@@ -107,7 +107,7 @@ And Google's as
 
 ```json5
 {
-   "delgate_permission_common_get_login_creds": [ "android://com.example" ]
+   "delgate_permission_common_get_login_creds": [ "android://com.example/F2:52:4D:82:E7:1E:68:AF:8C:...:4B" ]
 }
 ```
 
@@ -119,30 +119,27 @@ that are bound together.
 
 One way of approaching this problem would be to run with an approach similar to those discussed
 above: JSON files hosted at well-known locations on various origins that wish to assert their shared
-first-partyness. [Origin Policy](https://wicg.github.io/origin-policy/) seems like it might be a
-good conceptual fit for this metadata, as it's aiming to be a mechanism for origin-wide
-configuration that can allow the kinds of <i lang="la">a priori</i> assertions we're interested in.
-
-With this in mind, we could allow `https://a.example/`, `https://b.example/`, and
+first-partyness. We could allow `https://a.example/`, `https://b.example/`, and
 `https://c.example/` to declare themselves as a <dfn>first-party set</dfn> as follows:
 
-1.  Each origin hosts an [origin policy](https://wicg.github.io/origin-policy/) containing the
-    following member:
+1.  Each origin hosts a JSON file at `/.well-known/first-party-set` containing a `first-party-set`
+    member which holds the set of `origins` being asserted:
 
     ```json5
     {
       ...,
-      "first-party-set": [ "https://a.example/", "https://b.example/", "https://c.example/" ]
+      "first-party-set": {
+        "origins": [ "https://a.example/", "https://b.example/", "https://c.example/" ]
+      }
       ...
     }
     ```
 
-2.  When a user visits `https://a.example/`, that page instructs the browser to obtain its
-    Origin Policy by delivering a [`Sec-Origin-Policy`](https://wicg.github.io/origin-policy/#origin-policy-header)
-    response header.
+2.  When a user visits `https://a.example/`, that page instructs the browser to obtain its set of
+    first-parties by delivering an `X-Bikeshed-This-Origin-Asserts-A-First-Party-Set: ?T` header.
 
-3.  The browser parses the `first-party-set` member, and verifies its claims by fetching
-    `/.well-known/origin-policy` from `https://b.example/` and `https://c.example/`.
+3.  The browser fetches `/.well-known/first-party-set` from the origin, and verifies its claims by
+    fetching `/.well-known/first-party-set` from `https://b.example/` and `https://c.example/`.
 
 4.  The browser will cache the set of origins `{ https://a.example/, https://b.example/, https://c.example/ }`
     as being first-party to each other, as long as the following constraints are met. If any are violated,
@@ -186,20 +183,20 @@ this locally-hosted bundle by tweaking the structure of the `first-party-set` me
 ```
 
 The browser would fetch the bundle, verify that it contained signed exchanges for each of the relevant
-origins' Origin Policy files, and parse each according to the same rules as above.
+origins' JSON files, and parse each according to the same rules as above.
 
 This seems like a great approach from a performance perspective, but it does provide an opportunity
-to prebundle multiple distinct origin policies for multiple top-level domains. I think the practical
-damage that could be done is limited if we break the old sets when new sets are formed, but it might
-be possible to do more damage to the invariant that origins are part of one and only one first-party
-set than I expect.
+to prebundle multiple distinct `first-party-set` files for multiple top-level domains. I think the
+practical damage that could be done is limited if we break the old sets when new sets are formed,
+but it might be possible to do more damage to the invariant that origins are part of one and only
+one first-party set than I expect.
 
 
 ### TLS?
 
 Since this approach is rooted in TLS protecting the integrity of the assertions and allowing us to
 attribute the assertions to the origin, perhaps we can do something higher up the stack. For example,
-`https://a.example/` could serve its Origin Policy using a TLS cert which was valid for the exact set
+`https://a.example/` could serve its JSON file using a TLS cert which was valid for the exact set
 of origins asserted. Since this ~proves that the server is empowered to make assertions for each of
 those origins, we're done.
 
@@ -261,13 +258,11 @@ browsers aren't careful about how they expose the credential sharing behavior di
 
 ### The design above relies on origins. Shouldn't we evaluate registrable domains instead? <span id="origin-vs-domain"></span>
 
-Origin Policy is core to the above design, as I'm not terribly interested in creating yet another
-way to assert a set of characteristics about the way a given origin works, nor am I thrilled about
-yet another mechanism that creates quasi-securityish boundaries other than the origin. That said,
-we must carefully consider registrable domains, given the ways that cookies are scoped. It would be
-fatal to the design if `https://subdomain1.advertiser.example/` could live in one first-party set
-while `https://subdomain2.advertiser.example/` could live in another, as both origins have access
-to cookies set with `domains=advertiser.example`.
+I am not terribly interested in creating a quasi-securityish boundary at any point other than an
+origin. Still, we must carefully consider registrable domains, given the ways that cookies are
+scoped. It would be fatal to the design if `https://subdomain1.advertiser.example/` could live in
+one first-party set while `https://subdomain2.advertiser.example/` could live in another, as both
+origins have access to cookies set with `domains=advertiser.example`.
 
 Given this reality, we need to add a registrable domain constraint to the design above such that
 each registrable domain may live in one and only one first-party set.
@@ -303,7 +298,7 @@ Particularly gregarious origins will attempt to create all-encompassing first-pa
 to bypass third-party cookie-blocking schemes. For instance, there's real financial incentive for
 `https://advertiser.example/` (or even a coalition of advertisers) to build a list of all the
 publishers with whom they cooperate, and to incentivize those publishers to assert an up-to-date
-version of that list in their own origin policies, thereby declaring themselves to be a member of
+version of that list in their own JSON files, thereby declaring themselves to be a member of
 that mega-set.
 
 We can mitigate this risk to some extent by limiting the maximum number of registrable domains that
@@ -345,6 +340,37 @@ cache lifetime of its component origins.
 On the other, it might be reasonable to impose a minimum lifetime on a given set in order to
 mitigate against origins hopping between sets rapidly. In the signed exchange variant, for instance,
 we might tie the lifetime of the set to the lifetime of the exchanges themselves (~7 days).
+
+
+### Do we really need _another_ JSON file?
+
+We do, apparently.
+
+
+### Really?
+
+An earlier version of this proposal reused [Origin Policy](https://wicg.github.io/origin-policy/) as
+the delivery mechanism, and at first glance it really seems like it might be a good conceptual fit
+for this metadata, as it's aiming to be a mechanism for origin-wide configuration that can allow the
+kinds of <i lang="la">a priori</i> assertions we're interested in.
+
+This version backs away from that dependency for a few reasons: no browser has shipped an
+implementation of Origin Policy, and the mechanism is still somewhat in flux. In particular,
+browsers reasonably see some aspects of that mechanism as
+[cookie-like](https://wicg.github.io/origin-policy/#tracking), and are wary of adding such a
+mechanism as a dependency for first-party sets, which in part aims to make third-party
+cookie-blocking more deployable. I'm fairly certain we'll be able to resolve those concerns
+amicably, but I don't want that discussion to block this one. So, new JSON file! And maybe we
+can merge them in the future.
+
+Alternatively, we could simply reuse one of the existing files that Google and Apple have encouraged
+developers to host. Apple's doesn't seem appropriate, as it only binds web origins to apps, and
+relies entirely on the app store infrastructure to bind web origins to each other. Digital Asset
+Links, on the other hand, spells out an entire set of web origins along with application bindings
+for a specific type of relationship (see
+[Zalando's `/.well-known/assetlinks.json`](https://www.zalando.de/.well-known/assetlinks.json), for
+example). Adding another relationship type to that file might be a reasonable choice to converge
+upon.
 
 
 ### Tell me about instances of prior art!
