@@ -230,7 +230,7 @@ exploring.
 
 ### What, exactly, does "first-partyness" enable?
 
-Folks haves, in the past, [proposed somewhat radical shifts in the Same Origin Policy](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
+Folks have, in the past, [proposed somewhat radical shifts in the Same Origin Policy](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
 that could be enabled by the kind of affiliation discussed above. The proposal here is much narrower,
 and focused on the places in the platform where browsers currently distinguish first- and third-party
 interactions. Here, I am targeting specific use cases:
