@@ -373,15 +373,15 @@ example). Adding another relationship type to that file might be a reasonable ch
 upon.
 
 
-### Hrm. Are you sure that the SGX variant could work?
+### Hrm. Are you sure that the SXG variant could work?
 
 I was! And then a colleague noted in
 [mikewest/first-party-sets#2](https://github.com/mikewest/first-party-sets/issues/2)
 that it might not be as simple as I thought it was. My rough paraphrase of Ryan's comments are that
-the SGX approach would, in the example above, require `https://a.example/`'s administrators to
+the SXG approach would, in the example above, require `https://a.example/`'s administrators to
 continually refresh the signed exchanges they're distributing from `https://b.example/` and
 `https://c.example/`, and do so in a way that ensures the physical resource being represented isn't
-cached longer than the SGX's validity.
+cached longer than the SXG's validity.
 
 This complexity might make it more difficult than I assumed for developers to get things right. 
 
