@@ -9,28 +9,32 @@ Approval. It's a collection of interesting ideas for discussion, nothing more, n
 
 ## Third-parties that aren't.
 
-User agents grant users fairly granular control over the cookies and site data that web origins are
-permitted to access and store. One pattern that most browsers have agreed upon is a categorization
-of requests and documents into "first-party" and "third-party" buckets, giving users the option to
-regulate cross-context access to persistent state.
+One pattern that most browsers have agreed upon is a categorization of requests and documents into
+"first-party" and "third-party" buckets, giving users the option to regulate cross-context access
+to persistent state.
 
 These terms traditionally work along the lines of the algorithm defined in [Section 5.2 of 
 the draft RFC6265bis](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-02#section-5.2),
-which grounds the distinction purely in terms of [registrable domains](https://url.spec.whatwg.org/#host-registrable-domain).
-Broadly, the "first-party" is the registrable domain of the origin visible in the browser's address
-bar, and anything that doesn't match exactly is a "third-party". For example, if a user visits
+which grounds the distinction purely in terms of [registrable domains](https://url.spec.whatwg.org/#host-registrable-domain). Broadly, the "first-party" is the registrable domain of the origin visible in the browser's
+address bar, and anything that doesn't match exactly is a "third-party". For example, if a user visits
 `https://example.com/` which frames both `https://widgets-r-us.com/` and
 `https://subdomain.example.com/`, the former is considered "third-party" (as `widgets-r-us.com`
 does not match `example.com`), while the latter is considered "first-party" (as both origins
 share `example.com` as their registrable domain).
 
-This mechanism breaks down in practice, as a single entity will often host its assets and services
-across domains that aren't known <i lang="la">a priori</i> to be related. Consider
-`https://apple.com/` and `https://icloud.com/`, `https://google.com/` and `https://youtube.com/`, or
-`https://amazon.com/` and `https://amazon.de/`. These origins all represent distinct registrable
-domains, and are generally considered "third-party" to each other, though they're controlled by the
-same entity, and explicitly share state information with each other in order to support features
-like single sign-on.
+A number of browser features depend upon this distinction to some extent. Cookie controls are the
+most prominent example, followed by narrower features like credential sharing schemes
+([Shared Web Credentials](https://developer.apple.com/reference/security/shared_web_credentials) and
+[Smart Lock for Passwords](https://developers.google.com/identity/smartlock-passwords/android/associate-apps-and-sites),
+for example), process selection, etc.
+
+For these features, the first-/third-party distinction breaks down to an extent in practice, as a
+single entity will often host its assets and services across domains that aren't known
+<i lang="la">a priori</i> to be related. Consider `https://apple.com/` and `https://icloud.com/`,
+`https://google.com/` and `https://youtube.com/`, or `https://amazon.com/` and
+`https://amazon.de/`. These origins all represent distinct registrable domains, and are generally
+considered "third-party" to each other, though they're controlled by the same entity, and explicitly
+share state information with each other in order to support features like single sign-on.
 
 
 ## Native Apps' Status Quo
