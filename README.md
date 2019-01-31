@@ -404,6 +404,8 @@ Gladly!
 
 *   FIDO defined "[application facets](https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-appid-and-facets-v2.0-id-20180227.html)", which aims at a similar problem space.
 
+*   The [DBOUND](https://datatracker.ietf.org/wg/dbound/about/) group in the IETF aimed to address a similar problem space.
+
 *   Moar?
     
 [entitylist]: https://github.com/mozilla-services/shavar-prod-lists/blob/master/disconnect-entitylist.json
