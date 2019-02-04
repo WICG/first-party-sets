@@ -406,6 +406,9 @@ Gladly!
 
 *   The [DBOUND](https://datatracker.ietf.org/wg/dbound/about/) group in the IETF aimed to address a similar problem space.
 
+*   The Tracking Protection Working Group's "[Tracking Preference Expression (DNT)](https://www.w3.org/TR/tracking-dnt/)" defined a "[same-party](https://www.w3.org/TR/tracking-dnt/#rep.same-party)" property in a server transparency declaration at `/.well-known/dnt/`
+     This was designed to allow the entity managing any server (first-party or subresource) to declare what other domains it was responsible for.
+
 *   Moar?
     
 [entitylist]: https://github.com/mozilla-services/shavar-prod-lists/blob/master/disconnect-entitylist.json
