@@ -157,9 +157,9 @@ first-partyness. We could allow `https://a.example/`, `https://b.example/`, and
         the new first-party set's origins' registrable domains. See the [FAQ entry below](#origin-vs-domain)
         for a bit more detail on this point.
 
-    3.  None of the origins specified is itself a registrable domain. That is,
-        [public suffixes](https://publicsuffix.org/) like `https://appspot.com/` cannot themselves
-        be part of a first-party set.
+    3.  None of the origins specified is itself a [public suffix](https://publicsuffix.org/). That
+        is, origins like `https://appspot.com/` cannot themselves be part of a first-party set, as
+        they explicitly shard themselves into registrable domains with distinct owners.
 
 This seems like a reasonable approach to start with. It has straightforward properties, and can be
 well understood in terms of policy delivery mechanisms that already exist.
