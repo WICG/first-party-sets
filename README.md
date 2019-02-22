@@ -126,13 +126,13 @@ above: JSON files hosted at well-known locations on various origins that wish to
 first-partyness. We could allow `https://a.example/`, `https://b.example/`, and
 `https://c.example/` to declare themselves as a <dfn>first-party set</dfn> as follows:
 
-1.  Each origin hosts a JSON file at `/.well-known/first-party-set` containing a `first-party-set`
+1.  Each origin hosts a JSON file at `/.well-known/first-party-set` containing a `first_party_set`
     member which holds the set of `origins` being asserted:
 
     ```json5
     {
       ...,
-      "first-party-set": {
+      "first_party_set": {
         "origins": [ "https://a.example/", "https://b.example/", "https://c.example/" ]
       }
       ...
@@ -149,7 +149,7 @@ first-partyness. We could allow `https://a.example/`, `https://b.example/`, and
     as being first-party to each other, as long as the following constraints are met. If any are violated,
     the new set will not be created:
 
-    1.  Each origin's `first-party-set` member asserts exactly the same set of origins. If the
+    1.  Each origin's `first_party_set` member asserts exactly the same set of origins. If the
         origins' assertions diverge in any way (even if they partially overlap), then the newly
         asserted first-party set will not be created.
 
@@ -173,12 +173,12 @@ has a substantial performance cost. Perhaps we can do better?
 It might be possible for `https://a.example/` to host a [bundle](https://wicg.github.io/webpackage/draft-yasskin-wpack-bundled-exchanges.html)
 of [Signed HTTP Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) for
 each of the origins with which it wishes to be first-party. The browser could be instructed to use
-this locally-hosted bundle by tweaking the structure of the `first-party-set` member:
+this locally-hosted bundle by tweaking the structure of the `first_party_set` member:
 
 ```json5
 {
   ...,
-  "first-party-set": {
+  "first_party_set": {
     "origins": [ "https://a.example/", "https://b.example/", "https://c.example/" ],
     "bundle": "https://a.example/path/to/the/first-party-set/bundle"
   },
@@ -210,7 +210,7 @@ _Note: clever folks have suggested that this is a bad idea given CDNs and I thin
 ### Incremental Verification
 
 The proposal above suggests that we ought to verify all entries in a given origin's declared
-`first-party-set` at once, fetching and processing all origins' policies in one conceptual
+first-party set at once, fetching and processing all origins' policies in one conceptual
 transaction. This is somewhat brittle, and introduces a sincere performance impact.
 
 It might be possible instead to relax this mechanism, and instead verify only pairwise
@@ -271,7 +271,7 @@ origins have access to cookies set with `domains=advertiser.example`.
 Given this reality, we need to add a registrable domain constraint to the design above such that
 each registrable domain may live in one and only one first-party set.
 
-For completeness, an alternative approach would list registrable domains in the `first-party-set`
+For completeness, an alternative approach would list registrable domains in the `first_party_set`
 member rather than origins (e.g. `[ 'a.example', 'b.example', 'c.example' ]`), and allowing the
 assertion provided by the apex of a given registrable domain to apply to each origin it represents.
 That's certainly possible, but I don't prefer it, given the philosophical standpoint noted above.
@@ -286,7 +286,7 @@ up to some proprietary platform API:
 ```json5
 {
   ...,
-  "first-party-set": [ "https://a.example/", "https://b.example/",
+  "first_party_set": [ "https://a.example/", "https://b.example/",
                        "https://c.example/", "ios://D3KQX62K1A.com.example.DemoApp",
                        "android://com.example.DemoApp" ],
   ...
