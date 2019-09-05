@@ -1,414 +1,378 @@
-# Explainer: First-Party Sets
+# First-Party Sets
 
-Mike West, January 2019
+This document proposes a new web platform mechanism to declare a collection of related domains as
+being in a First-Party Set.
 
-_©2019, Google, Inc. All rights reserved._
+# Table of Contents
 
-(_Though this isn't a proposal that's well thought out, and stamped solidly with the Google Seal of
-Approval. It's a collection of interesting ideas for discussion, nothing more, nothing less._)
+- [Introduction](#introduction)
+- [Goals](#goals)
+- [Non-goals](#non-goals)
+- [Declaring a First Party Set](#declaring-a-first-party-set)
+- [Applications](#applications)
+- [Design details](#design-details)
+   - [Acceptable and unacceptable sets](#acceptable-and-unacceptable-sets)
+      - [Defining acceptable sets](#defining-acceptable-sets)
+      - [Mitigating unacceptable sets](#mitigating-unacceptable-sets)
+      - [Detecting unacceptable sets](#detecting-unacceptable-sets)
+   - [Cross-site tracking vectors](#cross-site-tracking-vectors)
+   - [Service workers](#service-workers)
+- [Alternative designs](#alternative-designs)
+   - [Using a static list](#using-a-static-list)
+   - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
+- [Prior Art](#prior-art)
 
-## Third-parties that aren't.
+# Introduction
 
-One pattern that most browsers have agreed upon is a categorization of requests and documents into
-"first-party" and "third-party" buckets, giving users the option to regulate cross-context access
-to persistent state.
+Browsers have proposed a variety of tracking policies and privacy models
+([Chromium](https://github.com/michaelkleber/privacy-model/blob/master/README.md),
+[Edge](https://blogs.windows.com/msedgedev/2019/06/27/tracking-prevention-microsoft-edge-preview/),
+[Mozilla](https://wiki.mozilla.org/Security/Anti_tracking_policy),
+[WebKit](https://webkit.org/tracking-prevention-policy/)) which scope access to user identity to
+some notion of first-party. In defining this scope, we must balance two goals: the scope should be
+small enough to meet the user's privacy expectations, yet large enough to provide the user's desired
+functionality on the site they are interacting with.
 
-These terms traditionally work along the lines of the algorithm defined in [Section 5.2 of 
-the draft RFC6265bis](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-02#section-5.2),
-which grounds the distinction purely in terms of [registrable domains](https://url.spec.whatwg.org/#host-registrable-domain). Broadly, the "first-party" is the registrable domain of the origin visible in the browser's
-address bar, and anything that doesn't match exactly is a "third-party". For example, if a user visits
-`https://example.com/` which frames both `https://widgets-r-us.com/` and
-`https://subdomain.example.com/`, the former is considered "third-party" (as `widgets-r-us.com`
-does not match `example.com`), while the latter is considered "first-party" (as both origins
-share `example.com` as their registrable domain).
+One natural scope is the domain name in the top-level origin. However, the website the user is
+interacting with may be deployed across multiple domain names. For example, `https://google.com`,
+`https://google.co.uk`, and `https://youtube.com` are owned by the same entity, as are `https://apple.com`
+and `https://icloud.com`, or `https://amazon.com` and `https://amazon.de`.
 
-A number of browser features depend upon this distinction to some extent. Cookie controls are the
-most prominent example, followed by narrower features like credential sharing schemes
-([Shared Web Credentials](https://developer.apple.com/reference/security/shared_web_credentials) and
-[Smart Lock for Passwords](https://developers.google.com/identity/smartlock-passwords/android/associate-apps-and-sites),
-for example), process selection, etc.
+We may wish to include these kinds of related names, where consistent with privacy requirements. For
+example, Firefox [ships](https://github.com/mozilla-services/shavar-prod-lists#entity-list) an
+entity list that defines lists of domains belonging to the same organization. This explainer
+discusses a dynamic mechanism for defining these lists, which trades off the [costs of a static
+list](#using-a-static-list) with [other considerations](#design-details).
 
-For these features, the first-/third-party distinction breaks down to an extent in practice, as a
-single entity will often host its assets and services across domains that aren't known
-<i lang="la">a priori</i> to be related. Consider `https://apple.com/` and `https://icloud.com/`,
-`https://google.com/` and `https://youtube.com/`, or `https://amazon.com/` and
-`https://amazon.de/`. These origins all represent distinct registrable domains, and are generally
-considered "third-party" to each other, though they're controlled by the same entity, and explicitly
-share state information with each other in order to support features like single sign-on.
+# Goals
 
+-  Allow related domain names to declare themselves as the same first-party.
+-  Provide a scalable and maintainable web platform mechanism to achieve the above, and thus
+   avoid a hard-coded list.
 
-## Native Apps' Status Quo
+# Non-goals
 
-Both Apple and Google have taken stabs at this problem for the narrow use case of sharing login
-credentials between native apps and web origins (via
-[Shared Web Credentials](https://developer.apple.com/reference/security/shared_web_credentials) and
-[Smart Lock for Passwords](https://developers.google.com/identity/smartlock-passwords/android/associate-apps-and-sites),
-respectively). Developers are asked to put a file somewhere on their origin that lists a set of
-origins and apps that are associated with each other, and that association unlocks access to
-shared credentials.
+-  Third-party sign-in between unrelated sites.
+-  Information exchange between unrelated sites for ad targeting or conversion measurement.
+-  Other use cases which involve unrelated sites.
 
-Apple's mechanism requires a JSON-formatted file at
-[`/.well-known/apple-app-site-association`](https://developer.apple.com/documentation/security/password_autofill/setting_up_an_app_s_associated_domains#3001215)
-whose content contains a `webcredentials` dictionary, which contains an `apps` array, which contains
-a list of application identifiers:
+(Some of these use cases are covered by [other
+explainers](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox) from the Privacy
+Sandbox.)
 
-```json5
-{
-   "webcredentials": {
-       "apps": [    "D3KQX62K1A.com.example.DemoApp",
-                    "D3KQX62K1A.com.example.DemoAdminApp" ]
-    }
-}
+# Declaring a First Party Set
+
+A first-party set is identified by one _owner_ registered domain and a list of _secondary_
+registered domains. (See [alternative designs](#alternative-designs) for a discussion of origins
+vs registered domains.)
+
+An origin is in the first-party set if:
+
+-  Its scheme is https; and
+-  Its registered domain is either the owner or is one of the secondary domains.
+
+The owner and each secondary domain in a first-party set hosts a first-party set manifest at
+`https://<domain>/.well-known/first-party-set`, containing a JSON dictionary. The secondary domains
+point to the owning domain while the owning domain lists the members of the set, as well as a
+version number to trigger updates.
+
+Suppose `a.example`, `b.example`, and `c.example` wish to form a first-party set, owned by `a.example`. The
+sites would then serve the following resources:
+
+```
+https://a.example/.well-known/first-party-set
+{ "owner": "a.example",
+  "version": 1,
+  "members": ["b.example", "c.example"] }
+
+https://b.example/.well-known/first-party-set
+{ "owner": "a.example" }
+
+https://c.example/.well-known/first-party-set
+{ "owner": "a.example" }
 ```
 
-Google's mechanism (based on [Digital Asset Links](https://developers.google.com/digital-asset-links/))
-requires a JSON-formatted file at `/.well-known/assetlinks.json` whose content contains an array of
-dictionaries, each specifying a single `relation`/`target` pair, the latter consisting of a `namespace`
-(`app` or `web`), and either an origin or package name/strangely-formatted-fingerprint:
+We then impose additional constraints on the owner's manifest:
 
-```json5
-[{
-  "relation": ["delegate_permission/common.get_login_creds"],
-  "target": {
-    "namespace": "web",
-    "site": "https://signin.example.com"
-  }
- },
- {
-  "relation": ["delegate_permission/common.get_login_creds"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.example",
-    "sha256_cert_fingerprints": [
-      "F2:52:4D:82:E7:1E:68:AF:8C:...:4B"
-    ]
-  }
- }]
+-  Entries in `members` that are not registrable domains are ignored.
+-  To mitigate unacceptable sets, if the number of entries in `members` must not exceed some
+   limit, reject the entire manifest. As to the size of the limit, the largest entry in the Firefox
+   entity list is around 200 domains (due to ccTLDs), although a tighter limit below 20-30 would
+   much more effectively limit the scope. Per Chromium's
+   [document](https://github.com/michaelkleber/privacy-model#identity-is-partitioned-by-first-party-site),
+   one of the criteria is that "the resulting identity scope is not too large".
+-  All domains in the set must be covered by the same X.509 certificate.
+
+By default, every registrable domain is implicitly owned by itself. The browser discovers
+first-party sets as it makes network requests and stores the first-party set owner for each domain.
+On a top-level navigation, websites may send a `Sec-First-Party-Set` response header to inform the
+browser of its first-party set owner. For example `https://b.example/some/page` may send the following
+header:
+
+```
+  Sec-First-Party-Set: owner="a.example", minVersion=1
 ```
 
-These mechanisms both have the drawback of relying on their respective app stores as a root of trust:
-web origins' assertions aren't accepted unless backed up with an app-based assertion (the
-[`com.apple.developer.associated-domains`](https://developer.apple.com/documentation/security/password_autofill/setting_up_an_app_s_associated_domains)
-entitlement on the one hand, and an [`asset_statements`](https://developers.google.com/identity/smartlock-passwords/android/associate-apps-and-sites)
-resource on the other), and app-based assertions are verified by a gatekeeper before being accepted
-as valid.
-
-It seems like we should be able to extract the key components of these existing, app-store-based models,
-and restructure them for use on the web. If you squint a bit, the two formats are really just
-transformations of each other (e.g. it would be possible to render Apple's version as
-
-```json5
-[{
-  "relation": [ "webcredentials" ],
-  "target": {
-    "namespace": "iOS",
-    "app": "D3KQX62K1A.com.example.DemoApp"
-  }
-}, ...]
-```
-
-And Google's as
-
-```json5
-{
-   "delgate_permission_common_get_login_creds": [ "android://com.example/F2:52:4D:82:E7:1E:68:AF:8C:...:4B" ]
-}
-```
-
-The important bits seem to be the type of relationship being expressed, and the set of apps/origins
-that are bound together.
-
-
-## A Proposal
-
-One way of approaching this problem would be to run with an approach similar to those discussed
-above: JSON files hosted at well-known locations on various origins that wish to assert their shared
-first-partyness. We could allow `https://a.example/`, `https://b.example/`, and
-`https://c.example/` to declare themselves as a <dfn>first-party set</dfn> as follows:
-
-1.  Each origin hosts a JSON file at `/.well-known/first-party-set` containing a `first_party_set`
-    member which holds the set of `origins` being asserted:
-
-    ```json5
-    {
-      ...,
-      "first_party_set": {
-        "origins": [ "https://a.example/", "https://b.example/", "https://c.example/" ]
-      }
-      ...
-    }
-    ```
-
-2.  When a user visits `https://a.example/`, that page instructs the browser to obtain its set of
-    first-parties by delivering an `X-Bikeshed-This-Origin-Asserts-A-First-Party-Set: ?T` header.
-
-3.  The browser fetches `/.well-known/first-party-set` from the origin, and verifies its claims by
-    fetching `/.well-known/first-party-set` from `https://b.example/` and `https://c.example/`.
-
-4.  The browser will cache the set of origins `{ https://a.example/, https://b.example/, https://c.example/ }`
-    as being first-party to each other, as long as the following constraints are met. If any are violated,
-    the new set will not be created:
-
-    1.  Each origin's `first_party_set` member asserts exactly the same set of origins. If the
-        origins' assertions diverge in any way (even if they partially overlap), then the newly
-        asserted first-party set will not be created.
-
-    2.  No other cached first-party set contains an origin whose registrable domain matches any of
-        the new first-party set's origins' registrable domains. See the [FAQ entry below](#origin-vs-domain)
-        for a bit more detail on this point.
-
-    3.  None of the origins specified is itself a [public suffix](https://publicsuffix.org/). That
-        is, origins like `https://appspot.com/` cannot themselves be part of a first-party set, as
-        they explicitly shard themselves into registrable domains with distinct owners.
-
-This seems like a reasonable approach to start with. It has straightforward properties, and can be
-well understood in terms of policy delivery mechanisms that already exist.
-
-It does, however, generate an HTTP request to every origin involved in a set of first-parties, which
-has a substantial performance cost. Perhaps we can do better?
-
-
-### Signed Exchanges
-
-It might be possible for `https://a.example/` to host a [bundle](https://wicg.github.io/webpackage/draft-yasskin-wpack-bundled-exchanges.html)
-of [Signed HTTP Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) for
-each of the origins with which it wishes to be first-party. The browser could be instructed to use
-this locally-hosted bundle by tweaking the structure of the `first_party_set` member:
-
-```json5
-{
-  ...,
-  "first_party_set": {
-    "origins": [ "https://a.example/", "https://b.example/", "https://c.example/" ],
-    "bundle": "https://a.example/path/to/the/first-party-set/bundle"
-  },
-  ...
-}
-```
-
-The browser would fetch the bundle, verify that it contained signed exchanges for each of the relevant
-origins' JSON files, and parse each according to the same rules as above.
-
-This seems like a great approach from a performance perspective, but it does provide an opportunity
-to prebundle multiple distinct `first-party-set` files for multiple top-level domains. I think the
-practical damage that could be done is limited if we break the old sets when new sets are formed,
-but it might be possible to do more damage to the invariant that origins are part of one and only
-one first-party set than I expect.
-
-
-### TLS?
-
-Since this approach is rooted in TLS protecting the integrity of the assertions and allowing us to
-attribute the assertions to the origin, perhaps we can do something higher up the stack. For example,
-`https://a.example/` could serve its JSON file using a TLS cert which was valid for the exact set
-of origins asserted. Since this ~proves that the server is empowered to make assertions for each of
-those origins, we're done.
-
-_Note: clever folks have suggested that this is a bad idea given CDNs and I think I agree with them._
-
-
-### Incremental Verification
-
-The proposal above suggests that we ought to verify all entries in a given origin's declared
-first-party set at once, fetching and processing all origins' policies in one conceptual
-transaction. This is somewhat brittle, and introduces a sincere performance impact.
-
-It might be possible instead to relax this mechanism, and instead verify only pairwise
-relationships as they're actually used. That is, if A declares itself to be in a set with B, C, and
-D, but only loads resources from B, then we don't actually _need_ to validate C and D's
-declarations yet. We could simply validate B's, and worry about C and D when they come up.
-
-This could ease adoption costs to some extent, and would make the system more forgiving of temporary
-server outages. It seems robust enough for some use cases (first- vs third-party cookies, for
-instance). I'm not sure it's good enough for all use cases (in particular, if this mechanism is to
-replace the credential-sharing schemes discussed above, I'm not sure how we'd know which subset of
-entities to validate: perhaps only those that have stored credentials?), but it's well worth
-exploring.
-
-
-## FAQ
-
-
-### What, exactly, does "first-partyness" enable?
-
-Folks have, in the past, [proposed somewhat radical shifts in the Same Origin Policy](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
-that could be enabled by the kind of affiliation discussed above. The proposal here is much narrower,
-and focused on the places in the platform where browsers currently distinguish first- and third-party
-interactions. Here, I am targeting specific use cases:
-
-*   The "block third-party cookies and site data" behavior in browsers (as well as future evolutions
-    of that kind of behavior) would respect this notion of first-partyness. Likewise, browsers can
-    enhance their cookie control mechanisms with this additional metadata. "Forget this site" can
-    shift towards "Forget this entity", wiping data for an entire set of first-parties at once.
-
-*   Browsers' credential sharing behavior for sites which are affiliated could substitute this webby proposal
-    for the vendor-specific solutions which exist today.
-
-*   Browsers may use first-party sets as one additional input into heuristics around their process
-    models while they [ramp up to strict origin isolation](https://chromium.googlesource.com/chromium/src/+/master/docs/security/side-channel-threat-model.md#multiple-origins-within-a).
-
-To be clear, first-partyness **does not** weaken the existing restrictions created by the Same-Origin
-Policy, nor does it allow an origin to access any data it wouldn't have access to in a first-party
-context. This proposal does not include shared storage, or shared cookie access, or shared DOM
-access, or any other scary thing that security people would say is a bad idea.
-
-Still, it seems likely that folks will want to stretch the bounds of what first-party sets enables
-over time. And even the small set of specific use-cases above is probably scarier than it looks at
-first. Consider an entity that has an advertising domain that runs third-party code on the one hand,
-and a set of interesting user services intended for first-party use on the other. Tying those two
-domains together in the same first-party set could increase the risk of credential leakage, if
-browsers aren't careful about how they expose the credential sharing behavior discussed above.
-
-
-### The design above relies on origins. Shouldn't we evaluate registrable domains instead? <span id="origin-vs-domain"></span>
-
-I am not terribly interested in creating a quasi-securityish boundary at any point other than an
-origin. Still, we must carefully consider registrable domains, given the ways that cookies are
-scoped. It would be fatal to the design if `https://subdomain1.advertiser.example/` could live in
-one first-party set while `https://subdomain2.advertiser.example/` could live in another, as both
-origins have access to cookies set with `domains=advertiser.example`.
-
-Given this reality, we need to add a registrable domain constraint to the design above such that
-each registrable domain may live in one and only one first-party set.
-
-For completeness, an alternative approach would list registrable domains in the `first_party_set`
-member rather than origins (e.g. `[ 'a.example', 'b.example', 'c.example' ]`), and allowing the
-assertion provided by the apex of a given registrable domain to apply to each origin it represents.
-That's certainly possible, but I don't prefer it, given the philosophical standpoint noted above.
-
-
-### What about apps?
-
-It would be unfortunate if we had to request additional files in order to map origins to apps and vice-versa.
-You could imagine extending the format to accept iOS and Android formats as well, and leaving the validation
-up to some proprietary platform API:
-
-```json5
-{
-  ...,
-  "first_party_set": [ "https://a.example/", "https://b.example/",
-                       "https://c.example/", "ios://D3KQX62K1A.com.example.DemoApp",
-                       "android://com.example.DemoApp" ],
-  ...
-}
-```
-
-This would probably require us to ignore schemes which the browser doesn't understand. That doesn't sound terrible.
-
-
-### How will malicious actors abuse this mechanism?
-
-Particularly gregarious origins will attempt to create all-encompassing first-party sets in order
-to bypass third-party cookie-blocking schemes. For instance, there's real financial incentive for
-`https://advertiser.example/` (or even a coalition of advertisers) to build a list of all the
-publishers with whom they cooperate, and to incentivize those publishers to assert an up-to-date
-version of that list in their own JSON files, thereby declaring themselves to be a member of
-that mega-set.
-
-We can mitigate this risk to some extent by limiting the maximum number of registrable domains that
-can live together in a first-party set, rejecting sets that exceed this number. There are certainly
-examples of entities in the status quo that are composed of hundreds of distinct registrable
-domains, but they're clearly the exception rather than the rule. [Mozilla's entity list][entitylist]
-has an average of only ~3.7 registrable domains per entity, for example.
-
-Google is the largest entity in that dataset, with ~200 unique registrable domains. However, the
-vast majority of these are distinguished only by ccTLD. If we consider only the leftmost domain
-label of a registrable domain when counting (thereby treating `google.com`, `google.de`,
-`google.com.gi`, and so on as one entry in the set), then even Google only lists 33 registrable
-domains.
-
-With more careful analysis of the status quo, I suspect we can come up with a reasonably small
-number that takes care of a substantial portion of the use cases we care about, and ask the
-entities that legitimately fall outside that boundary to make hard choices about which of their
-1,001 registrable domains really needs to live in such a set.
-
-Still, it seems likely that unscrupulous actors could still gain some advantage by joining only
-the top X sites on which they'd like to bypass third-party cookie protections. We can discourage
-this to some extent by tuning the kinds of risks that entities expose themselves to when joining
-groups of not-actually-affiliated entities. For example, shifting from "Forget this site" to
-"Forget this entity" would increase the mortality rate of each member's locally-stored data.
-Likewise, making it possible to share credential information within a set is a disincentive to
-forming a broad coallition of unaffiliated entities.
-
-One can imagine other non-technical limitations. As the declaration is public by nature, the style
-of abuse noted here will be trivially obvious to observers, which creates exciting opportunities
-for out-of-band intervention.
-
-
-### What's the set's lifetime?
-
-On the one hand, it might make sense to revalidate the set whenever any of its origins' Origin
-Policy expires from cache, which would have the effect of tying the set's lifetime to the shortest
-cache lifetime of its component origins.
-
-On the other, it might be reasonable to impose a minimum lifetime on a given set in order to
-mitigate against origins hopping between sets rapidly. In the signed exchange variant, for instance,
-we might tie the lifetime of the set to the lifetime of the exchanges themselves (~7 days).
-
-
-### Do we really need _another_ JSON file?
-
-We do, apparently.
-
-
-### Really?
-
-An earlier version of this proposal reused [Origin Policy](https://wicg.github.io/origin-policy/) as
-the delivery mechanism, and at first glance it really seems like it might be a good conceptual fit
-for this metadata, as it's aiming to be a mechanism for origin-wide configuration that can allow the
-kinds of <i lang="la">a priori</i> assertions we're interested in.
-
-This version backs away from that dependency for a few reasons: no browser has shipped an
-implementation of Origin Policy, and the mechanism is still somewhat in flux. In particular,
-browsers reasonably see some aspects of that mechanism as
-[cookie-like](https://wicg.github.io/origin-policy/#tracking), and are wary of adding such a
-mechanism as a dependency for first-party sets, which in part aims to make third-party
-cookie-blocking more deployable. I'm fairly certain we'll be able to resolve those concerns
-amicably, but I don't want that discussion to block this one. So, new JSON file! And maybe we
-can merge them in the future.
-
-Alternatively, we could simply reuse one of the existing files that Google and Apple have encouraged
-developers to host. Apple's doesn't seem appropriate, as it only binds web origins to apps, and
-relies entirely on the app store infrastructure to bind web origins to each other. Digital Asset
-Links, on the other hand, spells out an entire set of web origins along with application bindings
-for a specific type of relationship (see
-[Zalando's `/.well-known/assetlinks.json`](https://www.zalando.de/.well-known/assetlinks.json), for
-example). Adding another relationship type to that file might be a reasonable choice to converge
-upon.
-
-
-### Hrm. Are you sure that the SXG variant could work?
-
-I was! And then a colleague noted in
-[mikewest/first-party-sets#2](https://github.com/mikewest/first-party-sets/issues/2)
-that it might not be as simple as I thought it was. My rough paraphrase of Ryan's comments are that
-the SXG approach would, in the example above, require `https://a.example/`'s administrators to
-continually refresh the signed exchanges they're distributing from `https://b.example/` and
-`https://c.example/`, and do so in a way that ensures the physical resource being represented isn't
-cached longer than the SXG's validity.
-
-This complexity might make it more difficult than I assumed for developers to get things right. 
-
-
-### Tell me about instances of prior art!
-
-Gladly!
-
-*   Apple's [Shared Web Credentials](https://developer.apple.com/reference/security/shared_web_credentials)
-    and Google's [Smart Lock for Passwords](https://developers.google.com/identity/smartlock-passwords/android/associate-apps-and-sites),
-    both discussed in detail above.
-
-*   Mozilla has a fairly large [list of "entities"][entitylist] that are used to modify the behavior
-    of Firefox's tracking protection mechanisms in the interests of web compatibility. It seems like
-    first-party sets could address the same use case.
-
-*   FIDO defined "[application facets](https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-appid-and-facets-v2.0-id-20180227.html)", which aims at a similar problem space.
-
-*   The [DBOUND](https://datatracker.ietf.org/wg/dbound/about/) group in the IETF aimed to address a similar problem space.
-
-*   The Tracking Protection Working Group's "[Tracking Preference Expression (DNT)](https://www.w3.org/TR/tracking-dnt/)" defined a "[same-party](https://www.w3.org/TR/tracking-dnt/#rep.same-party)" property in a server transparency declaration at `/.well-known/dnt/`
-     This was designed to allow the entity managing any server (first-party or subresource) to declare what other domains it was responsible for.
-
-*   Moar?
-    
-[entitylist]: https://github.com/mozilla-services/shavar-prod-lists/blob/master/disconnect-entitylist.json
+If this header does not match the browser's current information for `b.example` (either the owner does
+not match, or its saved first-party set manifest is too old), the browser pauses navigation to fetch
+the two manifest resources. Here, it would fetch `https://a.example/.well-known/first-party-set` and
+`https://b.example/.well-known/first-party-set`.
+
+These requests must be uncredentialed and with suitably partitioned network caches to not leak
+cross-site information. In particular, the fetch must not share caches with browsing activity under
+`a.example`. See also discussion on [cross-site tracking vectors](#cross-site-tracking-vectors).
+
+If the manifests show the domain is in the set, the browser records `a.example` as the owner of
+`b.example` (but not `c.example`) in its first-party-set storage. It evicts all domains currently
+recorded as owned by `a.example` that no longer match the new manifest. Then it clears all state for
+domains whose owners changed, including reloading all active documents. This should behave like
+`[Clear-Site-Data: *](https://www.w3.org/TR/clear-site-data/)`. This is needed to unlink any site
+identities that should no longer be linked. Note this also means that execution contexts (documents,
+workers, etc.) are scoped to a particular first-party set throughout their lifetime. If the
+first-party owner changes, existing ones are destroyed.
+
+The browser then retries the request (state has since been cleared) and completes navigation. As
+retrying POSTs is undesirable, we should ignore the `Sec-First-Party-Set` header directives on POST
+navigations. Sites that require a first-party set to be picked up on POST navigations should perform
+a redirect (as is already common), and have the `Sec-First-Party-Set` directive apply on the
+redirect.
+
+Subresource requests and subframe navigations are simpler as they cannot introduce a new first-party
+context. If the request matches the first-party URL's owner's manifest but is not currently recorded
+as being in that first-party set, the browser validates membership as above before making the
+request. Any Sec-First-Party-Set headers are ignored and, in particular, the browser should never
+read or write state for a first-party set other than the current one. This simpler process also
+avoids questions of retrying requests. The minVersion parameter in the header ensures that the
+browser's view of the owner's manifest is up-to-date enough for this logic.
+
+# Applications
+
+In support of the various browser privacy models, web platform features can use first-party sets to
+determine whether embedded content may or may not access its own state. For instance,
+[draft-west-cookie-samesite-firstparty-01](https://tools.ietf.org/html/draft-west-cookie-samesite-firstparty-01)
+describes a SameSite cookie attribute that sites may use to opt individual cookies in to relaxed
+variants of `SameSite=Strict` and `SameSite=Lax`: `SameSite=FirstPartySetStrict` and
+`SameSite=FirstPartySetLax`. It may also be reasonable to use first-party sets to partition network
+caches, in cases where the tighter origin-based isolation is too expensive.
+
+Web platform features should _not_ use first-party sets make one origin's state directly accessible
+to another origin in the set. It should only control when embedded content can access its own state.
+That is, if `a.example` and `b.example` are in the same first-party set, the same-origin policy
+should still prevent `https://a.example` from accessing `https://b.example`'s IndexedDB databases.
+However, it may be reasonable to allow a `https://b.example` iframe within `https://a.example` to
+access the `https://b.example` databases.
+
+# Design details
+
+## Acceptable and unacceptable sets
+
+### Defining acceptable sets
+
+We should have some notion of what sets are acceptable or unacceptable. For instance, a set
+containing the entire web, or a collection of completely unrelated sites, seems clearly
+unacceptable. Conversely, a set containing `https://acme-corp-landing-page.example` and
+`https://acme-corp-online-store.example` seems reasonable. There is a wide spectrum between these
+two scenarios. We should define where to draw the line.
+
+Exactly how to define this is an open question to be discussed. For an initial set of principles, we
+can look to how the various browser proposals say the following about first parties (emphasis
+added):
+
+-  [A Potential Privacy Model for the Web (Chromium Privacy Sandbox)](https://github.com/michaelkleber/privacy-model/blob/master/README.md):
+   "The notion of "First Party" may expand beyond eTLD+1, e.g. as proposed in First Party Sets. It
+   is _reasonable for the browser to relax its identity-sharing controls_ within that expanded
+   notion, provided that the resulting identity scope is _not too large_ and _can be understood by
+   the user_."
+-  [Edge Tracking Protection Preview](https://blogs.windows.com/msedgedev/2019/06/27/tracking-prevention-microsoft-edge-preview/):
+   "Not all organizations do business on the internet using just one domain name. In order to help
+   keep sites working smoothly, we group domains _owned and operated by the same organization_
+   together."
+-  [Mozilla Anti-Tracking Policy](https://wiki.mozilla.org/Security/Anti_tracking_policy): "A
+   first party is a resource or a set of resources on the web _operated by the same organization_,
+   which is both _easily discoverable by the user_ and _with which the user intends to interact_."
+-  [WebKit Tracking Prevention Policy](https://webkit.org/tracking-prevention-policy/): "A first
+   party is a website that a user is intentionally and knowingly visiting, as displayed by the URL
+   field of the browser, and the set of resources on the web _operated by the same organization_."
+   and, under "Unintended Impact", "Single sign-on to multiple websites _controlled by the same
+   organization_."
+
+This definition should also consider scenarios such as otherwise unrelated sites forming a
+consortium in order to expand the scope of their site identities.
+
+### Mitigating unacceptable sets
+
+This proposal includes technical measures which limit which first-party sets may be formed. First,
+first-party sets require opt-in from all parties. This means one origin cannot form a set
+unilaterally without opt-in from other members. Second, manifest sizes are bounded, which limits the
+number of unrelated domains which may be in an unacceptable first-party set. Finally, we apply a
+certificate constraint, which correlates first-party sets with technical control of the domain
+names.
+
+However, it is important to emphasize that these technical measures are not sufficient to exclude
+unacceptable sets. While we have not defined a criteria above, the initial principles above are
+tighter than the technical measures. First, while we bound first-party sets sizes, there are many
+ccTLDs. If we decide `https://example.com`, `https://example.co.uk`, etc., are in scope, the limit may
+end up fairly generous. Second, certificates only validate technical control of a domain name. CDNs
+and hosting providers often legitimately acquire a single certificate covering multiple names that
+they host. The names may not be operated by the same organization or have a relationship meaningful
+to the user.
+
+Thus these technical measures are only a first-pass filter on unacceptable sets. The browser still
+must apply interventions to unacceptable sets. This may be done by
+[detecting](#detecting-unacceptable-sets) and maintaining a list of blocked first-party owners, as in
+[Google Safe Browsing](https://safebrowsing.google.com). All first-party sets whose owners appear on
+the list are ignored and, if already present, cleared. This will change the set owner and trigger
+state clearing. This repairs the inconsistency with the privacy model, as well as disincentivizes
+sites from participating in unacceptable first-party sets. Note also this state clearing means sites
+cannot cycle between different sets to get around size limitations.
+
+### Detecting unacceptable sets
+
+Maintaining a blocklist requires the browser monitor and detect unacceptable sets. Some possible
+strategies:
+
+-  Such sets will likely center on popular sites, which simplifies the monitoring.
+-  The certificate constraint causes sets to leave evidence in certificate transparency logs,
+   which provides some degree of auditability. Note this is imperfect because giant CDN
+   certificates may contain many names but not be used for a first-party set.
+-  First-party set ownership can be monitored by monitoring the /.well-known/first-party-set
+   resource for various sites. Servers could attempt to defeat this by using cloaking techniques to
+   serve different sets to different monitors and users, but this can be helped by general measures
+   to reduce fingerprinting, and by first-party-set-specific measures to avoid personalized sets
+   (credentialless fetches, partitioning network state, etc.).
+
+## Cross-site tracking vectors
+
+This design requires the browser remember state about first-party sets, and use that state to
+influence site behavior. We must ensure this state does not introduce a cross-site tracking vector
+for two sites _not_ in the same first-party set. For instance, a site may be able to somehow encode
+a user identifier into the first-party set and have that identifier be readable in another site.
+Additionally, first-party sets are discovered and validated on-demand, so this could leak
+information about which sites have been visited.
+
+Our primary mitigation for these attacks is to treat first-party sets as first-party-only state. We
+heavily restrict how first-party set state interacts with subresources. Thus we never query or write
+to first-party set information for any set other than the current one. Even if first-party set
+membership were personalized, that membership should only influence the set itself.
+
+We can further mitigate personalized first-party sets, as well as information leaks during
+validation, by fetching manifests without credentials and from appropriate network partitions
+(double-keyed HTTP cache, etc.).
+
+Finally, first-party set state must be cleared whenever other state for some first-party is cleared,
+such as if the user cleared cookies from the browser UI.
+
+Some additional scenarios to keep in mind:
+
+-  The decision to validate a first-party set must not be based on not-yet-readable data,
+   otherwise side channel attacks are feasible. For instance, we cannot optimize the subresource
+   logic to only validate sets if a `SameSite=FirstPartyLax` cookie exists.
+-  When validating a first-party set from a top-level navigation, it is important to fetch _both_
+   manifests unconditionally, rather than use the cached version of the owner manifest. Otherwise
+   one site can learn if the user has visited the other by claiming to be in a first-party set and
+   measuring how long the browser took to reject it.
+-  If two first-party sets jointly own a set of "throwaway" domains (so state clearing does not
+   matter), they can communicate a user identifier in which throwaway domains one set grabs from
+   the other. This is partially addressed by mitigating personalized first-party sets (if not
+   personalized, the sites must coordinate via a global signal like time). Beyond that, this can be
+   addressed by mitigations against unacceptable sets in general (a domain that can be part of two
+   sets is clearly unacceptable). See further discussion below.
+
+## Service workers
+
+Service workers complicate first-party sets. We must consider network requests made from a service
+worker, subresource fetches made from a document with a service worker attached, as well as how a
+site which uses a service worker may adopt first-party sets.
+
+Changing a domain's first-party owner clears all state, including service worker registrations. This
+means service workers, like documents, are scoped to a given first-party set. Network requests from
+a service worker then behave like subresources.
+
+If a document has a service worker attached, its subresource fetches go through the service worker.
+This does _not_ trigger first-party set logic as this fetch is, at this point, a funny IPC. If the
+service worker makes a request in response, the first-party set logic will fire as above.
+
+Finally, if a site already has a service worker, it should still be able to deploy first-party sets.
+However that service worker effectively translates navigation fetches into subresource fetches, and
+only top-level navigations discover new sets. We resolve this by moving `Sec-Fetch-Party-Set` header
+processing to the navigation logic. If the header is present, whether it came from the network
+directly or the service worker, we attempt to validate the set. This is fine because the header is
+not directly trusted.
+
+# Alternative designs
+
+## Using a static list
+
+The immediate alternate design is to use a static list, such as Firefox's [entity
+list](https://github.com/mozilla-services/shavar-prod-lists#entity-list). A static list has several
+advantages. It is much simpler: it does not require mechanisms for the set changing, and there is no
+need to monitor unacceptable sets. A browser can more directly impose its policy on what kinds of
+sets are and are not acceptable.
+
+At the same time, hardcoded lists can develop availability and deployment issues. First, each change
+must be propagated to each user's browser via an update. This complicates sites' ability to deploy
+new related domains. In comparison, the HSTS preload list is only a hardening measure around a
+[dynamic HTTP header](https://tools.ietf.org/html/rfc6797), so sites can deploy HSTS unilaterally. 
+Relatedly, each browser also becomes a gatekeeper for these new domains. This produces an
+[internet choke point](https://intarchboard.github.io/chokepoints/draft-iab-chokepoints-latest.html).
+Finally, as preload lists grow, they can also develop scalability issues, as in the [HSTS preload
+list](https://bugs.chromium.org/p/chromium/issues/detail?id=587954).
+
+This dynamic design avoids these concerns. It is worth noting, however, that the design does not
+remove the need for browsers to apply policies. Browsers still must mitigate unacceptable sets. The
+design only removes the browser from the critical path in deploying new entries.
+
+## Origins instead of registrable domains
+
+A first-party set is a collection of origins, but it is specified by registrable domains, which
+carries a dependency on the [public suffix list](https://publicsuffix.org). While this is consistent
+with the various proposed privacy models as well as cookie handling, the security boundary on the
+web is the origin, not registrable domain.
+
+An alternate design would be to instead specify sets by origins directly. In this model, any https
+origin would be a possible first-party set owner, and each origin must individually join a set,
+rather than relying on the root as we do here. For continuity with the existing behavior, we would
+then define the registrable domain as the default first-party set for each origin. That is, by
+default, `https://foo.example.com`, `https://bar.example.com`, and `https://example.com:444` would all be
+in a set owned by `https://example.com`. Defining a set explicitly would override this default set.
+
+This would reduce the web's dependency on the public suffix list, which would mitigate [various
+problems](https://github.com/sleevi/psl-problems). For instance, a university may allow students to register arbitrary subdomains at
+`https://foo.university.example`, but did not place `university.example` on the public suffix list,
+either due to compatibility concerns or oversight. With an origin-specified first-party set,
+individual origins could then detach themselves from the default set to avoid security problems with
+non-origin-based features such as cookies. (Note the
+_[_Host- cookie prefix](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.3.2)
+also addresses this issue.)
+
+This origin-defined approach has additional complications to resolve:
+
+-  There are a handful of features (cookies, document.domain) which are scoped to registrable
+   domains, not origins. Those features should not transitively join two different sets. For
+   instance, we must account for one set containing `https://foo.bar.example.com` and
+   `https://example.com`, but not `https://bar.example.com`. For cookies, we can say that cookies
+   remember the set which created them and we match both the Domain attribute and the first-party
+   set. Thus if `https://foo.bar.example.com` sets a Domain=example.com cookie, `https://example.com`
+   can read it, but not `https://bar.example.com`. Other features would need similar updates.
+-  The implicit state should be expressible explicitly, to simplify rollback and deployment,
+   which means first-party set manifests must describe patterns of origins, rather than a simple
+   bounded list of domains. In particular, we should support subtree patterns.
+-  `https://foo.example.com`'s implicit owner is `https://example.com`. If `https://example.com` then
+   forms an explicit set which does not include `https://foo.example.com`, we need to change
+   `https://foo.example.com`'s implicit state, perhaps to a singleton set.
+-  This complex set of patterns and implicit behaviors must be reevaluated against existing
+   origins every time a first-party set is updated.
+-  The patterns also make the meaning of the size limit unclear.
+-  Certificate wildcards (which themselves depend on the public suffix list) don't match an
+   entire subtree. This conflicts with wanting to express implicit states above.
+
+These complexities are likely solvable while keeping most of this design, should browsers believe
+this is worthwhile.
+
+# Prior Art
+
+-  Firefox's [entity list](https://github.com/mozilla-services/shavar-prod-lists#entity-list)
+-  [draft-sullivan-dbound-problem-statement-02](https://tools.ietf.org/html/draft-sullivan-dbound-problem-statement-02)
+-  [Single Trust and Same-Origin Policy v2](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
+   and [affiliated domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12) from John
+   Wilander to public-webappsec
