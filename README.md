@@ -43,7 +43,7 @@ We may wish to include these kinds of related names, where consistent with priva
 example, Firefox [ships](https://github.com/mozilla-services/shavar-prod-lists#entity-list) an
 entity list that defines lists of domains belonging to the same organization. This explainer
 discusses a dynamic mechanism for defining these lists, which trades off the [costs of a static
-list](#heading=h.2uvq9e1eb6yv) with [other considerations](#heading=h.fke98ati2y3q).
+list](#using-a-static-list) with [other considerations](#design-details).
 
 # Goals
 
@@ -64,7 +64,7 @@ Sandbox.)
 # Declaring a First Party Set
 
 A first-party set is identified by one _owner_ registered domain and a list of _secondary_
-registered domains. (See [alternative designs](#heading=h.5x5tdzi9jclv) for a discussion of origins
+registered domains. (See [alternative designs](#alternative-designs) for a discussion of origins
 vs registered domains.)
 
 An origin is in the first-party set if:
@@ -77,7 +77,7 @@ The owner and each secondary domain in a first-party set hosts a first-party set
 point to the owning domain while the owning domain lists the members of the set, as well as a
 version number to trigger updates.
 
-Suppose a.example, b.example, and c.example wish to form a first-party set, owned by a.example. The
+Suppose `a.example`, `b.example`, and `c.example` wish to form a first-party set, owned by `a.example`. The
 sites would then serve the following resources:
 
 ```
@@ -107,21 +107,21 @@ We then impose additional constraints on the owner's manifest:
 By default, every registrable domain is implicitly owned by itself. The browser discovers
 first-party sets as it makes network requests and stores the first-party set owner for each domain.
 On a top-level navigation, websites may send a `Sec-First-Party-Set` response header to inform the
-browser of its first-party set owner. For example https://b.example/some/page may send the following
+browser of its first-party set owner. For example `https://b.example/some/page` may send the following
 header:
 
 ```
   Sec-First-Party-Set: owner="a.example", minVersion=1
 ```
 
-If this header does not match the browser's current information for b.example (either the owner does
+If this header does not match the browser's current information for `b.example` (either the owner does
 not match, or its saved first-party set manifest is too old), the browser pauses navigation to fetch
 the two manifest resources. Here, it would fetch `https://a.example/.well-known/first-party-set` and
 `https://b.example/.well-known/first-party-set`.
 
 These requests must be uncredentialed and with suitably partitioned network caches to not leak
 cross-site information. In particular, the fetch must not share caches with browsing activity under
-`a.example`. See also discussion on [cross-site tracking vectors](#heading=h.cl6nqu56yp8x).
+`a.example`. See also discussion on [cross-site tracking vectors](#cross-site-tracking-vectors).
 
 If the manifests show the domain is in the set, the browser records `a.example` as the owner of
 `b.example` (but not `c.example`) in its first-party-set storage. It evicts all domains currently
@@ -212,7 +212,7 @@ names.
 However, it is important to emphasize that these technical measures are not sufficient to exclude
 unacceptable sets. While we have not defined a criteria above, the initial principles above are
 tighter than the technical measures. First, while we bound first-party sets sizes, there are many
-ccTLDs. If we decide https://example.com, https://example.co.uk, etc., are in scope, the limit may
+ccTLDs. If we decide `https://example.com`, `https://example.co.uk`, etc., are in scope, the limit may
 end up fairly generous. Second, certificates only validate technical control of a domain name. CDNs
 and hosting providers often legitimately acquire a single certificate covering multiple names that
 they host. The names may not be operated by the same organization or have a relationship meaningful
@@ -220,7 +220,7 @@ to the user.
 
 Thus these technical measures are only a first-pass filter on unacceptable sets. The browser still
 must apply interventions to unacceptable sets. This may be done by
-[detecting](#heading=h.crhvphamkv85) and maintaining a list of blocked first-party owners, as in
+[detecting](#detecting-unacceptable-sets) and maintaining a list of blocked first-party owners, as in
 [Google Safe Browsing](https://safebrowsing.google.com). All first-party sets whose owners appear on
 the list are ignored and, if already present, cleared. This will change the set owner and trigger
 state clearing. This repairs the inconsistency with the privacy model, as well as disincentivizes
@@ -334,12 +334,12 @@ An alternate design would be to instead specify sets by origins directly. In thi
 origin would be a possible first-party set owner, and each origin must individually join a set,
 rather than relying on the root as we do here. For continuity with the existing behavior, we would
 then define the registrable domain as the default first-party set for each origin. That is, by
-default, https://foo.example.com, https://bar.example.com, and https://example.com:444 would all be
-in a set owned by https://example.com. Defining a set explicitly would override this default set.
+default, `https://foo.example.com`, `https://bar.example.com`, and `https://example.com:444` would all be
+in a set owned by `https://example.com`. Defining a set explicitly would override this default set.
 
 This would reduce the web's dependency on the public suffix list, which would mitigate various
 problems. For instance, a university may allow students to register arbitrary subdomains at
-https://foo.university.example, but did not place university.example on the public suffix list,
+`https://foo.university.example`, but did not place `university.example` on the public suffix list,
 either due to compatibility concerns or oversight. With an origin-specified first-party set,
 individual origins could then detach themselves from the default set to avoid security problems with
 non-origin-based features such as cookies. (Note the
@@ -350,17 +350,17 @@ This origin-defined approach has additional complications to resolve:
 
 -  There are a handful of features (cookies, document.domain) which are scoped to registrable
    domains, not origins. Those features should not transitively join two different sets. For
-   instance, we must account for one set containing https://foo.bar.example.com and
-   https://example.com, but not https://bar.example.com. For cookies, we can say that cookies
+   instance, we must account for one set containing `https://foo.bar.example.com` and
+   `https://example.com`, but not `https://bar.example.com`. For cookies, we can say that cookies
    remember the set which created them and we match both the Domain attribute and the first-party
-   set. Thus if https://foo.bar.example.com sets a Domain=example.com cookie, https://example.com
-   can read it, but not https://bar.example.com. Other features would need similar updates.
+   set. Thus if `https://foo.bar.example.com` sets a Domain=example.com cookie, `https://example.com`
+   can read it, but not `https://bar.example.com`. Other features would need similar updates.
 -  The implicit state should be expressible explicitly, to simplify rollback and deployment,
    which means first-party set manifests must describe patterns of origins, rather than a simple
    bounded list of domains. In particular, we should support subtree patterns.
--  https://foo.example.com's implicit owner is https://example.com. If https://example.com then
-   forms an explicit set which does not include https://foo.example.com, we need to change
-   https://foo.example.com's implicit state, perhaps to a singleton set.
+-  `https://foo.example.com`'s implicit owner is `https://example.com`. If `https://example.com` then
+   forms an explicit set which does not include `https://foo.example.com`, we need to change
+   `https://foo.example.com`'s implicit state, perhaps to a singleton set.
 -  This complex set of patterns and implicit behaviors must be reevaluated against existing
    origins every time a first-party set is updated.
 -  The patterns also make the meaning of the size limit unclear.
