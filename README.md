@@ -1,8 +1,7 @@
 # First-Party Sets
 
 This document proposes a new web platform mechanism to declare a collection of related domains as
-being in a First-Party Set. This is a revised version of an explainer [previously published](https://github.com/mikewest/first-party-sets/blob/master/README.md) by
-Mike West.
+being in a First-Party Set.
 
 # Table of Contents
 
@@ -337,8 +336,8 @@ then define the registrable domain as the default first-party set for each origi
 default, `https://foo.example.com`, `https://bar.example.com`, and `https://example.com:444` would all be
 in a set owned by `https://example.com`. Defining a set explicitly would override this default set.
 
-This would reduce the web's dependency on the public suffix list, which would mitigate various
-problems. For instance, a university may allow students to register arbitrary subdomains at
+This would reduce the web's dependency on the public suffix list, which would mitigate [various
+problems](https://github.com/sleevi/psl-problems). For instance, a university may allow students to register arbitrary subdomains at
 `https://foo.university.example`, but did not place `university.example` on the public suffix list,
 either due to compatibility concerns or oversight. With an origin-specified first-party set,
 individual origins could then detach themselves from the default set to avoid security problems with
@@ -372,7 +371,6 @@ this is worthwhile.
 
 # Prior Art
 
--  Previous [First-Party Sets Explainer](https://github.com/mikewest/first-party-sets) by Mike West
 -  Firefox's [entity list](https://github.com/mozilla-services/shavar-prod-lists#entity-list)
 -  [draft-sullivan-dbound-problem-statement-02](https://tools.ietf.org/html/draft-sullivan-dbound-problem-statement-02)
 -  [Single Trust and Same-Origin Policy v2](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
