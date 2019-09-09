@@ -126,7 +126,7 @@ If the manifests show the domain is in the set, the browser records `a.example` 
 `b.example` (but not `c.example`) in its first-party-set storage. It evicts all domains currently
 recorded as owned by `a.example` that no longer match the new manifest. Then it clears all state for
 domains whose owners changed, including reloading all active documents. This should behave like
-`[Clear-Site-Data: *](https://www.w3.org/TR/clear-site-data/)`. This is needed to unlink any site
+[`Clear-Site-Data: *`](https://www.w3.org/TR/clear-site-data/). This is needed to unlink any site
 identities that should no longer be linked. Note this also means that execution contexts (documents,
 workers, etc.) are scoped to a particular first-party set throughout their lifetime. If the
 first-party owner changes, existing ones are destroyed.
@@ -342,7 +342,7 @@ problems](https://github.com/sleevi/psl-problems). For instance, a university ma
 either due to compatibility concerns or oversight. With an origin-specified first-party set,
 individual origins could then detach themselves from the default set to avoid security problems with
 non-origin-based features such as cookies. (Note the
-_[_Host- cookie prefix](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.3.2)
+[\_\_Host- cookie prefix](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.3.2)
 also addresses this issue.)
 
 This origin-defined approach has additional complications to resolve:
