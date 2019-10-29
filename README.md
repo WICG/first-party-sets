@@ -17,6 +17,7 @@ being in a First-Party Set.
       - [Detecting unacceptable sets](#detecting-unacceptable-sets)
    - [Cross-site tracking vectors](#cross-site-tracking-vectors)
    - [Service workers](#service-workers)
+   - [UI Treatment](#ui-treatment)
 - [Alternative designs](#alternative-designs)
    - [Using a static list](#using-a-static-list)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
@@ -298,6 +299,20 @@ only top-level navigations discover new sets. We resolve this by moving `Sec-Fet
 processing to the navigation logic. If the header is present, whether it came from the network
 directly or the service worker, we attempt to validate the set. This is fine because the header is
 not directly trusted.
+
+## UI Treatment
+
+In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
+domain belongs to, browsers may choose to present UI with information about the First-Party Set owner 
+and the contents of its manifest file. One potential location in Chrome is the 
+[Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble)
+- this provides requisite information to discerning users, while avoiding the use of valuable screen 
+real-estate or presenting confusing permission prompts. However, browsers are free to choose different
+presentation based on their UI patterns, or adjust as informed by user research.
+
+Note that First-Party Sets also gives browsers the opportunity to group per-site controls (such as 
+those at `chrome://settings/content/all`) by the “first-party” boundary instead of eTLD+1, which is 
+not always the correct site boundary.
 
 # Alternative designs
 
