@@ -305,8 +305,9 @@ not directly trusted.
 In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
 domain belongs to, browsers may choose to present UI with information about the First-Party Set owner 
 and the contents of its manifest file. One potential location in Chrome is the 
-[Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble)
-- this provides requisite information to discerning users, while avoiding the use of valuable screen 
+[Origin/Page Info Bubble]
+(https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - this 
+provides requisite information to discerning users, while avoiding the use of valuable screen 
 real-estate or presenting confusing permission prompts. However, browsers are free to choose different
 presentation based on their UI patterns, or adjust as informed by user research.
 
