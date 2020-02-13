@@ -9,12 +9,15 @@ being in a First-Party Set.
 - [Goals](#goals)
 - [Non-goals](#non-goals)
 - [Declaring a First Party Set](#declaring-a-first-party-set)
+- [Discovering First Party Sets](#discovering-first-party-sets)
 - [Applications](#applications)
 - [Design details](#design-details)
-   - [Acceptable and unacceptable sets](#acceptable-and-unacceptable-sets)
+   - [UA Policy](#ua-policy)
       - [Defining acceptable sets](#defining-acceptable-sets)
-      - [Mitigating unacceptable sets](#mitigating-unacceptable-sets)
-      - [Detecting unacceptable sets](#detecting-unacceptable-sets)
+      - [Static lists](#static-lists)
+      - [Signed assertions](#signed-assertions)
+      - [Open questions](#open-questions)
+      - [Administrative controls](#administrative-controls)
    - [Cross-site tracking vectors](#cross-site-tracking-vectors)
    - [Service workers](#service-workers)
    - [UI Treatment](#ui-treatment)
@@ -42,14 +45,16 @@ and `https://icloud.com`, or `https://amazon.com` and `https://amazon.de`.
 We may wish to include these kinds of related names, where consistent with privacy requirements. For
 example, Firefox [ships](https://github.com/mozilla-services/shavar-prod-lists#entity-list) an
 entity list that defines lists of domains belonging to the same organization. This explainer
-discusses a dynamic mechanism for defining these lists, which trades off the [costs of a static
-list](#using-a-static-list) with [other considerations](#design-details).
+discusses a mechanism to allow organizations to each declare their own list of domains, which is 
+then accepted by a browser if the set conforms to its policy.
+
 
 # Goals
 
 -  Allow related domain names to declare themselves as the same first-party.
--  Provide a scalable and maintainable web platform mechanism to achieve the above, and thus
-   avoid a hard-coded list.
+-  Define a framework for browser policy on which declared names will be treated as the same site 
+   in privacy mechanisms.
+
 
 # Non-goals
 
@@ -72,10 +77,11 @@ An origin is in the first-party set if:
 -  Its scheme is https; and
 -  Its registered domain is either the owner or is one of the secondary domains.
 
-The owner and each secondary domain in a first-party set hosts a first-party set manifest at
-`https://<domain>/.well-known/first-party-set`, containing a JSON dictionary. The secondary domains
-point to the owning domain while the owning domain lists the members of the set, as well as a
-version number to trigger updates.
+The browser will consider domains to be members of a set if the domains opt in and the set meets 
+[UA policy](#ua-policy), to incorporate both [user and site needs](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies). Domains opt in by hosting a JSON
+manifest at `https://<domain>/.well-known/first-party-set`. The secondary domains point to the 
+owning domain while the owning domain lists the members of the set, a version number to trigger 
+updates, and a set of signed assertions to inform UA policy ([details below](#ua-policy)).
 
 Suppose `a.example`, `b.example`, and `c.example` wish to form a first-party set, owned by `a.example`. The
 sites would then serve the following resources:
@@ -84,7 +90,13 @@ sites would then serve the following resources:
 https://a.example/.well-known/first-party-set
 { "owner": "a.example",
   "version": 1,
-  "members": ["b.example", "c.example"] }
+  "members": ["b.example", "c.example"],
+  "assertions": { 
+	"chrome-fps-v1" : "<base64 contents...>",
+	"firefox-fps-v1" : "<base64 contents...>",
+	"safari-fps-v1": "<base64 contents...>"
+  },
+ }
 
 https://b.example/.well-known/first-party-set
 { "owner": "a.example" }
@@ -93,16 +105,13 @@ https://c.example/.well-known/first-party-set
 { "owner": "a.example" }
 ```
 
-We then impose additional constraints on the owner's manifest:
+The browser then imposes additional constraints on the owner's manifest:
 
 -  Entries in `members` that are not registrable domains are ignored.
--  To mitigate unacceptable sets, if the number of entries in `members` must not exceed some
-   limit, reject the entire manifest. As to the size of the limit, the largest entry in the Firefox
-   entity list is around 200 domains (due to ccTLDs), although a tighter limit below 20-30 would
-   much more effectively limit the scope. Per Chromium's
-   [document](https://github.com/michaelkleber/privacy-model#identity-is-partitioned-by-first-party-site),
-   one of the criteria is that "the resulting identity scope is not too large".
--  All domains in the set must be covered by the same X.509 certificate.
+-  Only entries in `members` that meet [UA policy](#ua-policy) will be accepted. The others will be ignored.
+   If the owner is not covered by UA policy, the entire set is rejected.
+
+# Discovering First Party Sets
 
 By default, every registrable domain is implicitly owned by itself. The browser discovers
 first-party sets as it makes network requests and stores the first-party set owner for each domain.
@@ -156,8 +165,8 @@ variants of `SameSite=Strict` and `SameSite=Lax`: `SameSite=FirstPartySetStrict`
 `SameSite=FirstPartySetLax`. It may also be reasonable to use first-party sets to partition network
 caches, in cases where the tighter origin-based isolation is too expensive.
 
-Web platform features should _not_ use first-party sets make one origin's state directly accessible
-to another origin in the set. It should only control when embedded content can access its own state.
+Web platform features should _not_ use first-party sets to make one origin's state directly accessible
+to another origin in the set. First-party sets should only control when embedded content can access its own state.
 That is, if `a.example` and `b.example` are in the same first-party set, the same-origin policy
 should still prevent `https://a.example` from accessing `https://b.example`'s IndexedDB databases.
 However, it may be reasonable to allow a `https://b.example` iframe within `https://a.example` to
@@ -165,7 +174,7 @@ access the `https://b.example` databases.
 
 # Design details
 
-## Acceptable and unacceptable sets
+## UA Policy
 
 ### Defining acceptable sets
 
@@ -175,8 +184,9 @@ unacceptable. Conversely, a set containing `https://acme-corp-landing-page.examp
 `https://acme-corp-online-store.example` seems reasonable. There is a wide spectrum between these
 two scenarios. We should define where to draw the line.
 
-Exactly how to define this is an open question to be discussed. For an initial set of principles, we
-can look to how the various browser proposals say the following about first parties (emphasis
+Browsers implementing First-Party Sets will specify UA policy for which domains may be in the same set. While 
+not required, it is desirable to have some consistency across UA policies. For a set of guiding principles in 
+defining UA policy, we can look to how the various browser proposals describe first parties (emphasis
 added):
 
 -  [A Potential Privacy Model for the Web (Chromium Privacy Sandbox)](https://github.com/michaelkleber/privacy-model/blob/master/README.md):
@@ -197,50 +207,90 @@ added):
    and, under "Unintended Impact", "Single sign-on to multiple websites _controlled by the same
    organization_."
 
-This definition should also consider scenarios such as otherwise unrelated sites forming a
-consortium in order to expand the scope of their site identities.
+We expect the UA policies to evolve over time as use cases and abuse scenarios come up. For instance, 
+otherwise unrelated sites forming a consortium in order to expand the scope of their site identities 
+would be considered abuse. 
 
-### Mitigating unacceptable sets
+Given the UA policy, policy decisions must be delivered to the user’s browser. 
+This can use either static lists or signed assertions. Note first-party set membership requires being 
+listed in the manifest in addition to meeting UA policy. This allows sites to quickly remove domains from 
+their first-party set.
 
-This proposal includes technical measures which limit which first-party sets may be formed. First,
-first-party sets require opt-in from all parties. This means one origin cannot form a set
-unilaterally without opt-in from other members. Second, manifest sizes are bounded, which limits the
-number of unrelated domains which may be in an unacceptable first-party set. Finally, we apply a
-certificate constraint, which correlates first-party sets with technical control of the domain
-names.
+### Static lists
 
-However, it is important to emphasize that these technical measures are not sufficient to exclude
-unacceptable sets. While we have not defined a criteria above, the initial principles above are
-tighter than the technical measures. First, while we bound first-party sets sizes, there are many
-ccTLDs. If we decide `https://example.com`, `https://example.co.uk`, etc., are in scope, the limit may
-end up fairly generous. Second, certificates only validate technical control of a domain name. CDNs
-and hosting providers often legitimately acquire a single certificate covering multiple names that
-they host. The names may not be operated by the same organization or have a relationship meaningful
-to the user.
+The browser vendor could maintain a list of domains which meet its UA policy, and ship it in the browser. 
+This is analogous to the list of [domains owned by the same entity](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) used by Edge and Firefox to control 
+cross-site tracking mitigations.
 
-Thus these technical measures are only a first-pass filter on unacceptable sets. The browser still
-must apply interventions to unacceptable sets. This may be done by
-[detecting](#detecting-unacceptable-sets) and maintaining a list of blocked first-party owners, as in
-[Google Safe Browsing](https://safebrowsing.google.com). All first-party sets whose owners appear on
-the list are ignored and, if already present, cleared. This will change the set owner and trigger
-state clearing. This repairs the inconsistency with the privacy model, as well as disincentivizes
-sites from participating in unacceptable first-party sets. Note also this state clearing means sites
-cannot cycle between different sets to get around size limitations.
+A browser using such a list would then intersect first-party set manifests with the list. It would ignore 
+the assertions field in the manifest. Note fetching the manifest is still necessary to ensure the site opts 
+into being a set. This avoids problems if, say, a domain was transferred to another entity and the static list 
+is out of date.
 
-### Detecting unacceptable sets
+Static lists are easy to reason about and easy for others to inspect. At the same time, they can develop 
+deployment and scalability issues. Changes to the list must be pushed to each user's browser via some update 
+mechanism. This complicates sites' ability to deploy new related domains, particularly in markets where 
+network connectivity limits update frequency. They also scale poorly if the list gets too large.
 
-Maintaining a blocklist requires the browser monitor and detect unacceptable sets. Some possible
-strategies:
+### Signed assertions
 
--  Such sets will likely center on popular sites, which simplifies the monitoring.
--  The certificate constraint causes sets to leave evidence in certificate transparency logs,
-   which provides some degree of auditability. Note this is imperfect because giant CDN
-   certificates may contain many names but not be used for a first-party set.
--  First-party set ownership can be monitored by monitoring the /.well-known/first-party-set
-   resource for various sites. Servers could attempt to defeat this by using cloaking techniques to
-   serve different sets to different monitors and users, but this can be helped by general measures
-   to reduce fingerprinting, and by first-party-set-specific measures to avoid personalized sets
-   (credentialless fetches, partitioning network state, etc.).
+Alternatively, the browser vendor, or some entities it designates, can sign assertions for domains which meet 
+UA policy, using some private key. A signed assertion has the same meaning as membership in a static list: 
+these domains meet the signer’s policy. The browser would trust the signers’ public key and, as above, only 
+accept domains covered by suitable assertions.
+
+Assertions are delivered in the `assertions` field, which contains a dictionary mapping from signer name to signed 
+assertion. Browsers ignore unused assertions. This format allows sites to serve assertions from multiple signers, 
+so they can handle policy variations more smoothly. In particular, we expect policies to evolve over time, so 
+browser vendors may wish to run their own signers. Note these assertions solve a different problem from the Web 
+PKI and are delivered differently. However, many of the lessons are analogous.
+
+As with a static list, signers maintain a full list of currently checked domains. They should publish this list 
+at a well-known location, such as `https://fps-signer.example/first-party-sets.json`. Although browsers will not 
+consume the list directly, this allows others to audit the list. The signer may wish to incorporate a 
+[Certificate-Transparency-like](https://tools.ietf.org/html/rfc6962) mechanism for stronger guarantees.
+
+The signer then regularly produces fresh signed assertions for the current list state. For extensibility, the 
+exact format and contents of this assertion are signer-specific (browsers completely ignore unknown signers, 
+so there is no need for a common format). However, there should be a recommended format to avoid common 
+mistakes. Each signed assertion must contain:
+
+- The domains that have been checked against the signer’s policy
+- An expiration time for the signature
+- A signature over the above, made by the signer’s private key
+
+Assertion lifetimes should be kept short, say two weeks. This reduces the lifetime of any mistakes. The browser 
+vendor may also maintain a blocklist of revoked assertions to react more quickly, but the reduced lifetime reduces 
+the size of such a list.
+
+To avoid operational challenges for sites, the signer makes the latest assertions available at a well-known 
+location, such as `https://fps-signer.example/assertions/<owner-domain>`. We will provide automated tooling to 
+refresh the manifest from these assertions, and sites with more specialized needs can build their own. To support
+such automation, the URL patterns must be standard across signers.
+
+Note any duplicate domains in the assertions and members attribute should compress well with gzip.
+
+### Open questions
+
+- Should the recommended format include intermediate certificates? X.509 certificates are typically issued 
+  from a shorter-lived intermediate certificate signed by the root. This allows keeping the more sensitive 
+  root key offline.
+- Should the recommended format include extensions? Too many extension points, particularly around cryptographic 
+  algorithms, can introduce complexity and security risks.
+- Should the assertions treat the owner as distinct from the member domains, or is a flat list sufficient? That 
+  is, is the signer’s policy likely to treat the owner distinct from other members?
+
+Extensibility by signer names means formats can always be extended by updating browsers to expect new signers. 
+But we must ensure that this does not increase operational burden on sites by designing the tooling correctly. 
+For instance, the `chrome-fps-v1` and `chrome-fps-v2` signers could share an assertion URL, which provides a set of 
+assertions. The tooling would then automatically include each in the manifest.
+
+### Administrative controls
+
+For enterprise usages, browsers typically offer administrators options to control web platform behavior. UA policy 
+is unlikely to cover private domains, so browsers might expose administrative options for locally-defined 
+first-party sets.
+
 
 ## Cross-site tracking vectors
 
@@ -274,10 +324,13 @@ Some additional scenarios to keep in mind:
    measuring how long the browser took to reject it.
 -  If two first-party sets jointly own a set of "throwaway" domains (so state clearing does not
    matter), they can communicate a user identifier in which throwaway domains one set grabs from
-   the other. This is partially addressed by mitigating personalized first-party sets (if not
-   personalized, the sites must coordinate via a global signal like time). Beyond that, this can be
-   addressed by mitigations against unacceptable sets in general (a domain that can be part of two
-   sets is clearly unacceptable). See further discussion below.
+   the other. This can be prevented if UA policy includes each domain in at most one entity. 
+   However note that, immediately after a domain changes ownership, policies using signed assertions 
+   may briefly accept either of two entities while the old assertions expire. The browser can push a 
+   revocation list to clear old assertions faster. Mitigating personalized sets also partially 
+   addresses this attack (if not personalized, the sites must coordinate via a global signal like 
+   time).
+
 
 ## Service workers
 
@@ -304,8 +357,7 @@ not directly trusted.
 
 In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
 domain belongs to, browsers may choose to present UI with information about the First-Party Set owner 
-and the contents of its manifest file. One potential location in Chrome is the 
-[Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - this 
+and the members list. One potential location in Chrome is the [Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - this 
 provides requisite information to discerning users, while avoiding the use of valuable screen 
 real-estate or presenting confusing permission prompts. However, browsers are free to choose different
 presentation based on their UI patterns, or adjust as informed by user research.
@@ -315,27 +367,6 @@ those at `chrome://settings/content/all`) by the “first-party” boundary inst
 not always the correct site boundary.
 
 # Alternative designs
-
-## Using a static list
-
-The immediate alternate design is to use a static list, such as Firefox's [entity
-list](https://github.com/mozilla-services/shavar-prod-lists#entity-list). A static list has several
-advantages. It is much simpler: it does not require mechanisms for the set changing, and there is no
-need to monitor unacceptable sets. A browser can more directly impose its policy on what kinds of
-sets are and are not acceptable.
-
-At the same time, hardcoded lists can develop availability and deployment issues. First, each change
-must be propagated to each user's browser via an update. This complicates sites' ability to deploy
-new related domains. In comparison, the HSTS preload list is only a hardening measure around a
-[dynamic HTTP header](https://tools.ietf.org/html/rfc6797), so sites can deploy HSTS unilaterally. 
-Relatedly, each browser also becomes a gatekeeper for these new domains. This produces an
-[internet choke point](https://intarchboard.github.io/chokepoints/draft-iab-chokepoints-latest.html).
-Finally, as preload lists grow, they can also develop scalability issues, as in the [HSTS preload
-list](https://bugs.chromium.org/p/chromium/issues/detail?id=587954).
-
-This dynamic design avoids these concerns. It is worth noting, however, that the design does not
-remove the need for browsers to apply policies. Browsers still must mitigate unacceptable sets. The
-design only removes the browser from the critical path in deploying new entries.
 
 ## Origins instead of registrable domains
 
@@ -377,7 +408,6 @@ This origin-defined approach has additional complications to resolve:
    `https://foo.example.com`'s implicit state, perhaps to a singleton set.
 -  This complex set of patterns and implicit behaviors must be reevaluated against existing
    origins every time a first-party set is updated.
--  The patterns also make the meaning of the size limit unclear.
 -  Certificate wildcards (which themselves depend on the public suffix list) don't match an
    entire subtree. This conflicts with wanting to express implicit states above.
 
