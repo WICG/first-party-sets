@@ -42,9 +42,9 @@ interacting with may be deployed across multiple domain names. For example, `htt
 `https://google.co.uk`, and `https://youtube.com` are owned by the same entity, as are `https://apple.com`
 and `https://icloud.com`, or `https://amazon.com` and `https://amazon.de`.
 
-We may wish to include these kinds of related names, where consistent with privacy requirements. For
-example, Firefox [ships](https://github.com/mozilla-services/shavar-prod-lists#entity-list) an
-entity list that defines lists of domains belonging to the same organization. This explainer
+We may wish to allow user identity to span related origins, where consistent with privacy requirements. For
+example, Firefox ships an [entity list](https://github.com/mozilla-services/shavar-prod-lists#entity-list)
+that defines lists of domains belonging to the same organization. This explainer
 discusses a mechanism to allow organizations to each declare their own list of domains, which is 
 then accepted by a browser if the set conforms to its policy.
 
