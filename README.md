@@ -91,10 +91,10 @@ https://a.example/.well-known/first-party-set
   "version": 1,
   "members": ["b.example", "c.example"],
   "assertions": { 
-	"chrome-fps-v1" : "<base64 contents...>",
-	"firefox-fps-v1" : "<base64 contents...>",
-	"safari-fps-v1": "<base64 contents...>"
-  },
+    "chrome-fps-v1" : "<base64 contents...>",
+    "firefox-fps-v1" : "<base64 contents...>",
+    "safari-fps-v1": "<base64 contents...>"
+  }
  }
 
 https://b.example/.well-known/first-party-set
