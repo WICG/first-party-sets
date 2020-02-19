@@ -87,7 +87,8 @@ sites would then serve the following resources:
 
 ```
 https://a.example/.well-known/first-party-set
-{ "owner": "a.example",
+{
+  "owner": "a.example",
   "version": 1,
   "members": ["b.example", "c.example"],
   "assertions": { 
@@ -95,7 +96,7 @@ https://a.example/.well-known/first-party-set
     "firefox-fps-v1" : "<base64 contents...>",
     "safari-fps-v1": "<base64 contents...>"
   }
- }
+}
 
 https://b.example/.well-known/first-party-set
 { "owner": "a.example" }
