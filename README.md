@@ -22,7 +22,6 @@ being in a First-Party Set.
    - [Service workers](#service-workers)
    - [UI Treatment](#ui-treatment)
 - [Alternative designs](#alternative-designs)
-   - [Using a static list](#using-a-static-list)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
 
