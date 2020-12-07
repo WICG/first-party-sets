@@ -3,8 +3,20 @@
 This document proposes a new web platform mechanism to declare a collection of related domains as
 being in a First-Party Set.
 
+A [Work Item](https://privacycg.github.io/charter.html#work-items)
+of the [Privacy Community Group](https://privacycg.github.io/).
+
+## Editors:
+
+- [Kaustubha Govind](https://github.com/krgovind), Google
+- [David Benjamin](https://github.com/davidben), Google
+
+## Participate
+- https://github.com/privacycg/first-party-sets/issues
+
 # Table of Contents
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
 - [Introduction](#introduction)
 - [Goals](#goals)
 - [Non-goals](#non-goals)
@@ -24,6 +36,7 @@ being in a First-Party Set.
 - [Alternative designs](#alternative-designs)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 # Introduction
 
@@ -87,15 +100,16 @@ sites would then serve the following resources:
 
 ```
 https://a.example/.well-known/first-party-set
-{ "owner": "a.example",
+{
+  "owner": "a.example",
   "version": 1,
   "members": ["b.example", "c.example"],
   "assertions": { 
-	"chrome-fps-v1" : "<base64 contents...>",
-	"firefox-fps-v1" : "<base64 contents...>",
-	"safari-fps-v1": "<base64 contents...>"
-  },
- }
+    "chrome-fps-v1" : "<base64 contents...>",
+    "firefox-fps-v1" : "<base64 contents...>",
+    "safari-fps-v1": "<base64 contents...>"
+  }
+}
 
 https://b.example/.well-known/first-party-set
 { "owner": "a.example" }
