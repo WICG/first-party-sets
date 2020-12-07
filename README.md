@@ -158,11 +158,10 @@ browser's view of the owner's manifest is up-to-date enough for this logic.
 
 In support of the various browser privacy models, web platform features can use first-party sets to
 determine whether embedded content may or may not access its own state. For instance,
-[draft-west-cookie-samesite-firstparty-01](https://tools.ietf.org/html/draft-west-cookie-samesite-firstparty-01)
-describes a SameSite cookie attribute that sites may use to opt individual cookies in to relaxed
-variants of `SameSite=Strict` and `SameSite=Lax`: `SameSite=FirstPartySetStrict` and
-`SameSite=FirstPartySetLax`. It may also be reasonable to use first-party sets to partition network
-caches, in cases where the tighter origin-based isolation is too expensive.
+sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using
+the proposed [`SameParty` cookie attribute](https://github.com/cfredric/sameparty). It may also be reasonable to 
+use first-party sets to partition network caches, in cases where the tighter origin-based isolation
+is too expensive.
 
 Web platform features should _not_ use first-party sets to make one origin's state directly accessible
 to another origin in the set. First-party sets should only control when embedded content can access its own state.
