@@ -329,7 +329,7 @@ Some additional scenarios to keep in mind:
 
 -  The decision to validate a first-party set must not be based on not-yet-readable data,
    otherwise side channel attacks are feasible. For instance, we cannot optimize the subresource
-   logic to only validate sets if a `SameSite=FirstPartyLax` cookie exists.
+   logic to only validate sets if a `SameParty` cookie exists.
 -  When validating a first-party set from a top-level navigation, it is important to fetch _both_
    manifests unconditionally, rather than use the cached version of the owner manifest. Otherwise
    one site can learn if the user has visited the other by claiming to be in a first-party set and
