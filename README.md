@@ -28,7 +28,7 @@ of the [Privacy Community Group](https://privacycg.github.io/).
    - [UA Policy](#ua-policy)
    - [Verification Entity](#verification-entity)
    - [Relying solely upon Technical Enforcement](#relying-solely-upon-technical-enforcement)
-- [Administrative Controls](#administrative-controls)
+   - [Administrative Controls](#administrative-controls)
 - [UI Treatment](#ui-treatment)
 - [Alternative designs](#alternative-designs)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
@@ -133,21 +133,7 @@ This proposal is consistent with the same-origin policy. That is, Web Platform f
 
 # Site-Declared Sets in Browsers
 
-Browsers should maintain a static list of site-declared groups of domains which meet UA ([User Agent](https://www.w3.org/WAI/UA/work/wiki/Definition_of_User_Agent)) policy, and ship it in the browser as a rIn support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
-
-*   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](https://github.com/cfredric/sameparty).
-*   An iframe’s access to its own storage should be allowed when embedded on a site within the same first-party set. For example, this would allow a https://b.example iframe within https://a.example to access its own https://b.example databases, which would otherwise be restricted.
-
-Additionally, browsers may consider using First-Party Sets in new privacy features, such as:
-
-*   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
-*   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
-*   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
-*   Top and/or second level key for cache partitioning, potentially with site opt-in.
-
-This proposal is consistent with the same-origin policy. That is, Web Platform features must not use first-party sets to make one origin's state directly accessible to another origin in the set. For example, if a.example and b.example are in the same first-party set, the same-origin policy would still prevent https://a.example from accessing https://b.example's cookies or IndexedDB databases.
-
-eliably updateable component. This is analogous to the list of [domains owned by the same entity](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) used by Edge and Firefox to control cross-site tracking mitigations.
+Browsers should maintain a static list of site-declared groups of domains which meet UA ([User Agent](https://www.w3.org/WAI/UA/work/wiki/Definition_of_User_Agent)) policy, and ship it in the browser as a reliably updateable component. This is analogous to the list of [domains owned by the same entity](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) used by Edge and Firefox to control cross-site tracking mitigations.
 
 The differences between this proposal and the use of the [Disconnect entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) in Edge and Firefox are:
 
@@ -177,7 +163,7 @@ This section proposes a possible model for a First-Party Set acceptance process 
 
 ## Submission
 
-Sites will need to submit their proposed group of domains to a public tracker (such as a dedicated GitHub repository, like that of the [Public Suffix List](https://github.com/publicsuffix/list/wiki/Guidelines), and [Disconnect’s entities list](https://github.com/disconnectme/disconnect-tracking-protection/issues?q=is%3Aissue+%22entity%22+)), along with information needed to satisfy the UA policy. Technical verification of the submitter’s control over the domains may also require a challenge to be served at a .well-known location on each of the domains in the set.
+Sites will need to submit their proposed group of domains to a public tracker (such as a dedicated GitHub repository, like that of the [Public Suffix List](https://github.com/publicsuffix/list/wiki/Guidelines), and [Disconnect’s entities list](https://github.com/disconnectme/disconnect-tracking-protection/issues?q=is%3Aissue+%22entity%22+)), along with information needed to satisfy the UA policy. Technical verification of the submitter’s control over the domains may also require a challenge to be served at a `.well-known` location on each of the domains in the set.
 
 ## UA Policy
 
@@ -188,7 +174,7 @@ For a set of guiding principles in defining UA policy, we can look to how the va
 -   [Mozilla Anti-Tracking Policy](https://wiki.mozilla.org/Security/Anti_tracking_policy): "A first party is a resource or a set of resources on the web _operated by the same organization_, which is both _easily discoverable by the user_ and _with which the user intends to interact_."
 -   [WebKit Tracking Prevention Policy](https://webkit.org/tracking-prevention-policy/): "A first party is a website that a user is intentionally and knowingly visiting, as displayed by the URL field of the browser, and the set of resources on the web _operated by the same organization_." and, under "Unintended Impact", "Single sign-on to multiple websites _controlled by the same organization_."
 
-In addition, the DNT specification [defines “party” as](https://www.w3.org/TR/tracking-dnt/#terminology.participants): “a natural person, a legal entity, or a set of legal entities that share _common owner(s), common controller(s)_, and a group identity that is easily discoverable by a user.”
+In addition, the DNT specification [defines “party” as](https://www.w3.org/TR/tracking-dnt/#terminology.participants): “a natural person, a legal entity, or a set of legal entities that share _common owner(s), common controller(s)_, and a group identity that is _easily discoverable by a user_.”
 
 We propose the following high level policy as an initial version for discussion, subject to change based on ecosystem feedback:
 
@@ -213,13 +199,13 @@ Instead of having a verification entity check conformance to policy; it may be p
 
 However, at this time we do not believe it is possible to enforce against the formation of consortiums of unrelated entities, and thus will require some form of verification entity to guard against that.
 
-### Administrative controls
+## Administrative controls
 
-For enterprise usages, browsers typically offer administrators options to control web platform behavior. UA policy 
+For enterprise usage, browsers typically offer administrators options to control web platform behavior. UA policy 
 is unlikely to cover private domains, so browsers might expose administrative options for locally-defined 
 first-party sets.
 
-## UI Treatment
+# UI Treatment
 
 In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
 domain belongs to, browsers may choose to present UI with information about the First-Party Set owner 
