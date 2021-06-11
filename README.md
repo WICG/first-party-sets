@@ -61,95 +61,157 @@ then accepted by a browser if the set conforms to its policy.
 # Goals
 
 -  Allow related domain names to declare themselves as the same first-party.
--  Define a framework for browser policy on which declared names will be treated as the same site 
-   in privacy mechanisms.
+-  Develop a coherent definition of "first-party" vs "third-party" for privacy mechanisms on the web platform.
+-  Allow for browsers to understand the relationships between domains of multi-domain sites such that they can effectively present that information to the user.
 
 
 # Non-goals
 
+-  Making changes to web security principles such as [Same Origin Policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy).
+-  Expansion of capabilities beyond what is possible without recent browser-imposed privacy mitigations such as restrictions on third party cookies or cache partitioning.
 -  Third-party sign-in between unrelated sites.
 -  Information exchange between unrelated sites for ad targeting or conversion measurement.
 -  Other use cases which involve unrelated sites.
+-  Define specific UI treatment.
 
 (Some of these use cases are covered by [other
 explainers](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox) from the Privacy
 Sandbox.)
 
+# Use Cases
+
+On the modern web, sites span multiple domains and many sites are owned & operated by the same organization. Organizations may want to maintain different top-level domains for:
+
+-   App domains - a single application may be deployed over multiple domains, where the user may seamlessly navigate between them as a single session.
+    -   office.com, live.com, microsoft.com ([reference](https://github.com/privacycg/first-party-sets/issues/35#issue-810396040))
+    -   lucidchart.com, lucid.co, lucidspark.com, lucid.app ([reference](https://github.com/privacycg/first-party-sets/issues/19#issuecomment-769277058))
+-   Brand domains
+    -   uber.com, ubereats.com
+-   Country-specific domains to enable localization 
+    -   google.co.in, google.co.uk
+-   Common eTLD
+    -   For example, gov.uk, and service.gov.uk are on the Public Suffix List and have UK government agencies/services as subdomains which get treated as separate registrable domains by browsers; but share services such as consent management that rely on access to cross-domain cookies. 
+-   Sandbox domains that users never directly interact with, but exist to isolate user-uploaded content for security reasons. 
+    -   google.com, googleusercontent.com
+    -   github.com, githubusercontent.com
+-   Service domains that users never directly interact with, but provide services across the same organization’s sites. 
+        -   github.com, githubassets.com
+        -   facebook.com, fbcdn.net
+
+**Note:** The above have been provided only to serve as real-world illustrative assumed examples of collections of domains that are owned by the same organization; and have not all been validated with the site owners.
+
+Without compatibility measures such as Firefox and Edge browsers’ use of [Disconnect.me’s Entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json), blocking cross-site communication mechanisms such as access to third-party cookies breaks many first-party use-cases.
+
+First-Party Sets is a proposal to standardize a mechanism that solves this issue in a coherent way by declaring a collection of domains as being part of the same site or 'party'; so that they can be treated as one _privacy boundary_. This allows for browsers to enable protections against tracking across this privacy boundary, and ensures continued operation of existing functionality which would otherwise be broken by blocking cross-domain cookies (“third-party cookies”). It would support seamless operation of functionality such as:
+
+
+
+-   Sign-in across owned & operated properties 
+    -   bbc.com and bbc.co.uk
+    -   sony.com and playstation.com
+-   Support for embedded content from across owned & operated properties (e.g. videos/documents/resources restricted to the user signed in on the top-level site)
+-   Separation of user-uploaded content from other site content for security reasons, while allowing the sandboxed domain access to authentication (and other) cookies. For example, Google sequesters such content on googleusercontent.com, GitHub on githubusercontent.com, CodePen [on](https://blog.codepen.io/2019/10/03/changed-domains-for-iframe-previews/) cdpn.io. Hosting untrusted, compromised content on the same domain where a user is authenticated may result in attackers’ potentially capturing authentication cookies, or login credentials (in case of password managers that scope credentials to domains); and cause harm to users.
+    -   Alternative solution: Sandboxed domains can also consider using [partitioned cookies](https://github.com/WICG/CHIPS).
+-   Shared services, such as consent management across domains with a common eTLD suffix; such as gov.uk. Repeatedly asking for cookie consent on individual gov.uk sites may be confusing to users, erode trust in the website’s functioning, and cause fatigue; because users think of all subdomains as being part of one gov.uk website.
+-   Analytics/measurement of user journeys across O&O properties to improve quality of services.
+
 # Applications
 
-In support of the various browser privacy models, web platform features can use first-party sets to
-determine whether embedded content may or may not access its own state. For instance,
-sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using
-the proposed [`SameParty` cookie attribute](https://github.com/cfredric/sameparty). It may also be reasonable to 
-use first-party sets to partition network caches, in cases where the tighter origin-based isolation
-is too expensive.
+In support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
 
-Web platform features should _not_ use first-party sets to make one origin's state directly accessible
-to another origin in the set. First-party sets should only control when embedded content can access its own state.
-That is, if `a.example` and `b.example` are in the same first-party set, the same-origin policy
-should still prevent `https://a.example` from accessing `https://b.example`'s IndexedDB databases.
-However, it may be reasonable to allow a `https://b.example` iframe within `https://a.example` to
-access the `https://b.example` databases.
+-   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](https://github.com/cfredric/sameparty).
+-   An iframe’s access to its own storage should be allowed when embedded on a site within the same first-party set. For example, this would allow a `https://b.example` iframe within `https://a.example` to access its own `https://b.example` databases, which would otherwise be restricted.
 
-# Design details
+Additionally, browsers may consider using First-Party Sets in new privacy features, such as:
+
+-   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
+-   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
+-   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
+-   Top and/or second level key for cache partitioning, potentially with site opt-in.
+
+This proposal is consistent with the same-origin policy. That is, Web Platform features must not use first-party sets to make one origin's state directly accessible to another origin in the set. For example, if a.example and b.example are in the same first-party set, the same-origin policy would still prevent `https://a.example` from accessing `https://b.example`'s cookies or IndexedDB databases.
+
+# Site-Declared Sets in Browsers
+
+Browsers should maintain a static list of site-declared groups of domains which meet UA ([User Agent](https://www.w3.org/WAI/UA/work/wiki/Definition_of_User_Agent)) policy, and ship it in the browser as a rIn support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
+
+*   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](https://github.com/cfredric/sameparty).
+*   An iframe’s access to its own storage should be allowed when embedded on a site within the same first-party set. For example, this would allow a https://b.example iframe within https://a.example to access its own https://b.example databases, which would otherwise be restricted.
+
+Additionally, browsers may consider using First-Party Sets in new privacy features, such as:
+
+*   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
+*   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
+*   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
+*   Top and/or second level key for cache partitioning, potentially with site opt-in.
+
+This proposal is consistent with the same-origin policy. That is, Web Platform features must not use first-party sets to make one origin's state directly accessible to another origin in the set. For example, if a.example and b.example are in the same first-party set, the same-origin policy would still prevent https://a.example from accessing https://b.example's cookies or IndexedDB databases.
+
+eliably updateable component. This is analogous to the list of [domains owned by the same entity](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) used by Edge and Firefox to control cross-site tracking mitigations.
+
+The differences between this proposal and the use of the [Disconnect entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) in Edge and Firefox are:
+
+*   **All sites** with use-cases that depend on cross-domain, same-party communication will be required to declare one (or more) sets. As opposed to the Disconnect list, which only applies to sites [classified as a tracker](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/services.json).
+*   Site authors must submit their First-Party Set declarations for acceptance (see [UA Policy](#ua-policy) for proposed documented criteria).
+*   Sets will expire after a prescribed period of time, and be required to undergo renewal. This prevents sets from becoming stale, in case domain ownership changes.
+*   Each set is indicated by the owner site, and member sites. 
+
+    ```
+    { owner: "https://fps-owner.example", 
+      members: ["https://fps-member1.example",
+      "https://fps-member2.example"]}
+
+    ```
+
+Technical consistency and freshness checks must be performed on the list:
+
+*   No domain can appear in more than one set.
+*   Expired sets must be removed.
+
+Static lists are easy to reason about and easy for others to inspect. At the same time, they can develop deployment and scalability issues. Changes to the list must be pushed to each user's browser via some update mechanism. This complicates sites' ability to deploy new related domains, particularly in markets where network connectivity limits update frequency. They also scale poorly if the list gets too large. When such considerations outweigh the benefits of the lower implementation complexity of static lists, browsers may consider using the [Signed Assertions based design](signed_assertions.md) that proposes fetching sets from a `.well-known` location of the website.
+
+
+# Acceptance Process
+
+This section proposes a possible model for a First-Party Set acceptance process that could be shared across all browsers. However, many aspects of the process and policy will need to be tuned based on feedback from the web ecosystem.
+
+## Submission
+
+Sites will need to submit their proposed group of domains to a public tracker (such as a dedicated GitHub repository, like that of the [Public Suffix List](https://github.com/publicsuffix/list/wiki/Guidelines), and [Disconnect’s entities list](https://github.com/disconnectme/disconnect-tracking-protection/issues?q=is%3Aissue+%22entity%22+)), along with information needed to satisfy the UA policy. Technical verification of the submitter’s control over the domains may also require a challenge to be served at a .well-known location on each of the domains in the set.
 
 ## UA Policy
 
-### Defining acceptable sets
+For a set of guiding principles in defining UA policy, we can look to how the various browser proposals describe first parties (emphasis added):
 
-We should have some notion of what sets are acceptable or unacceptable. For instance, a set
-containing the entire web, or a collection of completely unrelated sites, seems clearly
-unacceptable. Conversely, a set containing `https://acme-corp-landing-page.example` and
-`https://acme-corp-online-store.example` seems reasonable. There is a wide spectrum between these
-two scenarios. We should define where to draw the line.
+-   [A Potential Privacy Model for the Web (Chromium Privacy Sandbox)](https://github.com/michaelkleber/privacy-model/blob/master/README.md): "The notion of "First Party" may expand beyond eTLD+1, e.g. as proposed in First Party Sets. It is _reasonable for the browser to relax its identity-sharing controls_ within that expanded notion, provided that the resulting identity scope is _not too large_ and _can be understood by the user_."
+-   [Edge Tracking Protection Preview](https://blogs.windows.com/msedgedev/2019/06/27/tracking-prevention-microsoft-edge-preview/): "Not all organizations do business on the internet using just one domain name. In order to help keep sites working smoothly, we group domains _owned and operated by the same organization_ together."
+-   [Mozilla Anti-Tracking Policy](https://wiki.mozilla.org/Security/Anti_tracking_policy): "A first party is a resource or a set of resources on the web _operated by the same organization_, which is both _easily discoverable by the user_ and _with which the user intends to interact_."
+-   [WebKit Tracking Prevention Policy](https://webkit.org/tracking-prevention-policy/): "A first party is a website that a user is intentionally and knowingly visiting, as displayed by the URL field of the browser, and the set of resources on the web _operated by the same organization_." and, under "Unintended Impact", "Single sign-on to multiple websites _controlled by the same organization_."
 
-Browsers implementing First-Party Sets will specify UA policy for which domains may be in the same set. While 
-not required, it is desirable to have some consistency across UA policies. For a set of guiding principles in 
-defining UA policy, we can look to how the various browser proposals describe first parties (emphasis
-added):
+In addition, the DNT specification [defines “party” as](https://www.w3.org/TR/tracking-dnt/#terminology.participants): “a natural person, a legal entity, or a set of legal entities that share _common owner(s), common controller(s)_, and a group identity that is easily discoverable by a user.”
 
--  [A Potential Privacy Model for the Web (Chromium Privacy Sandbox)](https://github.com/michaelkleber/privacy-model/blob/master/README.md):
-   "The notion of "First Party" may expand beyond eTLD+1, e.g. as proposed in First Party Sets. It
-   is _reasonable for the browser to relax its identity-sharing controls_ within that expanded
-   notion, provided that the resulting identity scope is _not too large_ and _can be understood by
-   the user_."
--  [Edge Tracking Protection Preview](https://blogs.windows.com/msedgedev/2019/06/27/tracking-prevention-microsoft-edge-preview/):
-   "Not all organizations do business on the internet using just one domain name. In order to help
-   keep sites working smoothly, we group domains _owned and operated by the same organization_
-   together."
--  [Mozilla Anti-Tracking Policy](https://wiki.mozilla.org/Security/Anti_tracking_policy): "A
-   first party is a resource or a set of resources on the web _operated by the same organization_,
-   which is both _easily discoverable by the user_ and _with which the user intends to interact_."
--  [WebKit Tracking Prevention Policy](https://webkit.org/tracking-prevention-policy/): "A first
-   party is a website that a user is intentionally and knowingly visiting, as displayed by the URL
-   field of the browser, and the set of resources on the web _operated by the same organization_."
-   and, under "Unintended Impact", "Single sign-on to multiple websites _controlled by the same
-   organization_."
+We propose the following high level policy as an initial version for discussion, subject to change based on ecosystem feedback:
 
-We expect the UA policies to evolve over time as use cases and abuse scenarios come up. For instance, 
-otherwise unrelated sites forming a consortium in order to expand the scope of their site identities 
-would be considered abuse. 
+-   Domains must have a common owner, and common controller.
+-   Domains must share a common group identity that is easily observable by users.
+-   Domains must share a common privacy policy that is surfaced to the user via [UI treatment](#ui-treatment).
 
-Given the UA policy, policy decisions must be delivered to the user’s browser. 
-This can use either static lists or signed assertions. Note first-party set membership requires being 
-listed in the manifest in addition to meeting UA policy. This allows sites to quickly remove domains from 
-their first-party set.
+We expect the UA policy to evolve over time as use cases and abuse scenarios come up. For instance, otherwise unrelated sites forming a consortium in order to expand the scope of their site identities would be considered abuse.
 
-### Static lists
+## Verification Entity
 
-The browser vendor could maintain a list of domains which meet its UA policy, and ship it in the browser. 
-This is analogous to the list of [domains owned by the same entity](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) used by Edge and Firefox to control 
-cross-site tracking mitigations.
+An independent entity must verify that submissions conform to the documented UA policy before acceptance. The entity must also assign an expiration date, following which sets are removed from the browser-baked static lists.
 
-A browser using such a list would then intersect first-party set manifests with the list. It would ignore 
-the assertions field in the manifest. Note fetching the manifest is still necessary to ensure the site opts 
-into being a set. This avoids problems if, say, a domain was transferred to another entity and the static list 
-is out of date.
+## Relying solely upon Technical Enforcement
 
-Static lists are easy to reason about and easy for others to inspect. At the same time, they can develop 
-deployment and scalability issues. Changes to the list must be pushed to each user's browser via some update 
-mechanism. This complicates sites' ability to deploy new related domains, particularly in markets where 
-network connectivity limits update frequency. They also scale poorly if the list gets too large.
+Instead of having a verification entity check conformance to policy; it may be possible to rely on a combination of:
+
+-   Self-attestation of UA Policy conformance by submitter.
+-   Technical consistency checks such as verifying control over domains, and ensuring that no domain appears in more than one set.
+-   Transparency logs documenting all acceptances and deletions to enable accountability and auditability.
+-   Mechanism/process for the general public to report potential violations of UA Policy.
+
+However, at this time we do not believe it is possible to enforce against the formation of consortiums of unrelated entities, and thus will require some form of verification entity to guard against that.
 
 ### Administrative controls
 
