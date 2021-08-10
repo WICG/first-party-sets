@@ -137,7 +137,7 @@ Browsers should maintain a static list of site-declared groups of domains which 
 
 The differences between this proposal and the use of the [Disconnect entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) in Edge and Firefox are:
 
-*   **All sites** with use-cases that depend on cross-domain, same-party communication will be required to declare one (or more) sets. As opposed to the Disconnect list, which only applies to sites [classified as a tracker](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/services.json).
+*   **All sites** with use-cases that depend on cross-domain, same-party communication will be required to declare a set for the corresponding group of sites. As opposed to the Disconnect list, which only applies to sites [classified as a tracker](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/services.json).
 *   Site authors must submit their First-Party Set declarations for acceptance (see [UA Policy](#ua-policy) for proposed documented criteria).
 *   Sets will expire after a prescribed period of time, and be required to undergo renewal. This prevents sets from becoming stale, in case domain ownership changes.
 *   Each set is indicated by the owner site, and member sites. 
