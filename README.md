@@ -120,17 +120,19 @@ First-Party Sets is a proposal to standardize a mechanism that solves this issue
 In support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
 
 -   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](https://github.com/cfredric/sameparty).
--   An iframe’s access to its own storage should be allowed when embedded on a site within the same first-party set. For example, this would allow a `https://b.example` iframe within `https://a.example` to access its own `https://b.example` databases, which would otherwise be restricted.
 
 To illustrate the above use cases, we'll suppose that https://member1.example and https://member2.example are in the same first-party set, and consider the following two pages.
 
 ![Cross-party and same-party embeddings](images/party_embeddings.png)
 
-The first page, case *a*, is hosted on a third-party domain (https://other.example) and embeds an iframe from https://member1.example. We say that this iframe is in a *cross-party context*, since the top-level frame's domain is not in the same first-party set as the embedded iframe's domain. The second page, case *b*, is hosted on https://member2.example, and also embeds an iframe from https://member1.example. We say that this iframe is in a *same-party context*, since the top-level frame's domain is in the same first-party set as the iframe's domain. The aforementioned uses of first-party sets aim to grant a site access to its own state (e.g. cookies or storage) when in a same-party context (case *b*), while blocking access when in a cross-party context (case *a*).
+On browsers where cross-site tracking protections are enabled, the first page, case *a*, is hosted on a third-party domain (`https://other.example`) and embeds an iframe from `https://member1.example`. We say that this iframe is in a *cross-party context*, since the top-level frame's domain is not in the same first-party set as the embedded iframe's domain. The second page, case *b*, is hosted on `https://member2.example`, and also embeds an iframe from `https://member1.example`. We say that this iframe is in a *same-party context*, since the top-level frame's domain is in the same first-party set as the iframe's domain. The aforementioned uses of first-party sets aim to grant a site access to its own state (e.g. cookies) when in a same-party context (case *b*), while blocking access when in a cross-party context (case *a*).
 
-Note that First-Party Sets does *not* grant access to one domain's state to any other domain, regardless of the context, in this example. I.e., neither https://other.example nor https://member2.example ever have access to https://member1.example's cookies or storage.
+* In case *a*, `https://member1.example`'s `SameParty` cookie is *not* sent in the iframe's subresource request, since the iframe is in a cross-party context.
+* In case *b*, `https://member1.example`'s `SameParty` cookie *is* sent in the iframe's subresource request, since the iframe is in a same-party context.
 
-The above example (where access to a domain's own cookies/storage is granted when embedded in certain domains, but is disallowed when embedded in others) is not possible without a proposal like First-Party Sets.
+Note that First-Party Sets does *not* grant access to one domain's state to any other domain, regardless of the context, in this example. I.e., neither `https://other.example` nor `https://member2.example` ever have access to `https://member1.example`'s cookies.
+
+The above example (where access to a domain's own cookies is granted when embedded in certain domains, but is disallowed when embedded in others) is not possible without a proposal like First-Party Sets.
 
 ---
 
