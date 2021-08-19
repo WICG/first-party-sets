@@ -205,6 +205,10 @@ For enterprise usage, browsers typically offer administrators options to control
 is unlikely to cover private domains, so browsers might expose administrative options for locally-defined 
 first-party sets.
 
+# Gating of Access to State behind Permission Prompt
+
+User-Agents may also choose to prompt the user about accepting a particular First-Party Set, in which case the availability of storage may change after the first page load. Developers are encouraged to  observe this change via any number of asynchronous storage APIs (such as the [Cookie Store API](https://wicg.github.io/cookie-store/#CookieStore) or [Storage Access API](https://github.com/privacycg/storage-access)) and respond as appropriate, either using the newly available data or reloading resources.
+
 # UI Treatment
 
 In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
