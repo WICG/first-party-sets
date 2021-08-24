@@ -22,6 +22,7 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 - [Non-goals](#non-goals)
 - [Use Cases](#use-cases)
 - [Applications](#applications)
+- [Clearing Site Data on Set Transitions](#clearing-site-data-on-set-transitions)
 - [Site-Declared Sets in Browsers](#site-declared-sets-in-browsers)
 - [Acceptance Process](#acceptance-process)
    - [Submission](#submission)
@@ -130,6 +131,53 @@ Additionally, browsers may consider using First-Party Sets in new privacy featur
 -   Top and/or second level key for cache partitioning, potentially with site opt-in.
 
 This proposal is consistent with the same-origin policy. That is, Web Platform features must not use first-party sets to make one origin's state directly accessible to another origin in the set. For example, if a.example and b.example are in the same first-party set, the same-origin policy would still prevent `https://a.example` from accessing `https://b.example`'s cookies or IndexedDB databases.
+
+# Clearing Site Data on set transitions
+Sites can switch the First-Party Set that they are a member of. We need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. The concrete goals that we aim to achieve are as follows:
+
+*   Preserve user expectations that their browsing activity is scoped/partitioned to “party” (as defined by First-Party Set).
+*   Prevent a potential privacy attack that uses a throwaway domain to rotate between sets, and therefore sync user data or identifiers across disparate sets. 
+
+In order to achieve this, site data needs to be cleared on certain transitions., The clearing should behave like [Clear-Site-Data](https://www.w3.org/TR/clear-site-data/), for which site data includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data since a site could expect different types of data to co-exist and require some consistency.
+
+Sites switching FPSs can be viewed as “leaving one FPS and joining another”, and the member sites can only add/remove themselves to/from FPSs with the consent from the owners. If a FPS’s owner changes, that set is considered dissolved. Thus we associate the need to clear site data with whether that site’s FPS owner has changed, with a few exceptions.
+
+If a site’s owner changed:
+
+1. If this site is joining a FPS, no site data clearing will be enforced.
+    *   Pro: Avoids adoption pain when a site first joins a FPS.
+    *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
+2. If this site is leaving a FPS, clear site data of this site.
+
+Potential modification, which adds implementation complexity:
+
+3. If this site’s new owner used to be a member site from the same FPS, no site data clearing will be enforced. 
+    *   Pro: Provides graceful transitions for examples (f) and (g).
+    *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
+
+## Examples
+
+![Clear Site Data Doc Img_ 1  FPS representation](https://user-images.githubusercontent.com/89418275/130536768-79c1d4ab-1f87-461a-b8f6-2420c2ab7521.jpg)
+
+![Clear Site Data Doc Img_ 2  FPS joining](https://user-images.githubusercontent.com/89418275/130536854-23df70a5-80a4-4090-9830-6f70fc3d06a4.jpg)
+
+
+1. Site A and Site B join together and formalize FPS with Site A as the owner and Site B as the member. No site data clearing will be enforced.
+2. Site C joins the existing FPS as a member site where Site A is the owner. No site data clearing will be enforced.
+
+![Clear Site Data Doc Img_ 3  FPS leaving](https://user-images.githubusercontent.com/89418275/130536873-0582ce35-1f2d-4b12-8b04-3b303688c37f.jpg)
+
+3. With the FPS that has owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and site data clearing will be enforced on Site A, Site B and Site C.
+4. With the FPS that has owner Site A and members Site B and Site C, if Site B leaves the FPS, site data clearing will be enforced on Site B.
+5. With two FPSs, where FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, site data clearing will be enforced on Site X and Site Y.
+
+With modification allowing no clearing of site data if new set owner was previous member:
+
+![Clear Site Data Doc Img_ 4  FPS rotation](https://user-images.githubusercontent.com/89418275/130536889-80771dc4-6c33-4ad3-9faa-100e5437590a.jpg)
+
+6. With the FPS that has owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data clearing will be enforced.
+7. With the FPS that has owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, site data clearing will be enforced on Site A.
+
 
 # Site-Declared Sets in Browsers
 
