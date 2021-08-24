@@ -132,7 +132,7 @@ Additionally, browsers may consider using First-Party Sets in new privacy featur
 
 This proposal is consistent with the same-origin policy. That is, Web Platform features must not use first-party sets to make one origin's state directly accessible to another origin in the set. For example, if a.example and b.example are in the same first-party set, the same-origin policy would still prevent `https://a.example` from accessing `https://b.example`'s cookies or IndexedDB databases.
 
-# Clearing Site Data on set transitions
+# Clearing Site Data on Set Transitions
 Sites can switch the First-Party Set that they are a member of. We need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. The concrete goals that we aim to achieve are as follows:
 
 *   Preserve user expectations that their browsing activity is scoped/partitioned to “party” (as defined by First-Party Set).
@@ -158,9 +158,7 @@ Potential modification, which adds implementation complexity:
 ## Examples
 
 ![Clear Site Data Doc Img_ 1  FPS representation](https://user-images.githubusercontent.com/89418275/130536768-79c1d4ab-1f87-461a-b8f6-2420c2ab7521.jpg)
-
 ![Clear Site Data Doc Img_ 2  FPS joining](https://user-images.githubusercontent.com/89418275/130536854-23df70a5-80a4-4090-9830-6f70fc3d06a4.jpg)
-
 
 1. Site A and Site B join together and formalize FPS with Site A as the owner and Site B as the member. No site data clearing will be enforced.
 2. Site C joins the existing FPS as a member site where Site A is the owner. No site data clearing will be enforced.
@@ -177,7 +175,6 @@ With modification allowing no clearing of site data if new set owner was previou
 
 6. With the FPS that has owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data clearing will be enforced.
 7. With the FPS that has owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, site data clearing will be enforced on Site A.
-
 
 # Site-Declared Sets in Browsers
 
