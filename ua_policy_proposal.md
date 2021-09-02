@@ -33,7 +33,7 @@ We recommend that browsers supporting First-Party Sets work together to:
 
 +   Maintain accuracy in self declaration of common controllership of user data collected as a result of user interactions with the domains listed in a First-Party Set formation request. 
     +   This means that changes in controllership must be followed up with a request for changes in the site's First-Party Set within _XX [to be determined]_ days.
-+   Make domain affiliations easily discoverable to the user. As a best practice, site authors should strive to make domain affiliations easily observable to the user, such as through common branding. This common branding should be clear to users of assistive technologies.
++   Make domain affiliations easily discoverable to the user. As a best practice, site authors should strive to make domain affiliations easily observable to the user, such as through common branding.
 +   Use First-Party Sets as a mechanism to enable user journeys, and improved user experience across related domains. 
 +   Where relevant, site authors may choose to form multiple, disjoint First-Party Sets. In other words, it is not required that all domains controlled by an organization must be part of a single First-Party Set. We recommend that site authors strive to create sets consistent with user understanding and expectations.
 
