@@ -4,7 +4,7 @@ First-Party Sets aims to define the notion of "first-party" as a technical const
 
 "Controller" is defined as in the [General Data Protection Regulation](https://gdpr-info.eu/art-4-gdpr/), as the "natural or legal person, public authority, agency or other body which, alone or jointly with others, determines the purposes and means of the processing of personal data."
 
-This definition of ‘party' aligns with the findings and recommendations of the 2012 Federal Trade Commission report titled "[Protecting Consumer Privacy in an Era of Rapid Change](https://www.ftc.gov/sites/default/files/documents/reports/federal-trade-commission-report-protecting-consumer-privacy-era-rapid-change-recommendations/120326privacyreport.pdf)". This report also recommends, for the sake of user transparency:
+This definition of ‘party' aligns with the findings and recommendations of the 2012 Federal Trade Commission report titled "[Protecting Consumer Privacy in an Era of Rapid Change](https://www.ftc.gov/sites/default/files/documents/reports/federal-trade-commission-report-protecting-consumer-privacy-era-rapid-change-recommendations/120326privacyreport.pdf)". (pp. 40-41) This report also recommends, for the sake of user transparency:
 
 3.  "Privacy notices should be clearer, shorter, and more standardized to enable better comprehension and comparison of privacy practices."
 
