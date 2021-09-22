@@ -37,7 +37,7 @@ We recommend that browsers supporting First-Party Sets work together to:
     +   This means that changes in ownership/controllership must be followed up with a request for changes in the site's First-Party Set within _XX [to be determined]_ days.
 +   Make domain affiliations easily discoverable to the user. As a best practice, site authors should strive to make domain affiliations easily observable to the user, such as through common branding.
 +   Use First-Party Sets as a mechanism to enable user journeys, and improved user experience across related domains.
-+   Use site configuration and policies that allow for reasonable verification and enforcement. For example, terms of service must allow independent enforcement entities to make a test or spamtrap accounts if needed to verify a common privacy policy.
++   Use site configuration and policies that allow for reasonable verification and enforcement. For example, terms of service must allow independent enforcement entities to make test or spamtrap accounts if needed to verify a common privacy policy.
 +   Where relevant, site authors may choose to form multiple, disjoint First-Party Sets. In other words, it is not required that all domains owned and controlled by an organization must be part of a single First-Party Set. We recommend that site authors strive to create sets consistent with user understanding and expectations.
 
 # Responsibilities of Independent Enforcement Entity
