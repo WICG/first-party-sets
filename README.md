@@ -218,6 +218,12 @@ Note that First-Party Sets also gives browsers the opportunity to group per-site
 those at `chrome://settings/content/all`) by the “first-party” boundary instead of eTLD+1, which is 
 not always the correct site boundary.
 
+# Domain Schemes
+
+User agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
+
+User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
+
 # Alternative designs
 
 ## Origins instead of registrable domains
