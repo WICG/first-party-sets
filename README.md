@@ -220,7 +220,7 @@ not always the correct site boundary.
 
 # Domain Schemes
 
-User agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
+In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
 
 User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
 
