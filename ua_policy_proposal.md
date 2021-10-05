@@ -28,13 +28,13 @@ We recommend that browsers supporting First-Party Sets work together to:
 +   Periodically review, and refine policy requirements.
 +   Implement a UI surface to educate users when the website they are visiting is part of a First-Party Set with other registrable domains; and link to the provided common privacy policy.
 +   Ensure that the browser periodically fetches updates to sets. We recommend that the time period between updates fetched into the browser not exceed 30 days.
-+   [Optional] Provide guidance/mechanisms for users and civil society to report potentially invalid or policy-violating sets, for investigation and manual verification by an independent enforcement entity.
++   Periodically validate a well-known end point provided by each domain in the First-Party Set containing cryptographic proof the domain is associated with the common privacy policy.
 
 # Responsibilities of the Site Author
 
 +   Maintain accuracy in self declaration of common ownership and controllership of the domains listed in a First-Party Set formation request. 
     +   This means that changes in ownership/controllership must be followed up with a request for changes in the site's First-Party Set within _XX [to be determined]_ days.
-+   Make domain affiliations easily discoverable to the user. As a best practice, site authors should strive to make domain affiliations easily observable to the user, such as through common branding.
++   Make domain affiliations easily discoverable to the user by providing cryptographic proof at a well-known endpoint concerning the association to the common privacy policy.
 +   Use First-Party Sets as a mechanism to enable user journeys, and improved user experience across related domains. 
 +   Where relevant, site authors may choose to form multiple, disjoint First-Party Sets. In other words, it is not required that all domains owned and controlled by an organization must be part of a single First-Party Set. We recommend that site authors strive to create sets consistent with user understanding and expectations.
 
@@ -42,46 +42,11 @@ We recommend that browsers supporting First-Party Sets work together to:
 
 For each element of the First Party Set policy, we propose an enforcement method. Below we suggest how each element is enforced and what role, if any, an independent enforcement entity might play as part of the enforcement effort.
 
-<table>
-<thead>
-<tr>
-<th><strong>Policy </strong></th>
-<th><strong>Enforcement Method </strong></th>
-<th><strong>Role of independent enforcement entity </strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Common owner and controller</td>
-<td>Annual self-declaration<sup>1</sup></td>
-<td>Maintains publicly-viewable declaration system, tracks changes, performs random "spot checks" for conformance based on publicly available information </td>
-</tr>
-<tr>
-<td>A group identity that is easily discoverable by a users </td>
-<td>UI treatment (and co-branding in some cases)<sup>2</sup> </td>
-<td>None (solely the browser's and site author's responsibility)</td>
-</tr>
-<tr>
-<td>Common Privacy Policy </td>
-<td>Technical checks<sup>3</sup> </td>
-<td>Performs technical check to ensure Privacy Policy is the same across all sites in the same set </td>
-</tr>
-</tbody>
-</table>
-
-<sup>1</sup> In order to use the First-Party Sets feature, an organization would need to publicly declare that they own and control the sites listed in their proposed set. The declaration would be required to be made in a publicly viewable location, such as an issue tracker on GitHub. That statement then becomes part of the privacy representations that the organization is making to users, similar to disclosures about how data is collected and used that organizations make in privacy policies. Misrepresentations about an entity's ownership/control of a site that lead to the collection of user data outside of the First Party Sets policy would be enforceable in the same way that misrepresentations or misleading statements in privacy policies are. Organizations could be held responsible for fraud or misrepresentation either in direct legal action from users or by regulators that enforce either privacy or consumer protection laws on behalf of users.
-
-<sup>2</sup> In order to meet the condition that domains must share a common group identity that is easily discoverable by users; browsers may provide UI to surface group identity when the top-level site is part of a First-Party Set. In addition, it is the site author's responsibility to ensure that at least one of the following is true: 
-
-+   sites within the set share a single domain name (but different TLDs)
-+   sites within the set share a prominently displayed common brand 
-+   sites within the set are prominently co-branded 
-+   sites within the set prominently disclose to users the parent company owner/operator (via a notice one click away from the home page, pop-up, or other method)
-
-<sup>3</sup> Site authors must ensure that a hyperlink to the common group privacy policy is placed on the default page of each domain listed on their proposed set; such that an automated technical check can be used to verify its presence.
+1. In order to use the First-Party Sets feature, an organization would need to publicly declare that they own and control the sites listed in their proposed set via cryptographic proof provided at a well-known end point. That statement then becomes part of the privacy representations that the organization is making to users, similar to disclosures about how data is collected and used that organizations make in privacy policies. Misrepresentations about an entity's ownership/control of a site that lead to the collection of user data outside of the First Party Sets policy would be enforceable in the same way that misrepresentations or misleading statements in privacy policies are. Organizations could be held responsible for fraud or misrepresentation either in direct legal action from users or by regulators that enforce either privacy or consumer protection laws on behalf of users.
+2. In order to meet the condition that domains must share a common group identity that is easily discoverable by users; browsers may provide a UI to surface group identity when the top-level site is part of a First-Party Set. The common privacy policy which is cryptographically verifiable via a well-known end point is sufficient to prove adherence to a First-Party Set and provide a link via the browser UI to that policy.
 
 Additional roles of enforcement entity: 
 
-+   Verifies that the requester of the set formation has control over the domains. This may be done by requiring that manifest files in a prescribed format be hosted at `.well-known` locations on each domain in the set.
++   Verifies that the requester of the set formation has control over the domains. This may be done by requiring that manifest files in a prescribed format be hosted at .well-known locations on each domain in the set in addition to the cryptographic proof provided at a well-known end point
 +   Performs technical check to ensure all First Party Sets are mutually exclusive (i.e. a site cannot be in multiple sets) 
 +   Conducts manual reviews/investigations of First Party Sets that have been flagged by civil society/research community 
