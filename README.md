@@ -251,31 +251,36 @@ Potential modification, which adds implementation complexity:
 
 ## Examples
 
-![FPS representation](./FPS_clear_site_data-representation.drawio.svg)
+![FPS representation](./image/FPS_clear_site_data-representation.drawio.svg)
 
 ---
 
-![FPS site data not cleared](./FPS_clear_site_data-not_clear.drawio.svg)
+![FPS site data not cleared](./image/FPS_clear_site_data-not_clear.drawio.svg)
 
 a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
+
 b. Site C joins the existing FPS as a member site where Site A is the owner. Site data will not be cleared.
 
 ---
 
-![FPS site data cleared](./FPS_clear_site_data-clear.drawio.svg)
+![FPS site data cleared](./image/FPS_clear_site_data-clear.drawio.svg)
 
 c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
+
 d. Given an FPS with owner Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
+
 e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, the browser will clear site data for Site X and Site Y.
 
 ---
 
 With the potential modification allowing sites to keep their data if the new set owner was a previous member:
 
-![FPS potential cases for site data not cleared](./FPS_clear_site_data-potential_modification.drawio.svg)
+![FPS potential cases for site data not cleared](./image/FPS_clear_site_data-potential_modification.drawio.svg)
 
 f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
+
 g. Given an FPS with owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, the browser will clear site data for Site A.
+
 h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the owner, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
 
 # Alternative designs
