@@ -251,32 +251,32 @@ Potential modification, which adds implementation complexity:
 
 ## Examples
 
-![Clear Site Data Img 1  FPS representation drawio](https://user-images.githubusercontent.com/89418275/137032991-519ab978-b2fe-449b-9563-fda993bee119.png)
+![FPS representation](./FPS_clear_site_data-representation.drawio.svg)
 
 ---
 
-![Clear Site Data Img 2  FPS joining drawio](https://user-images.githubusercontent.com/89418275/137032021-cb83f31c-27e4-4fc5-b754-d1d920aa5951.png)
+![FPS site data not cleared](./FPS_clear_site_data-not_clear.drawio.svg)
 
-1. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
-2. Site C joins the existing FPS as a member site where Site A is the owner. Site data will not be cleared.
+a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
+b. Site C joins the existing FPS as a member site where Site A is the owner. Site data will not be cleared.
 
 ---
 
-![Clear Site Data Img 3  FPS leaving drawio](https://user-images.githubusercontent.com/89418275/137032031-91515504-bc0a-43a0-b4f8-be24cd17a693.png)
+![FPS site data cleared](./FPS_clear_site_data-clear.drawio.svg)
 
-3. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
-4. Given an FPS with owner Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
-5. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, the browser will clear site data for Site X and Site Y.
+c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
+d. Given an FPS with owner Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
+e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, the browser will clear site data for Site X and Site Y.
 
 ---
 
 With the potential modification allowing sites to keep their data if the new set owner was a previous member:
 
-![Clear Site Data Img 4  FPS rotation drawio](https://user-images.githubusercontent.com/89418275/137032733-7b817d6e-cc2a-4329-9169-c067b84e8dbe.png)
+![FPS potential cases for site data not cleared](./FPS_clear_site_data-potential_modification.drawio.svg)
 
-6. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
-7. Given an FPS with owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, the browser will clear site data for Site A.
-8. Given the FPS with owner Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the owner, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
+f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
+g. Given an FPS with owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, the browser will clear site data for Site A.
+h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the owner, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
 
 # Alternative designs
 
