@@ -228,18 +228,18 @@ In order to achieve this, site data needs to be cleared on certain transitions. 
  * A user identifier could be stored in any of these storage types.
  * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
 
-Sites switching FPSs can be viewed as “leaving one FPS and joining another”, and the member sites can only add/remove themselves to/from FPSs with the consent from the owner. If a FPS’s owner changes, that set is considered dissolved. Thus we associate the need to clear site data with whether that site’s FPS owner has changed, with a few exceptions.
+Since member sites can only add/remove themselves to/from FPSs with the consent from the owner, we look at first-party set changes as a site changing its FPS owner.
 
 If a site’s owner changed:
 
-1. If this site is joining a FPS, no site data clearing will be enforced.
+1. If this site previously had no FPS owner, the site's data won't be cleared.
     *   Pro: Avoids adoption pain when a site first joins a FPS.
     *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
-2. If this site is leaving a FPS, clear site data of this site.
+2. Otherwise, clear site data of this site.
 
 Potential modification, which adds implementation complexity:
 
-3. If this site’s new owner used to be a member site from the same FPS, no site data clearing will be enforced. 
+3. If this site's new owner is a site that previously had the same FPS owner as the first site, the site's data won't be cleared. 
     *   Pro: Provides graceful transitions for examples (f) and (g).
     *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
 
