@@ -18,7 +18,7 @@ The signer then regularly produces fresh signed assertions for the current list 
 
 Assertion lifetimes should be kept short, say two weeks. This reduces the lifetime of any mistakes. The browser vendor may also maintain a blocklist of revoked assertions to react more quickly, but the reduced lifetime reduces the size of such a list.
 
-To avoid operational challenges for sites, the signer makes the latest assertions available at a well-known location, such as `https://fps-signer.example/assertions/&lt;owner-domain>`. We will provide automated tooling to refresh the manifest from these assertions, and sites with more specialized needs can build their own. To support such automation, the URL patterns must be standard across signers.
+To avoid operational challenges for sites, the signer makes the latest assertions available at a well-known location, such as `https://fps-signer.example/assertions/<owner-domain>`. We will provide automated tooling to refresh the manifest from these assertions, and sites with more specialized needs can build their own. To support such automation, the URL patterns must be standard across signers.
 
 Note any duplicate domains in the assertions and members attribute should compress well with gzip.
 
@@ -32,7 +32,7 @@ An origin is in a given first-party set if:
 *   Its scheme is https; and
 *   Its registered domain is either the owner or is one of the secondary domains.
 
-The browser will consider domains to be members of a set if the domains opt in and the set meets [UA policy](https://github.com/privacycg/first-party-sets#ua-policy), to incorporate both [user and site needs](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies). Domains opt in by hosting a JSON manifest at `https://&lt;domain>/.well-known/first-party-set`. The secondary domains point to the owning domain while the owning domain lists the members of the set, a version number to trigger updates, and a set of signed assertions to inform UA policy ([details below](https://github.com/privacycg/first-party-sets#ua-policy)).
+The browser will consider domains to be members of a set if the domains opt in and the set meets [UA policy](https://github.com/privacycg/first-party-sets#ua-policy), to incorporate both [user and site needs](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies). Domains opt in by hosting a JSON manifest at `https://<domain>/.well-known/first-party-set`. The secondary domains point to the owning domain while the owning domain lists the members of the set, a version number to trigger updates, and a set of signed assertions to inform UA policy ([details below](https://github.com/privacycg/first-party-sets#ua-policy)).
 
 Suppose `a.example`, `b.example`, and `c.example` wish to form a first-party set, owned by `a.example`. The sites would then serve the following resources, with signed assertions served in the `assertions` field of the owner manifest:
 

@@ -220,6 +220,12 @@ Note that First-Party Sets also gives browsers the opportunity to group per-site
 those at `chrome://settings/content/all`) by the “first-party” boundary instead of eTLD+1, which is 
 not always the correct site boundary.
 
+# Domain Schemes
+
+In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
+
+User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
+
 # Clearing Site Data on Set Transitions
 Sites can change which First-Party Set they are a member of. We need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership.
 
