@@ -238,8 +238,8 @@ Since member sites can only add/remove themselves to/from FPSs with the consent 
 
 If a site’s owner changed:
 
-1. If this site previously had no FPS owner, the site's data won't be cleared.
-    *   Pro: Avoids adoption pain when a site first joins a FPS.
+1. If this site has no FPS owner, the site's data won't be cleared.
+    *   Pro: Avoids adoption pain when a site joins a FPS.
     *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
 2. Otherwise, clear site data of this site.
 
