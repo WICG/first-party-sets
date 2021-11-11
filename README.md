@@ -238,7 +238,7 @@ Since member sites can only add/remove themselves to/from FPSs with the consent 
 
 If a site’s owner changed:
 
-1. If this site has no FPS owner, the site's data won't be cleared.
+1. If this site had no FPS owner, the site's data won't be cleared.
     *   Pro: Avoids adoption pain when a site joins a FPS.
     *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
 2. Otherwise, clear site data of this site.
@@ -251,11 +251,11 @@ Potential modification, which adds implementation complexity:
 
 ## Examples
 
-![FPS representation](./image/FPS_clear_site_data-representation.drawio.svg)
+![](./image/FPS_clear_site_data-representation.drawio.svg)
 
 ---
 
-![FPS site data not cleared](./image/FPS_clear_site_data-not_clear.drawio.svg)
+![](./image/FPS_clear_site_data-not_clear.drawio.svg)
 
 a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
 
@@ -263,7 +263,7 @@ b. Site C joins the existing FPS as a member site where Site A is the owner. Sit
 
 ---
 
-![FPS site data cleared](./image/FPS_clear_site_data-clear.drawio.svg)
+![](./image/FPS_clear_site_data-clear.drawio.svg)
 
 c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
 
@@ -275,7 +275,7 @@ e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 
 
 With the potential modification allowing sites to keep their data if the new set owner was a previous member:
 
-![FPS potential cases for site data not cleared](./image/FPS_clear_site_data-potential_modification.drawio.svg)
+![](./image/FPS_clear_site_data-potential_modification.drawio.svg)
 
 f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
 
