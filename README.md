@@ -30,6 +30,8 @@ of the [Privacy Community Group](https://privacycg.github.io/).
    - [Relying solely upon Technical Enforcement](#relying-solely-upon-technical-enforcement)
    - [Administrative Controls](#administrative-controls)
 - [UI Treatment](#ui-treatment)
+- [Clearing Site Data on Set Transitions](#clearing-site-data-on-set-transitions)
+   - [Examples](#examples)
 - [Alternative designs](#alternative-designs)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
@@ -223,6 +225,63 @@ not always the correct site boundary.
 In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
 
 User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
+
+# Clearing Site Data on Set Transitions
+Sites can change which First-Party Set they are a member of. We need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership.
+
+In order to achieve this, site data needs to be cleared on certain transitions. The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/clear-site-data/#grammardef-), which includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
+
+ * A user identifier could be stored in any of these storage types.
+ * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
+
+Since member sites can only add/remove themselves to/from FPSs with the consent from the owner, we look at first-party set changes as a site changing its FPS owner.
+
+If a site’s owner changed:
+
+1. If this site had no FPS owner, the site's data won't be cleared.
+    *   Pro: Avoids adoption pain when a site joins a FPS.
+    *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
+2. Otherwise, clear site data of this site.
+
+Potential modification, which adds implementation complexity:
+
+3. If this site's new owner is a site that previously had the same FPS owner as the first site, the site's data won't be cleared. 
+    *   Pro: Provides graceful transitions for examples (f) and (g).
+    *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
+
+## Examples
+
+![](./image/FPS_clear_site_data-representation.drawio.svg)
+
+---
+
+![](./image/FPS_clear_site_data-not_clear.drawio.svg)
+
+a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
+
+b. Site C joins the existing FPS as a member site where Site A is the owner. Site data will not be cleared.
+
+---
+
+![](./image/FPS_clear_site_data-clear.drawio.svg)
+
+c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
+
+d. Given an FPS with owner Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
+
+e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, the browser will clear site data for Site X and Site Y.
+
+---
+
+With the potential modification allowing sites to keep their data if the new set owner was a previous member:
+
+![](./image/FPS_clear_site_data-potential_modification.drawio.svg)
+
+f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
+
+g. Given an FPS with owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, the browser will clear site data for Site A.
+
+h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the owner, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
 
 # Alternative designs
 
