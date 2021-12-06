@@ -35,7 +35,7 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 - [Alternative designs](#alternative-designs)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
-- [Acknowledgements](#acknowledgments)
+- [Acknowledgements](#acknowledgements)
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 # Introduction
