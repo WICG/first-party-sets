@@ -9,7 +9,6 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 ## Editors:
 
 - [Kaustubha Govind](https://github.com/krgovind), Google
-- [David Benjamin](https://github.com/davidben), Google
 - [Harneet Sidhana](https://github.com/HarneetSidhana), Microsoft 
 
 ## Participate
@@ -36,6 +35,7 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 - [Alternative designs](#alternative-designs)
    - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
+- [Acknowledgements](#acknowledgments)
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 # Introduction
@@ -339,3 +339,7 @@ this is worthwhile.
 -  [Single Trust and Same-Origin Policy v2](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
    and [affiliated domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12) from John
    Wilander to public-webappsec
+   
+ # Acknowledgements
+ 
+ This proposal includes significant contributions from previous co-editor, [David Benjamin](https://github.com/davidben).
