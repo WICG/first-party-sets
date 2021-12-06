@@ -10,6 +10,7 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 
 - [Kaustubha Govind](https://github.com/krgovind), Google
 - [David Benjamin](https://github.com/davidben), Google
+- [Harneet Sidhana](https://github.com/HarneetSidhana), Microsoft 
 
 ## Participate
 - https://github.com/privacycg/first-party-sets/issues
