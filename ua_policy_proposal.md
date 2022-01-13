@@ -59,7 +59,7 @@ For each element of the First Party Set policy, we propose an enforcement method
 <tr>
 <td>A group identity that is easily discoverable by a users </td>
 <td>UI treatment (and co-branding in some cases)<sup>2</sup> </td>
-<td>None (solely the browser's and site author's responsibility)</td>
+<td>Conduct user surveys to determine if common identity is understandable to users</td>
 </tr>
 <tr>
 <td>Common Privacy Policy </td>
