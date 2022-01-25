@@ -59,11 +59,11 @@ For each element of the First Party Set policy, we propose an enforcement method
 <tr>
 <td>A group identity that is easily discoverable by a users </td>
 <td>UI treatment (and co-branding in some cases)<sup>2</sup> </td>
-<td>Conduct user surveys to determine if common identity is understandable to users</td>
+<td>Conduct user surveys to determine if common identity is understandable to users<sup>3</sup></td>
 </tr>
 <tr>
 <td>Common Privacy Policy </td>
-<td>Technical checks<sup>3</sup> </td>
+<td>Technical checks<sup>4</sup> </td>
 <td>Performs technical check to ensure Privacy Policy is the same across all sites in the same set </td>
 </tr>
 </tbody>
@@ -78,7 +78,9 @@ For each element of the First Party Set policy, we propose an enforcement method
 +   sites within the set are prominently co-branded 
 +   sites within the set prominently disclose to users the parent company owner/operator (via a notice one click away from the home page, pop-up, or other method)
 
-<sup>3</sup> Site authors must ensure that a hyperlink to the common group privacy policy is placed on the default page of each domain listed on their proposed set; such that an automated technical check can be used to verify its presence.
+<sup>3</sup> The IEE will conduct some user surveys on randomly selected sets, for calibration, along with surveys as needed in order to handle reports of invalid sets.
+
+<sup>4</sup> Site authors must ensure that a hyperlink to the common group privacy policy is placed on the default page of each domain listed on their proposed set; such that an automated technical check can be used to verify its presence.
 
 Additional roles of enforcement entity: 
 
