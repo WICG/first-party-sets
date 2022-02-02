@@ -17,6 +17,8 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 # Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 - [Introduction](#introduction)
 - [Goals](#goals)
 - [Non-goals](#non-goals)
@@ -24,19 +26,22 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 - [Applications](#applications)
 - [Site-Declared Sets in Browsers](#site-declared-sets-in-browsers)
 - [Acceptance Process](#acceptance-process)
-   - [Submission](#submission)
-   - [UA Policy](#ua-policy)
-   - [Verification Entity](#verification-entity)
-   - [Relying solely upon Technical Enforcement](#relying-solely-upon-technical-enforcement)
-   - [Administrative Controls](#administrative-controls)
+  - [Submission](#submission)
+  - [UA Policy](#ua-policy)
+  - [Verification Entity](#verification-entity)
+  - [Administrative controls](#administrative-controls)
 - [UI Treatment](#ui-treatment)
+- [Domain Schemes](#domain-schemes)
 - [Clearing Site Data on Set Transitions](#clearing-site-data-on-set-transitions)
-   - [Examples](#examples)
+  - [Examples](#examples)
 - [Alternative designs](#alternative-designs)
-   - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
+  - [Signed Assertions and set discovery instead of static lists](#signed-assertions-and-set-discovery-instead-of-static-lists)
+  - [Self-attestation and technical enforcement](#self-attestation-and-technical-enforcement)
+  - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
 - [Acknowledgements](#acknowledgements)
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # Introduction
 
@@ -157,8 +162,7 @@ Technical consistency and freshness checks must be performed on the list:
 *   No domain can appear in more than one set.
 *   Expired sets must be removed.
 
-Static lists are easy to reason about and easy for others to inspect. At the same time, they can develop deployment and scalability issues. Changes to the list must be pushed to each user's browser via some update mechanism. This complicates sites' ability to deploy new related domains, particularly in markets where network connectivity limits update frequency. They also scale poorly if the list gets too large. When such considerations outweigh the benefits of the lower implementation complexity of static lists, browsers may consider using the [Signed Assertions based design](signed_assertions.md) that proposes fetching sets from a `.well-known` location of the website.
-
+A different approach that does not involve consumption of a static list is discussed in the [Alternative designs section](#signed-assertions-and-set-discovery-instead-of-static-lists)
 
 # Acceptance Process
 
@@ -191,16 +195,7 @@ We expect the UA policy to evolve over time as use cases and abuse scenarios com
 
 An independent entity must verify that submissions conform to the documented UA policy before acceptance. The entity must also assign an expiration date, following which sets are removed from the browser-baked static lists.
 
-## Relying solely upon Technical Enforcement
-
-Instead of having a verification entity check conformance to policy; it may be possible to rely on a combination of:
-
--   Self-attestation of UA Policy conformance by submitter.
--   Technical consistency checks such as verifying control over domains, and ensuring that no domain appears in more than one set.
--   Transparency logs documenting all acceptances and deletions to enable accountability and auditability.
--   Mechanism/process for the general public to report potential violations of UA Policy.
-
-However, at this time we do not believe it is possible to enforce against the formation of consortiums of unrelated entities, and thus will require some form of verification entity to guard against that.
+The possibility of purely technical enforcement without a verification entity is discussed in the [Alternative Designs section](#self-attestation-and-technical-enforcement).
 
 ## Administrative controls
 
@@ -286,6 +281,25 @@ h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D 
 
 # Alternative designs
 
+## Signed Assertions and set discovery instead of static lists
+
+Static lists are easy to reason about and easy for others to inspect. At the same time, they can develop deployment and scalability issues. Changes to the list must be pushed to each user's browser via some update mechanism. This complicates sites' ability to deploy new related domains, particularly in markets where network connectivity limits update frequency. They also scale poorly if the list gets too large.
+
+The [Signed Assertions based design](signed_assertions.md) proposes an alternative solution that involves the browser learning the composition of sets directly from the websites that the user visits. To prevent privacy risks from personalized sets and ensure policy conformance, they are still verified by an independent entity through a digital signature.
+
+This design is significantly more complex than the consumption of a static list, especially when implementing [discovery and fetching of sets](signed_assertions.md#discovering-first-party-sets) in a privacy-preserving manner. As such, we prefer to start with the simpler static list approach, leaving the possibility of introducing a more complex alternative in the future.
+
+## Self-attestation and technical enforcement
+
+Instead of having a verification entity check conformance to policy; it may be possible to rely on a combination of:
+
+-   Self-attestation of UA Policy conformance by submitter.
+-   Technical consistency checks such as verifying control over domains, and ensuring that no domain appears in more than one set.
+-   Transparency logs documenting all acceptances and deletions to enable accountability and auditability.
+-   Mechanism/process for the general public to report potential violations of UA Policy.
+
+However, at this time we do not believe it is possible to enforce against the formation of consortiums of unrelated entities, and thus will require some form of verification entity to guard against that.
+
 ## Origins instead of registrable domains
 
 A first-party set is a collection of origins, but it is specified by registrable domains, which
@@ -339,7 +353,7 @@ this is worthwhile.
 -  [Single Trust and Same-Origin Policy v2](https://lists.w3.org/Archives/Public/public-webappsec/2017Mar/0034.html)
    and [affiliated domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12) from John
    Wilander to public-webappsec
-   
- # Acknowledgements
- 
+
+# Acknowledgements
+
  This proposal includes significant contributions from previous co-editor, [David Benjamin](https://github.com/davidben).
