@@ -295,6 +295,28 @@ h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D 
 
 # Alternative designs
 
+## Using EV Certificate information
+
+[Extended Validation (EV)
+Certificates](https://en.wikipedia.org/wiki/Extended_Validation_Certificate), in
+addition to backing encrypted exchange of information on the web, require
+verification of the legal entity associated with the website a certificate is
+issued for and encode information about this legal entity in the certificate
+itself. It might be possible to match this information for sites presenting EV
+certificates (or use the subjectAltName on a single EV certificate) to build
+First-Party Sets.
+
+Overall, we do not consider it desirable to couple identity or feature
+exposure through First-Party Sets to the existing certificate infrastructure.
+It's likely that this would negatively impact the deployment and use of
+encryption on the web, for example by forcing sites to obtain EV certificates
+to ensure continued functionality. A revocation of a certificate that is used
+for FPS would have grave implications (such as deletion of all local data through
+the Clear Site Data mechanism) and thus complicate the revocation process.
+
+See [Issue 12](https://github.com/privacycg/first-party-sets/issues/12) for an extended
+discussion.
+
 ## Signed Assertions and set discovery instead of static lists
 
 Static lists are easy to reason about and easy for others to inspect. At the same time, they can develop deployment and scalability issues. Changes to the list must be pushed to each user's browser via some update mechanism. This complicates sites' ability to deploy new related domains, particularly in markets where network connectivity limits update frequency. They also scale poorly if the list gets too large.
