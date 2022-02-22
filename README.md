@@ -40,6 +40,8 @@ of the [Privacy Community Group](https://privacycg.github.io/).
   - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Prior Art](#prior-art)
 - [Acknowledgements](#acknowledgements)
+- [Appendix](#appendix)
+  - [SameParty Cookies and First-Party Sets](#sameparty-cookies-and-first-party-sets)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -127,7 +129,7 @@ First-Party Sets is a proposal to standardize a mechanism that solves this issue
 
 In support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
 
--   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](https://github.com/cfredric/sameparty).
+-   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](#sameparty-cookies-and-first-party-sets).
 -   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
 -   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
 -   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
@@ -354,7 +356,7 @@ this is worthwhile.
  
  # Appendix
  
- # SameParty Cookies and First-Party Sets
+ ## SameParty Cookies and First-Party Sets
  
 Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](https://github.com/cfredric/sameparty).
 
