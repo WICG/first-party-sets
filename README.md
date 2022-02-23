@@ -38,6 +38,8 @@ of the [Privacy Community Group](https://privacycg.github.io/).
   - [Signed Assertions and set discovery instead of static lists](#signed-assertions-and-set-discovery-instead-of-static-lists)
   - [Self-attestation and technical enforcement](#self-attestation-and-technical-enforcement)
   - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
+- [Security and Privacy Considerations](#security-and-privacy-considerations)
+  - [Avoid weakening new and existing security boundaries](#avoid-weakening-new-and-existing-security-boundaries)
 - [Prior Art](#prior-art)
 - [Acknowledgements](#acknowledgements)
 - [Appendix](#appendix)
@@ -341,6 +343,16 @@ This origin-defined approach has additional complications to resolve:
 
 These complexities are likely solvable while keeping most of this design, should browsers believe
 this is worthwhile.
+
+# Security and Privacy Considerations
+
+## Avoid weakening new and existing security boundaries
+
+Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [cache probing](https://xsleaks.dev/docs/attacks/cache-probing/) attacks and third-party cookie blocking makes it much harder to perform [CSRF](https://owasp.org/www-community/attacks/csrf) by default. Where user agents intend to use First-Party Sets to replace or extend existing boundaries based on *site* or *origin* on the web, it is important to consider not only the effects on privacy, but also on security.
+
+Sites in a common FPS may not trust each other to the same degree as origins in a same-site relationship would, and may have greatly varying security requirements. Within reason, it should not be possible for a compromised site in an FPS to affect the integrity of other sites in the set.
+
+This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. Site owners should be aware of the potential security implications of creating an FPS and form only the smallest possible set of domains that encompasses user workflows/journeys across an application, especially when some origins in the set opt into features that may leave them open to potential security attacks from other origins in the set.
 
 # Prior Art
 
