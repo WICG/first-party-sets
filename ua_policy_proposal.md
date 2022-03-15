@@ -1,3 +1,5 @@
+## NOTE: To be archived or modified depending on reviewer feedback.
+
 # UA Policy Proposal
 
 First-Party Sets aims to define the notion of "first-party" as a technical construct that can be used by browsers in development of tracking protections in browsers. [The W3C Do Not Track (DNT) specification defines a ‘party'](https://www.w3.org/TR/tracking-compliance/#party) as having:

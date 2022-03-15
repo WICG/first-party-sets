@@ -1,3 +1,5 @@
+## NOTE: To be archived or modified depending on reviewer feedback.
+
 # Signed Assertions
 
 ## Introduction
