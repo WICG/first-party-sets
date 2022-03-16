@@ -6,6 +6,10 @@ validation SSL certificates that provide proof of legal ownership ("Validated Do
 [joint controllers](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/controllers-and-processors/what-does-it-mean-if-you-are-joint-controllers/) 
 as defined by GDPR, and share a common use policy as being in a "GDPR Validated Set" (or "Set" for brevity).
 
+**Note:** GDPR has been picked as the first legal framework to comply with. Other frameworks should be added iteratively
+after a proposal that meets the requirements of GDPR has been created. This approach enables a multi stage approach to 
+review and debate without attempting to solve for all legal frameworks in a single iteration.
+
 A [Work Item](https://privacycg.github.io/charter.html#work-items)
 of the [Privacy Community Group](https://privacycg.github.io/).
 
@@ -28,6 +32,10 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+- [GDPR Validated Sets](#gdpr-validated-sets)
+  - [Editors:](#editors)
+  - [Participate](#participate)
+- [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Goals](#goals)
 - [Out of Scope](#out-of-scope)
@@ -118,6 +126,12 @@ the proposal.
 -  Legal or logic conflicts between different use policies accepted by the user and applied to the same Set. Where such 
    conflicts exist the transparency of the solution will enable this to be identified and the data controller(s) 
    informed.
+-  Consideration of legal frameworks other than GDPR. Once a proposal that meets GDPR has been achieved other legal
+   frameworks can be overlaid.
+-  Solving the proof of legal domain ownership problem. The proposal provides multiple options that improve the current
+   situation and provides the flexibility for future solutions to be included. For example; if a government were to 
+   issue digital certificates providing proof of ownership then these could be incorporated. Section 
+   [Establishing Ownership](#establishing-ownership) provides more background on this issue.
 
 The following issues are not considered in this proposal.
 
