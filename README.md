@@ -1,17 +1,29 @@
-# First-Party Sets
+# GDPR Validated Sets
 
-This document proposes a new web platform mechanism to declare a collection of related domains as
-being in a First-Party Set.
+This document proposes a new web platform mechanism (primitive) to declare a collection of domains that have been owner
+certified by [notaries](https://www.thenotariessociety.org.uk/pages/what-is-a-notary) or are associated with extended
+validation SSL certificates that provide proof of legal ownership ("Validated Domains"), are sole or
+[joint controllers](https://ico.org.uk/for-organisations/guide-to-data-protection/guide-to-the-general-data-protection-regulation-gdpr/controllers-and-processors/what-does-it-mean-if-you-are-joint-controllers/) 
+as defined by GDPR, and share a common use policy as being in a "GDPR Validated Set" (or "Set" for brevity).
+
+**Note:** GDPR has been picked as the first legal framework to comply with. Other frameworks should be added iteratively
+after a proposal that meets the requirements of GDPR has been created. This approach enables a multi stage approach to 
+review and debate without attempting to solve for all legal frameworks in a single iteration.
 
 A [Work Item](https://privacycg.github.io/charter.html#work-items)
 of the [Privacy Community Group](https://privacycg.github.io/).
 
 ## Editors:
 
+**Note:** To be updated depending on response to the revised proposal.
+
 - [Kaustubha Govind](https://github.com/krgovind), Google
 - [Harneet Sidhana](https://github.com/HarneetSidhana), Microsoft 
 
 ## Participate
+
+**Note:** To be updated depending on response to the revised proposal.
+
 - https://github.com/privacycg/first-party-sets/issues
 
 # Table of Contents
@@ -19,24 +31,29 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
+- [GDPR Validated Sets](#gdpr-validated-sets)
+  - [Editors:](#editors)
+  - [Participate](#participate)
+- [Table of Contents](#table-of-contents)
 - [Introduction](#introduction)
 - [Goals](#goals)
-- [Non-goals](#non-goals)
+- [Out of Scope](#out-of-scope)
 - [Use Cases](#use-cases)
-- [Applications](#applications)
-- [Site-Declared Sets in Browsers](#site-declared-sets-in-browsers)
-- [Acceptance Process](#acceptance-process)
-  - [Submission](#submission)
-  - [UA Policy](#ua-policy)
-  - [Verification Entity](#verification-entity)
-  - [Administrative controls](#administrative-controls)
+- [Establishing Ownership](#establishing-ownership)
+- [Defining Sets](#defining-sets)
+- [The Problem of Consent](#the-problem-of-consent)
+- [Evaluating Sets](#evaluating-sets)
+  - [Writing](#writing)
+  - [Reading](#reading)
 - [UI Treatment](#ui-treatment)
 - [Domain Schemes](#domain-schemes)
-- [Clearing Site Data on Set Transitions](#clearing-site-data-on-set-transitions)
-  - [Examples](#examples)
+- [Privacy Considerations](#privacy-considerations)
+  - [Probabilistic Identifiers (aka Fingerprinting)](#probabilistic-identifiers-aka-fingerprinting)
+  - [Data Protected Authorities](#data-protected-authorities)
 - [Alternative designs](#alternative-designs)
+  - [First Party Sets](#first-party-sets)
   - [Signed Assertions and set discovery instead of static lists](#signed-assertions-and-set-discovery-instead-of-static-lists)
-  - [Self-attestation and technical enforcement](#self-attestation-and-technical-enforcement)
   - [Origins instead of registrable domains](#origins-instead-of-registrable-domains)
 - [Security and Privacy Considerations](#security-and-privacy-considerations)
   - [Avoid weakening new and existing security boundaries](#avoid-weakening-new-and-existing-security-boundaries)
@@ -53,231 +70,371 @@ Browsers have proposed a variety of tracking policies and privacy models
 ([Chromium](https://github.com/michaelkleber/privacy-model/blob/master/README.md),
 [Edge](https://blogs.windows.com/msedgedev/2019/06/27/tracking-prevention-microsoft-edge-preview/),
 [Mozilla](https://wiki.mozilla.org/Security/Anti_tracking_policy),
-[WebKit](https://webkit.org/tracking-prevention-policy/)) which scope access to user identity to
-some notion of first-party. In defining this scope, we must balance two goals: the scope should be
-small enough to meet the user's privacy expectations, yet large enough to provide the user's desired
-functionality on the site they are interacting with.
+[WebKit](https://webkit.org/tracking-prevention-policy/)) which scope access to user identity to some notion of domain 
+name displayed in the address bar of the browser (aka first-party). In defining this scope, we must balance two goals: 
+the scope should be small enough to meet the user's privacy expectations, yet large enough to provide the user's desired
+functionality on the site(s) they are interacting with.
 
-One natural scope is the domain name in the top-level origin. However, the website the user is
-interacting with may be deployed across multiple domain names. For example, `https://google.com`,
-`https://google.co.uk`, and `https://youtube.com` are owned by the same entity, as are `https://apple.com`
-and `https://icloud.com`, or `https://amazon.com` and `https://amazon.de`.
+One natural scope is the domain name in the top-level domain. However, the website the user is interacting with may be
+deployed across multiple domain names. For example, `https://google.com`, `https://google.co.uk`, and 
+`https://youtube.com` are owned by the same entity, as are `https://apple.com` and `https://icloud.com`, or 
+`https://amazon.com` and `https://amazon.de`, or `https://disney.es`, `https://disney.com`, `https://espn.com`, and 
+`https://hulu.com`, or `https://dove.com` and `https://axe.com`.
 
-We may wish to allow user identity to span related origins, where consistent with privacy requirements. For
-example, Firefox ships an [entity list](https://github.com/mozilla-services/shavar-prod-lists#entity-list)
-that defines lists of domains belonging to the same organization. This explainer
-discusses a mechanism to allow organizations to each declare their own list of domains, which is 
-then accepted by a browser if the set conforms to its policy.
+We wish to allow user agent data sharing to span multiple domains and origins only when the following conditions are 
+met;
 
+-  where the legal ownership of the registerable domain can be established by the user;
+-  where legal owner(s) of the registerable domain processing data as either a single controller or joint controllers 
+   under GDPR;
+-  that share a common use policy which incorporates a GDPR compliant privacy policy; and
+-  where the user has consented to the common use policy.
+
+For example, Firefox ships an [entity list](https://github.com/mozilla-services/shavar-prod-lists#entity-list)
+that defines lists of domains belonging to the same organization. This proposal discusses a mechanism to enable single 
+and joint controllers to share data without declaring a list of domains that are administered and policed by the user 
+agent vendor. Instead the user agent can inspect and verify Sets on behalf of users without the need for a centralized
+authority.
+
+**Note:** Domains and company names used as examples have been provided only to serve as real-world illustrative assumed
+examples of collections of domains that are owned by the same organization or share the same use policy; and have not
+all been validated with the owners.
 
 # Goals
 
--  Allow related domain names to declare themselves as the same first-party.
--  Develop a coherent definition of "first-party" vs "third-party" for privacy mechanisms on the web platform.
--  Allow for browsers to understand the relationships between domains of multi-domain sites such that they can effectively present that information to the user.
--  Uphold existing web security principles such as the [Same Origin Policy](https://developer.mozilla.org/en-US/docs/Web/Security/Same-origin_policy).
+Enables;
 
+-  innovation concerning consent, data use, and service provision to occur across the broadest group of web participants 
+   no longer restricting such innovation to implementors of user agents alone.
+-  Validated Domains (VD) to declare themselves as being in the same Set.
+-  the user to consent to common use policies rather than on a per domain basis.
+-  browsers to understand the relationships between data controllers and domains such that they can effectively present
+   that information to the user.
+-  browsers to understand the consent choices of users to better capture and respect their preferences.
+-  existing justice systems to be used to identify and sanction bad actors under laws.
 
-# Non-goals
+When delivered as a web primitive Sets support, simplify, and align to GPDR, other explainers and proposals including 
+[Privacy Sandbox](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox).
 
--  Expansion of capabilities beyond what is possible without recent browser-imposed privacy mitigations such as restrictions on third party cookies or cache partitioning.
--  Third-party sign-in between unrelated sites.
--  Information exchange between unrelated sites for ad targeting or conversion measurement.
--  Other use cases which involve unrelated sites.
--  Define specific UI treatment.
+# Out of Scope
 
-(Some of these use cases are covered by [other
-explainers](https://www.chromium.org/Home/chromium-privacy/privacy-sandbox) from the Privacy
-Sandbox.)
+This proposal is intended to establish the principles and concepts associated with data sharing under GDPR within the 
+user agent. It does not yet provide concrete implementation details. The following are not currently within the scope of
+the proposal.
+
+-  Indicating cookies that should be read or written from the Set rather than other locations. This might be achieved 
+   using the Same-Site attribute in further development.
+-  Relationship to other proposals or specifications.
+-  Legal or logic conflicts between different use policies accepted by the user and applied to the same Set. Where such 
+   conflicts exist the transparency of the solution will enable this to be identified and the data controller(s) 
+   informed.
+-  Consideration of legal frameworks other than GDPR. Once a proposal that meets GDPR has been achieved other legal
+   frameworks can be overlaid.
+-  Solving the proof of legal domain ownership problem. The proposal provides multiple options that improve the current
+   situation and provides the flexibility for future solutions to be included. For example; if a government were to 
+   issue digital certificates providing proof of ownership then these could be incorporated. Section 
+   [Establishing Ownership](#establishing-ownership) provides more background on this issue.
+
+The following issues are not considered in this proposal.
+
+-  Notaries providing validation in digital form. For the time being their notarized documents are human readable.
 
 # Use Cases
 
-On the modern web, sites span multiple domains and many sites are owned & operated by the same organization. Organizations may want to maintain different top-level domains for:
+On the modern web, sites span multiple domains and many sites are owned & operated by the same organization, or by
+multiple organizations operating as joint controllers sharing a common use policy.
+
+Organizations that are sole controllers may want to maintain different top-level domains for:
 
 -   App domains - a single application may be deployed over multiple domains, where the user may seamlessly navigate between them as a single session.
-    -   office.com, live.com, microsoft.com ([reference](https://github.com/privacycg/first-party-sets/issues/35#issue-810396040))
-    -   lucidchart.com, lucid.co, lucidspark.com, lucid.app ([reference](https://github.com/privacycg/first-party-sets/issues/19#issuecomment-769277058))
+    -   `office.com`, `live.com`, `microsoft.com` ([reference](https://github.com/privacycg/first-party-sets/issues/35#issue-810396040))
+    -   `lucidchart.com`, `lucid.co`, `lucidspark.com`, `lucid.app` ([reference](https://github.com/privacycg/first-party-sets/issues/19#issuecomment-769277058))
 -   Brand domains
-    -   uber.com, ubereats.com
+    -   `uber.com`, `ubereats.com`
 -   Country-specific domains to enable localization 
-    -   google.co.in, google.co.uk
+    -   `google.co.in`, `google.co.uk`
 -   Common eTLD
-    -   For example, gov.uk, and service.gov.uk are on the Public Suffix List and have UK government agencies/services as subdomains which get treated as separate registrable domains by browsers; but share services such as consent management that rely on access to cross-domain cookies. 
+    -   For example, `gov.uk`, and `service.gov.uk` are on the Public Suffix List and have UK government agencies/services as subdomains which get treated as separate registrable domains by browsers; but share services such as consent management that rely on access to cross-domain cookies. 
 -   Sandbox domains that users never directly interact with, but exist to isolate user-uploaded content for security reasons. 
-    -   google.com, googleusercontent.com
-    -   github.com, githubusercontent.com
+    -   `google.com`, `googleusercontent.com`
+    -   `github.com`, `githubusercontent.com`
 -   Service domains that users never directly interact with, but provide services across the same organization’s sites. 
-        -   github.com, githubassets.com
-        -   facebook.com, fbcdn.net
+    -   `github.com`, `githubassets.com`
+    -   `facebook.com`, `fbcdn.net`
 
-**Note:** The above have been provided only to serve as real-world illustrative assumed examples of collections of domains that are owned by the same organization; and have not all been validated with the site owners.
+Multiple organizations operating as joint controllers may want to maintain different top-level domains for:
 
-Without compatibility measures such as Firefox and Edge browsers’ use of [Disconnect.me’s Entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json), blocking cross-site communication mechanisms such as access to third-party cookies breaks many first-party use-cases.
+-   Business to consumer (B2C) organizations that operate under a single brand but are separate legal entities.
+    -   `papajohns.es`, `papajohns.com`, and `papajohns.co.uk`
+-   B2C web sites operators that share a common privacy policy and wish to avoid repeated consent requests but are otherwise unrelated.
+    -   `mirror.co.uk`, `thesun.co.uk`, and `telegraph.co.uk`
+-   Participants in a scheme or network.
+    -   `visa.com`, `visa.co.uk`, `barclaycard.co.uk`, and `nationwide.co.uk`
+-   Decentralized networks implemented by multiple legal entities.
+    -   For example; [SWAN](https://swan.community)
 
-First-Party Sets is a proposal to standardize a mechanism that solves this issue in a coherent way by declaring a collection of domains as being part of the same site or 'party'; so that they can be treated as one _privacy boundary_. This allows for browsers to enable protections against tracking across this privacy boundary, and ensures continued operation of existing functionality which would otherwise be broken by blocking cross-domain cookies (“third-party cookies”). It would support seamless operation of functionality such as:
+Blocking cross-site communication mechanisms such as access to third-party cookies breaks many use-cases. Forcing these
+use-cases to be implemented using shared domains and primary navigation redirects creates unwarranted friction for 
+users and benefits those larger entities that can operate all the services they require as sole controller and
+processor.
 
-
+GDPR Validated Sets is a proposal to standardize a mechanism that solves this issue in a coherent way by declaring a 
+collection of legal entities, which operate as sole or joint controllers, where a common use policy has been accepted by
+the user so that they can be treated as one _privacy boundary_. This allows for user agents to enable protections 
+against unauthorized tracking across this privacy boundary, and ensures continued operation of existing functionality 
+which would otherwise be broken by blocking cross-domain cookies (“third-party cookies”). It would support seamless 
+operation of functionality such as:
 
 -   Sign-in across owned & operated properties 
-    -   bbc.com and bbc.co.uk
-    -   sony.com and playstation.com
+    -   `bbc.com` and `bbc.co.uk`
+    -   `sony.com` and `playstation.com`
 -   Support for embedded content from across owned & operated properties (e.g. videos/documents/resources restricted to the user signed in on the top-level site)
--   Separation of user-uploaded content from other site content for security reasons, while allowing the sandboxed domain access to authentication (and other) cookies. For example, Google sequesters such content on googleusercontent.com, GitHub on githubusercontent.com, CodePen [on](https://blog.codepen.io/2019/10/03/changed-domains-for-iframe-previews/) cdpn.io. Hosting untrusted, compromised content on the same domain where a user is authenticated may result in attackers’ potentially capturing authentication cookies, or login credentials (in case of password managers that scope credentials to domains); and cause harm to users.
-    -   Alternative solution: Sandboxed domains can also consider using [partitioned cookies](https://github.com/WICG/CHIPS).
--   Shared services, such as consent management across domains with a common eTLD suffix; such as gov.uk. Repeatedly asking for cookie consent on individual gov.uk sites may be confusing to users, erode trust in the website’s functioning, and cause fatigue; because users think of all subdomains as being part of one gov.uk website.
--   Analytics/measurement of user journeys across O&O properties to improve quality of services.
+-   Separation of user-uploaded content from other site content for security reasons, while allowing the sandboxed domain access to authentication (and other) cookies. For example, Google sequesters such content on `googleusercontent.com`, GitHub on `githubusercontent.com`, CodePen [on](https://blog.codepen.io/2019/10/03/changed-domains-for-iframe-previews/) `cdpn.io`. Hosting untrusted, compromised content on the same domain where a user is authenticated may result in attackers’ potentially capturing authentication cookies, or login credentials (in case of password managers that scope credentials to domains); and cause harm to users.
+-   Shared services, such as consent management across domains with a common eTLD suffix; such as `gov.uk`. Repeatedly asking for cookie consent on individual `gov.uk` sites may be confusing to users, erode trust in the website’s functioning, and cause fatigue; because users think of all subdomains as being part of one gov.uk website.
+-   Analytics/measurement of user journeys across properties to improve quality of services.
 
-# Applications
+# Establishing Ownership
 
-In support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
+A long standing problem that has hindered the development of the web is the ability to relate domain ownership to legal
+entity. Debate within the [CA/Browser Forum](https://cabforum.org/) and elsewhere concludes that the most credible
+method of solving this issue is [extended validation](https://cabforum.org/extended-validation/) (EV) SSL certificates.
+However EV has been [criticized](https://en.wikipedia.org/wiki/Extended_Validation_Certificate#Criticism) in practice.
 
--   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](#sameparty-cookies-and-first-party-sets).
--   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
--   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
--   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
--   Top and/or second level key for cache partitioning, potentially with site opt-in.
+Establishing trust between users and service providers is a significant concern for web practitioners. Absent other 
+mechanisms brand identity and user education have become accepted. However this is still open to abuse as it is trivial 
+for bad actors to attempt to trick users with a false domain such as `http://microsoft.verification-servic.es/` with 
+an easy to obtain SSL certificate that might appear legitimate to unsuspecting users, especially if the implementation
+exactly resembles the brands familiar websites. This proposal does go someway to help address this issue, although it 
+is not a goal of the proposal. It certainly does not make the problem of ownership verification worse.
 
-# Site-Declared Sets in Browsers
+This proposal addresses this issue by supporting both existing SSL EV and also introducing 
+[notaries](https://www.thenotariessociety.org.uk/pages/what-is-a-notary) to verify the legal entity that owns a 
+registerable domain. Use of notaries (not lawyers) has not previously been considered by the internet community to date.
 
-Browsers should maintain a static list of site-declared groups of domains which meet UA ([User Agent](https://www.w3.org/WAI/UA/work/wiki/Definition_of_User_Agent)) policy, and ship it in the browser as a reliably updateable component. This is analogous to the list of [domains owned by the same entity](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) used by Edge and Firefox to control cross-site tracking mitigations.
+The advantages of using notaries to establish legal ownership of domains include:
 
-The differences between this proposal and the use of the [Disconnect entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json) in Edge and Firefox are:
+-  The notary profession is long established, highly regulated, and predates the internet.
+-  Notaries are extensively used to verify identity for the purposes of forming contracts and will be familiar to member
+   organizations if not individual engineers.
+-  Notaries operate internationally.
+-  There are many notaries providing choice for participants thus avoiding centralization.
+-  Notaries are not tied to any single technology or existing implementation.
+-  Separation of purpose: The solution is not directly tied to SSL certificates alone reducing administrative 
+   complexity.
 
-*   **All sites** with use-cases that depend on cross-domain, same-party communication will be required to declare a set for the corresponding group of sites. As opposed to the Disconnect list, which only applies to sites [classified as a tracker](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/services.json).
-*   Site authors must submit their First-Party Set declarations for acceptance (see [UA Policy](#ua-policy) for proposed documented criteria).
-*   Sets will expire after a prescribed period of time, and be required to undergo renewal. This prevents sets from becoming stale, in case domain ownership changes.
-*   Each set is indicated by the owner site, and member sites. 
+This proposal requires the owner of a domain that has used a notary to verify ownership to publish the notarized 
+document at the well-known endpoint `/.well-known/notarized-ownership.json`. To ensure the greatest flexibility multiple
+notarized documents can be provided by the same wellknown endpoint. An example JSON response might appear as follows 
+when requested from the following URL `https://org-a.com/.well-known/notarized-ownership.json`.
 
     ```
-    { owner: "https://fps-owner.example", 
-      members: ["https://fps-member1.example",
-      "https://fps-member2.example"]}
-
+    {
+      notarized-documents: [
+        "https://notary-service.com/proofs/organization-a/certificate.html",
+        "https://notarizer.com/proofs/company-a.pdf",
+        "https://org-a.com/our-proof.html"
+      ]
+    }
     ```
 
-Technical consistency and freshness checks must be performed on the list:
+The notarized documents returned by the URLs provided will be available for inspection by the user via a user agent UI
+component similar to the existing method of inspecting SSL certificates.
 
-*   No domain can appear in more than one set.
-*   Expired sets must be removed.
+The use of URLs to provide the notarized documents enables flexibility. Those notarized documents that are hosted at 
+domains that are known to relate to notaries might be given enhanced credibility by the user agent. User agents might
+use machine learning to extract common identifiers or markers from notarized documents. However all these possibilities
+are predicated on the concept of using notaries to establish proof of legal entity ownership of a registerable domain 
+absent an EV SSL certificate.
 
-A different approach that does not involve consumption of a static list is discussed in the [Alternative designs section](#signed-assertions-and-set-discovery-instead-of-static-lists)
+Once a registerable domain has been validated it will become known as a "Validated Domain" (VD) for the purposes of 
+this proposal.
 
-# Acceptance Process
+Once legal ownership is established existing sanctions for violations of GDPR become possible and the user agent no 
+longer needs to be concerned with policing or restricting these decisions.
 
-This section proposes a possible model for a First-Party Set acceptance process that could be shared across all browsers. However, many aspects of the process and policy will need to be tuned based on feedback from the web ecosystem.
+# Defining Sets
 
-## Submission
+VDs that wish to form a Set must publish a JSON format response at the endpoint `/.well-known/gdpr-validated-sets.json`.
 
-Sites will need to submit their proposed group of domains to a public tracker (such as a dedicated GitHub repository, like that of the [Public Suffix List](https://github.com/publicsuffix/list/wiki/Guidelines), and [Disconnect’s entities list](https://github.com/disconnectme/disconnect-tracking-protection/issues?q=is%3Aissue+%22entity%22+)), along with information needed to satisfy the UA policy. Technical verification of the submitter’s control over the domains may also require a challenge to be served at a `.well-known` location on each of the domains in the set.
+The response JSON will contain an array of URLs for use policies in HTML form that the VD's owner adheres to. The 
+following example provides two policies that the serving VD adheres to.
 
-## UA Policy
+    ```
+    { 
+      use-policies: [
+        "https://github.io/set-policy-uk-retail-banking.html",
+        "https://fco.org.uk/set-policy-bank-advertising.html"
+      ]
+    }
+    ```
 
-For a set of guiding principles in defining UA policy, we can look to how the various browser proposals describe first parties (emphasis added):
+**Note:** The array of use policy URLs might also appear in HTTP headers, or HTML elements. These are not described in 
+the interest of brevity.
 
--   [A Potential Privacy Model for the Web (Chromium Privacy Sandbox)](https://github.com/michaelkleber/privacy-model/blob/master/README.md): "The notion of "First Party" may expand beyond eTLD+1, e.g. as proposed in First Party Sets. It is _reasonable for the browser to relax its identity-sharing controls_ within that expanded notion, provided that the resulting identity scope is _not too large_ and _can be understood by the user_."
--   [Edge Tracking Protection Preview](https://blogs.windows.com/msedgedev/2019/06/27/tracking-prevention-microsoft-edge-preview/): "Not all organizations do business on the internet using just one domain name. In order to help keep sites working smoothly, we group domains _owned and operated by the same organization_ together."
--   [Mozilla Anti-Tracking Policy](https://wiki.mozilla.org/Security/Anti_tracking_policy): "A first party is a resource or a set of resources on the web _operated by the same organization_, which is both _easily discoverable by the user_ and _with which the user intends to interact_."
--   [WebKit Tracking Prevention Policy](https://webkit.org/tracking-prevention-policy/): "A first party is a website that a user is intentionally and knowingly visiting, as displayed by the URL field of the browser, and the set of resources on the web _operated by the same organization_." and, under "Unintended Impact", "Single sign-on to multiple websites _controlled by the same organization_."
+The user agent must inspect the HTML returned from the URLs at the point of initial visit to the VD prior to processing
+the resultant HTML. If the user has not already accepted the use policy (either because it was fetched from the same URL
+or because the returned document was identical to one that has already been presented to the user) then the user agent
+will prompt the user to make a choice using the the HTML meta description as the prompt text and three equally prominent
+options of;
 
-In addition, the DNT specification [defines “party” as](https://www.w3.org/TR/tracking-dnt/#terminology.participants): “a natural person, a legal entity, or a set of legal entities that share _common owner(s), common controller(s)_, and a group identity that is _easily discoverable by a user_.”
+-  "Accept";
+-  "Just this domain"; or 
+-  "Get me out of here".
 
-We propose the following high level policy as an initial version for discussion, subject to change based on ecosystem feedback:
+The user agent must provide a link to enable the user to read the entire use policy HTML should they wish. The user 
+agent must retain a copy of the HTML and related resources that were returned along with the date and time that it was
+fetched to provide a record for the curious user of the precise use policies they were presented with.
 
--   Domains must have a common owner, and common controller.
--   Domains must share a common group identity that is easily observable by users.
--   Domains must share a common privacy policy that is surfaced to the user via [UI treatment](#ui-treatment).
+Where multiple use policies are present they will be prompted for within the same UI in the order they appear in the 
+use-policies array. Conflicts within the wording of policies are out of scope.
 
-We expect the UA policy to evolve over time as use cases and abuse scenarios come up. For instance, otherwise unrelated sites forming a consortium in order to expand the scope of their site identities would be considered abuse.
+Where the user responds with "Accept" the use policy will apply for any VDs that advertises adherence to that policy.
 
-## Verification Entity
+Where the user responses "Just this domain" the policy will apply only to the VD and use policy in question. Other VDs 
+wishing to use the same policy will be prompted individually unless the user subsequently decides to "Accept" for all 
+VDs.
 
-An independent entity must verify that submissions conform to the documented UA policy before acceptance. The entity must also assign an expiration date, following which sets are removed from the browser-baked static lists.
+Where the user responds with "Get me out of here" the user agent will either close the tab if the tab is newly created 
+or return to the previous page. This behavior is intentional to enable the user to return to the VD should they wish and
+choose a different answer. 
 
-The possibility of purely technical enforcement without a verification entity is discussed in the [Alternative Designs section](#self-attestation-and-technical-enforcement).
+**Note:** There is no option to reject the use policy as the policy is required by the VD and the associated Set to
+deliver the service the user is seeking to receive. This is identical to the now popular method of requiring people to
+provide an email address when accessing a website and accepting the terms and conditions of service. If the user is not
+prepared to provide their email address or sign in then they do not get to access the service.
 
-## Administrative controls
+The user agent must not interfere with the prompt text, add any additional text, or other UI components. The UI must be
+entirely neutral.
 
-For enterprise usage, browsers typically offer administrators options to control web platform behavior. UA policy 
-is unlikely to cover private domains, so browsers might expose administrative options for locally-defined 
-first-party sets.
+The user agent must not override the users decision or make the decision on the user's behalf.
+
+The user agent must allow the user to inspect use policies they have responded to and offer the option to change
+their decision as well as read the related use policy text both at the time of response and the current version if
+different.
+
+The user agent should respect the cache response returned from the well-known endpoints for use policies. Once the cache
+expires the policy should be revalidated to ensure that it has not changed. This is identical to caching of any HTTP 
+response. If the response has changed the user agent must inform the user and seek their decision concerning continued
+use. The frequency of periodic inspection should be the lesser of the cache expiry header or 7 days to limit the 
+possibility of the user accepting a policy that subsequently changes.
+
+The well-known endpoint may optionally include the other VDs that form the Set. The following example shows how an 
+organization like Disney might limit the entities that can participate in their sole data controller Set.
+
+    ```
+    { 
+      use-policies: [
+        "https://disney.com/our-policy.html"
+      ],
+      allowed-validated-domains: [
+        "disney.com",
+        "espn.com",
+        "hulu.com"
+      ]
+    }
+    ```
+
+**Note:** The reason allowed VDs are optional is to support data sharing policies based on purpose rather than specific 
+parties therefore reducing complexity for developers. For example; a single binary flag, or a pseudo anonymous
+identifier, that are allowed for under GDPR and the use policy.
+
+# The Problem of Consent
+
+User consent is [problematic](https://github.com/patcg/proposals/issues/5). It is argued users do not know the details
+they are consenting to and therefore can't be considered to have provided meaningful consent concerning something they
+don't understand. However it is also argued consent captured in this manner is the basis on which all services are 
+provided to society today. Both are reasonable arguments. 
+
+However it is unreasonable to limit a specific proposal by requiring the proposal to address the long standing problem 
+of consent, to differentiate between the trustworthiness of legal entities requesting consent, or ignore consents role
+in the delivery of lawful services.
+
+Rather than restrict this proposal to either operate entirely on a legitimate interest basis under GDPR which is 
+increasingly unjustifiable in practice and in any case restrictive as to the data sharing that can be accommodated, or 
+use defaults for data processing that might limit competition by favouring established brands or highly integrated 
+service providers, this proposal provides mechanisms to identify the legal entities involved in data processing, and
+sufficient information to bring them to justice should a violation subsequently occur.
+
+Trust is either established via a highly defined process for Extended Validation of SSL certificates, or by a centuries
+old profession that have previously not held a role in relation to the web.
+
+Existing laws and guidance will limit the information that is shared using the mechanisms described is this proposal. 
+For example; GDPR already covers sensitive category data and therefore it does not need to be considered here.
+
+Neither this proposal, or user agents, can limit a decision concerning what is or is not shared by VDs that users have
+consented to. The role of user agents must be to assist users in accessing justice should they be harmed having taken
+reasonable steps to ensure they were informed about the choices they made.
+ 
+# Evaluating Sets
+
+When determining the validity of a Set for write and read operations the user agent will apply the following binary
+rules that must all evaluate to true.
+
+## Writing
+
+-  The request to write relates to the Set.
+-  The domain initiating the request is a VD.
+-  The associated use policies have been accepted by the user for the VD (either for the specific VD or globally for the
+   use policy).
+
+## Reading
+
+-  Data has previously been written for the Set.
+-  The request to read relates to the same Set as the existing data.
+-  The domain initiating the request is a VD.
+-  The associated use policies have been accepted by the user for both the original writing VD and the reading VD.
 
 # UI Treatment
 
-In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
-domain belongs to, browsers may choose to present UI with information about the First-Party Set owner 
-and the members list. One potential location in Chrome is the [Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - this 
-provides requisite information to discerning users, while avoiding the use of valuable screen 
-real-estate or presenting confusing permission prompts. However, browsers are free to choose different
-presentation based on their UI patterns, or adjust as informed by user research.
+In order to provide transparency to users regarding the Sets that a web page’s top-level 
+domain belongs to, browsers may choose to present a UI with information about the Set participants. One potential
+location in Chrome is the
+[Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - 
+this provides requisite information to discerning users, while avoiding the use of valuable screen real-estate or 
+presenting confusing permission prompts. However, browsers are free to choose different presentation based on their UI
+patterns, or adjust as informed by user research.
 
-Note that First-Party Sets also gives browsers the opportunity to group per-site controls (such as 
-those at `chrome://settings/content/all`) by the “first-party” boundary instead of eTLD+1, which is 
-not always the correct site boundary.
+Note that Sets also gives browsers the opportunity to group per-site controls (such as those at 
+`chrome://settings/content/all`) by the common use policy boundary instead of eTLD+1, which is not always the correct 
+site boundary.
 
 # Domain Schemes
 
-In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
+In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must
+"normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set.
+I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
 
-User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
+User agents may reject static lists that include non-HTTPS domains.
 
-# Clearing Site Data on Set Transitions
-Sites can change which First-Party Set they are a member of. We need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership.
+# Privacy Considerations
 
-In order to achieve this, site data needs to be cleared on certain transitions. The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/clear-site-data/#grammardef-), which includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
+## Probabilistic Identifiers (aka Fingerprinting)
 
- * A user identifier could be stored in any of these storage types.
- * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
+In order to determine if the Set is available the VD must already be part of the Set. A domain or VD that is not part of 
+the Set will be unable to inspect the Set, know of it's existence, or learn anything about it. Therefore there is no 
+increased risk associated with probabilistic identification. 
 
-Since member sites can only add/remove themselves to/from FPSs with the consent from the owner, we look at first-party set changes as a site changing its FPS owner.
+## Data Protected Authorities
 
-If a site’s owner changed:
-
-1. If this site had no FPS owner, the site's data won't be cleared.
-    *   Pro: Avoids adoption pain when a site joins a FPS.
-    *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
-2. Otherwise, clear site data of this site.
-
-Potential modification, which adds implementation complexity:
-
-3. If this site's new owner is a site that previously had the same FPS owner as the first site, the site's data won't be cleared. 
-    *   Pro: Provides graceful transitions for examples (f) and (g).
-    *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
-
-## Examples
-
-![](./image/FPS_clear_site_data-representation.drawio.svg)
-
----
-
-![](./image/FPS_clear_site_data-not_clear.drawio.svg)
-
-a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
-
-b. Site C joins the existing FPS as a member site where Site A is the owner. Site data will not be cleared.
-
----
-
-![](./image/FPS_clear_site_data-clear.drawio.svg)
-
-c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
-
-d. Given an FPS with owner Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
-
-e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, the browser will clear site data for Site X and Site Y.
-
----
-
-With the potential modification allowing sites to keep their data if the new set owner was a previous member:
-
-![](./image/FPS_clear_site_data-potential_modification.drawio.svg)
-
-f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
-
-g. Given an FPS with owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, the browser will clear site data for Site A.
-
-h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the owner, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
+The privacy risks associated with data sharing across VDs is mitigated via the requirement for common use policies to 
+adhere to GDPR. Where a common use policy does not meet this threshold the relevant controller(s) can be contacted and 
+ultimately sanctioned under existing laws. This approach does require the reader to accept that laws and data protection
+authorities have a legitimate role to play in the solution.
 
 # Alternative designs
+
+## First Party Sets
+
+First Party Sets (FPS) is a proposal aimed at increasing notice to users, but it does not adhere to commonly accepted
+data controller and processor laws, is overly complex, has a high administrative overhead, and favours large entities 
+or organizations that can circumvent the limitations via widely used and deployed sign in services.
+
+FPS focuses only on notice of ownership, but does not inform the user about the data sharing or processing that is going
+to take place, nor provide users access to evidence required to seek justice if their data rights are abused, and as 
+such is not focused on harms that might occur to users.
+
+However FPS does clearly demonstrate the limitations of privacy boundaries defined by domain names which this proposal
+expands in a competitively neutral manner to incorporate joint as well as sole controllers.
 
 ## Signed Assertions and set discovery instead of static lists
 
@@ -285,18 +442,7 @@ Static lists are easy to reason about and easy for others to inspect. At the sam
 
 The [Signed Assertions based design](signed_assertions.md) proposes an alternative solution that involves the browser learning the composition of sets directly from the websites that the user visits. To prevent privacy risks from personalized sets and ensure policy conformance, they are still verified by an independent entity through a digital signature.
 
-This design is significantly more complex than the consumption of a static list, especially when implementing [discovery and fetching of sets](signed_assertions.md#discovering-first-party-sets) in a privacy-preserving manner. As such, we prefer to start with the simpler static list approach, leaving the possibility of introducing a more complex alternative in the future.
-
-## Self-attestation and technical enforcement
-
-Instead of having a verification entity check conformance to policy; it may be possible to rely on a combination of:
-
--   Self-attestation of UA Policy conformance by submitter.
--   Technical consistency checks such as verifying control over domains, and ensuring that no domain appears in more than one set.
--   Transparency logs documenting all acceptances and deletions to enable accountability and auditability.
--   Mechanism/process for the general public to report potential violations of UA Policy.
-
-However, at this time we do not believe it is possible to enforce against the formation of consortiums of unrelated entities, and thus will require some form of verification entity to guard against that.
+This design is significantly more complex than the consumption of a static list, especially when implementing [discovery and fetching of sets](signed_assertions.md#discovering-first-party-sets) in a privacy-preserving manner. 
 
 ## Origins instead of registrable domains
 
