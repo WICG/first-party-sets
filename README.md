@@ -365,6 +365,8 @@ This consideration will always involve a necessary trade-off between gains like 
 # Acknowledgements
 
  This proposal includes significant contributions from previous co-editor, [David Benjamin](https://github.com/davidben).
+
+ We are also grateful for contributions from [Chris Fredrickson](https://github.com/cfredric) and [Shuran Huang](https://github.com/shuranhuang).
  
  # Appendix
  
