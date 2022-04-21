@@ -287,6 +287,31 @@ The [Signed Assertions based design](signed_assertions.md) proposes an alternati
 
 This design is significantly more complex than the consumption of a static list, especially when implementing [discovery and fetching of sets](signed_assertions.md#discovering-first-party-sets) in a privacy-preserving manner. As such, we prefer to start with the simpler static list approach, leaving the possibility of introducing a more complex alternative in the future.
 
+## Using EV Certificate information for dynamic verification of sets
+
+[Extended Validation (EV)
+Certificates](https://en.wikipedia.org/wiki/Extended_Validation_Certificate), in
+addition to backing encrypted exchange of information on the web, require
+verification of the legal entity associated with the website a certificate is
+issued for and encode information about this legal entity in the certificate
+itself. It might be possible to match this information for sites presenting EV
+certificates (or use the subjectAltName on a single EV certificate) to build
+First-Party Sets. This could be used in place of [Signed Assertions](signed_assertions.md)
+as part of a dynamic set discovery mechanism.
+
+However, such an automatic mechanism would result in a very tight coupling of
+identity and feature exposure through First-Party Sets to the existing certificate
+infrastructure.
+
+It's likely that this would negatively impact the deployment and use of
+encryption on the web, for example by forcing sites to obtain EV certificates
+as the only way to ensure continued functionality. A revocation of a certificate
+that is used for FPS would have grave implications (such as deletion of all local
+data through the Clear Site Data mechanism) and thus complicate the revocation process.
+
+See [Issue 12](https://github.com/privacycg/first-party-sets/issues/12) for an extended
+discussion.
+
 ## Self-attestation and technical enforcement
 
 Instead of having a verification entity check conformance to policy; it may be possible to rely on a combination of:
