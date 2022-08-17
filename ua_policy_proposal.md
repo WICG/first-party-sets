@@ -14,6 +14,7 @@ We propose that First-Party Sets will utilize these three principles as the corn
 +   Domains must have a common owner, and common controller.
 +   Domains must share a common group identity that is easily discoverable by users.
 +   Domains must share a common privacy policy that is surfaced to the user via UI treatment (e.g. on the website footer).
++   Domains must facilitate reasonable verification measures by user agents and independent enforcement entities.
 
 Alternatives Considered, and Discarded:
 
@@ -35,7 +36,8 @@ We recommend that browsers supporting First-Party Sets work together to:
 +   Maintain accuracy in self declaration of common ownership and controllership of the domains listed in a First-Party Set formation request. 
     +   This means that changes in ownership/controllership must be followed up with a request for changes in the site's First-Party Set within _XX [to be determined]_ days.
 +   Make domain affiliations easily discoverable to the user. As a best practice, site authors should strive to make domain affiliations easily observable to the user, such as through common branding.
-+   Use First-Party Sets as a mechanism to enable user journeys, and improved user experience across related domains. 
++   Use First-Party Sets as a mechanism to enable user journeys, and improved user experience across related domains.
++   Use site configuration and policies that allow for reasonable verification and enforcement. For example, terms of service must allow independent enforcement entities to make test or spamtrap accounts if needed to verify a common privacy policy.
 +   Where relevant, site authors may choose to form multiple, disjoint First-Party Sets. In other words, it is not required that all domains owned and controlled by an organization must be part of a single First-Party Set. We recommend that site authors strive to create sets consistent with user understanding and expectations.
 
 # Responsibilities of Independent Enforcement Entity
@@ -64,7 +66,7 @@ For each element of the First Party Set policy, we propose an enforcement method
 <tr>
 <td>Common Privacy Policy </td>
 <td>Technical checks<sup>3</sup> </td>
-<td>Performs technical check to ensure Privacy Policy is the same across all sites in the same set </td>
+<td>Performs technical check to ensure Privacy Policy is the same across all sites in the same set<sup>4</sup></td>
 </tr>
 </tbody>
 </table>
@@ -79,6 +81,8 @@ For each element of the First Party Set policy, we propose an enforcement method
 +   sites within the set prominently disclose to users the parent company owner/operator (via a notice one click away from the home page, pop-up, or other method)
 
 <sup>3</sup> Site authors must ensure that a hyperlink to the common group privacy policy is placed on the default page of each domain listed on their proposed set; such that an automated technical check can be used to verify its presence.
+
+<sup>4</sup>When an independent enforcement entity discovers that one member of a First-Party Set is using user data in a manner inconsistent with the common Privacy Policy, it may consider the set as invalid, without waiting for further verification steps to discover whether or not other members of the set are also violating their own policy in the same way.
 
 Additional roles of enforcement entity: 
 
