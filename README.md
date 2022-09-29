@@ -11,6 +11,7 @@ of the [Privacy Community Group](https://privacycg.github.io/).
 - [Kaustubha Govind](https://github.com/krgovind), Google
 - [Harneet Sidhana](https://github.com/HarneetSidhana), Microsoft 
 - [Johann Hofmann](https://github.com/johannhof), Google
+- [Damian Lion Maring](https://github.com/DamianLion), SAP
 
 ## Participate
 - https://github.com/privacycg/first-party-sets/issues
@@ -466,6 +467,17 @@ This origin-defined approach has additional complications to resolve:
 
 These complexities are likely solvable while keeping most of this design, should browsers believe
 this is worthwhile.
+
+## Extension of the existing content security policy header
+
+Mesures already implimented with the [content-security-policy](https://w3c.github.io/webappsec-csp/) allow applications to precisely define which resources shall / can be loaded or even which [describe capabilties of the script executed](https://w3c.github.io/webappsec-csp/#grammardef-unsafe-eval) on said webpages. With the csp directive of [`frame-src`](https://w3c.github.io/webappsec-csp/#directive-frame-src) we define which resources shall be allowed to be embedded as an iFrame by the hosting application. The [`frame-ancestors`](https://w3c.github.io/webappsec-csp/#directive-frame-ancestors) directive on the other hand defines which web applications are allowed to frame the hosted website
+
+Together both directives already form a bond and can set a certain trust. With the extension of of the csp a special parameter like `trusted-first-party:` or `owner` and `member` parameters could be introduced. These could either act standalone or as suffix / prefix parameters to the existing source-list. 
+
+Embedding scenarious would benefits as they could counter-act the removal of third-party-cookie support with minimal effort. The existing csp format allows webistes to define certain wildcards in order to have flexibility with their first-party-set
+
+However this alternative approach is mostly focused on iFraming scenarios. 
+
 
 # Security and Privacy Considerations
 
