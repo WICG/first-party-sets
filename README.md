@@ -339,11 +339,11 @@ Potential modification, which adds implementation complexity:
 
 ## Examples
 
-![](./image/FPS_clear_site_data-representation.drawio.svg)
+![](./images/FPS_clear_site_data-representation.drawio.svg)
 
 ---
 
-![](./image/FPS_clear_site_data-not_clear.drawio.svg)
+![](./images/FPS_clear_site_data-not_clear.drawio.svg)
 
 a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
 
@@ -351,7 +351,7 @@ b. Site C joins the existing FPS as a member site where Site A is the owner. Sit
 
 ---
 
-![](./image/FPS_clear_site_data-clear.drawio.svg)
+![](./images/FPS_clear_site_data-clear.drawio.svg)
 
 c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
 
@@ -363,7 +363,7 @@ e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 
 
 With the potential modification allowing sites to keep their data if the new set owner was a previous member:
 
-![](./image/FPS_clear_site_data-potential_modification.drawio.svg)
+![](./images/FPS_clear_site_data-potential_modification.drawio.svg)
 
 f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
 
