@@ -3,9 +3,6 @@
 This document proposes a new web platform mechanism to declare a collection of related domains as
 being in a First-Party Set.
 
-A [Work Item](https://privacycg.github.io/charter.html#work-items)
-of the [Privacy Community Group](https://privacycg.github.io/).
-
 ## Editors:
 
 - [Kaustubha Govind](https://github.com/krgovind), Google
