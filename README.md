@@ -120,13 +120,73 @@ This proposal anchors on the use cases described above to develop a framework fo
 
 # Applications
 
-In support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
+Various applications of First-Party Sets have been suggested by different parties. The list below is an effort to compile suggested applications. 
 
--   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](#sameparty-cookies-and-first-party-sets).
--   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
--   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
--   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
--   Top and/or second level key for cache partitioning, potentially with site opt-in.
+## Initial Proposed Applications
+
+**Bounce/navigation-based tracking protections**\
+_Interest from: [Safari](https://github.com/privacycg/first-party-sets/issues/53#issuecomment-902396090), Chrome, Edge_
+
+To allow for first-party cross-site single-sign-on flows to continue working, where [navigation-based tracking mitigations](https://privacycg.github.io/nav-tracking-mitigations/) are applied by browsers. Sign-on typically involves exchange of authentication tokens or other user identifiers via URL parameters on top-level navigation and redirects; which may get classified as navigational tracking.
+
+**Relaxing full third-party cookie blocking for cookies with the SameParty attribute**\
+_Interest from: Chrome, Edge_
+
+To help websites maintain various uses of cross-site cookies within the same organization such as for SSO, consent management, sandboxed domains, etc. 
+Cookies need to be labeled with the [SameParty attribute](#sameparty-cookies-and-first-party-sets).
+
+Prior art: Firefox and Edge use the [entity list](https://github.com/mozilla-services/shavar-prod-lists#entity-list), Safari’s [Quirks.cpp](https://webkit-search.igalia.com/webkit/rev/0be50a7e5c29546e4c5f27ee6b808f9aaadb9f80/Source/WebCore/page/Quirks.cpp#1154) and [affiliated domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12) proposal.
+
+**Cookie partitioning key**\
+_Interest from: Chrome, Edge_
+
+To allow third-party software-as-a-service vendors \([reference use-case](https://github.com/privacycg/first-party-sets/issues/33)\) to continue supporting websites whose user flows span multiple sites/domains via cookies. Third-party sites must opt-in via the Partitioned attribute to partition the cookie by the [top-level website’s FPS](https://github.com/WICG/CHIPS#chips-and-first-party-sets).
+
+## Other potential applications under discussion
+**Storage partitioning key**\
+_Under consideration by: [Chrome](https://github.com/privacycg/first-party-sets/issues/37), Edge_
+
+To allow third-party software-as-a-service vendors to continue supporting websites whose user flows span multiple sites/domains via storage \(IndexedDB, localStorage, sessionStorage, Service Workers, etc.\); [storage partitioning](https://github.com/wanderview/quota-storage-partitioning/blob/main/explainer.md) could use the top-level website’s FPS \(instead of top-level site\) as a partition key. However, there are security implications \(TODO: need to write up security considerations\) that need to be accounted for before making such a change.
+
+**Cache partitioning key**\
+_Under consideration by: [Chrome, Edge](https://github.com/privacycg/first-party-sets/issues/35)_
+
+To mitigate performance issues from full cache partitioning, FPS could enable a mechanism for sites to opt into sharing a cache partition within the same set. This would have to be opt-in to ensure participating sites are protecting against side-channel cache attacks from compromised sites within the set. \(TODO: need to write up security considerations\).
+
+**Relaxing cross-site prefetch restrictions within the same FPS**\
+_Under consideration by: [Chrome](https://github.com/privacycg/first-party-sets/issues/35#issuecomment-797713194), Edge_
+
+For privacy reasons, prefetches are limited to same-origin or same-site. To help performance, browsers could decide to expand this limitation to same-party \(this has no privacy implications for browsers that decide to relax 3p cookies based on FPS but may be a worthwhile trade-off for others, as well\).
+
+**Relaxing PWA origin-scoping to FPS**\
+_Under consideration by: [Edge](https://github.com/privacycg/first-party-sets/issues/46#issuecomment-892251777)_
+
+Progressive Web Apps \(PWAs\) are currently scoped to origins; therefore, cross-origin navigations may result in warnings, or open in a separate environment such as a [Custom Tab](https://developer.chrome.com/docs/android/custom-tabs/). PWA developers would like to scope their apps to multiple origins, using [scope_extensions](https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md). Since this mechanism is dynamically asserted, it may be an improvement for the browser to check that where the _scope_extensions_ list origins that are cross-site; all sites belong to the same FPS. 
+
+**Use of FPS metadata in Storage Access API prompts**\
+_Interest from: [Safari](https://github.com/privacycg/first-party-sets/issues/28)_
+
+Some websites host authentication services on a separate site; and may require frequent cross-site storage access on resources from that site. Allowing websites that span multiple sites to designate specific sites in the FPS as a single-sign-on service could be useful to surface to users in Storage Access API prompts, and potentially extend the duration/scope of the storage access grant; thus improving user experience.
+
+**Use of FPS to restrict or relax requirements for SAA**\
+_Interest from: [Safari](https://github.com/privacycg/storage-access/issues/83#issuecomment-989205411)_
+
+
+**Federated Credentials Management (FedCM) API**\
+_Interest from: Chrome_
+
+Issuing FedCM [directed identifiers](https://fedidcg.github.io/FedCM/#mitigation-directed-identifiers) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
+
+**Privacy Budget**\
+_Interest from: Chrome_
+
+Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
+
+**Same-party token for other protocols such as Cross-Origin-Resource-Policy**\
+_See [issue 5](https://github.com/privacycg/first-party-sets/issues/5)_
+
+Expanding access by adding a same-party token might help sites adopt security-critical headers such as CORP, which might not be viable for them if they were restricted to same-site or same-origin only.
+
 
 # Proposal
 
