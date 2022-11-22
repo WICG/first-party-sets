@@ -6,7 +6,6 @@ being in a First-Party Set.
 ## Editors:
 
 - [Kaustubha Govind](https://github.com/krgovind), Google
-- [Harneet Sidhana](https://github.com/HarneetSidhana), Microsoft 
 - [Johann Hofmann](https://github.com/johannhof), Google
 
 ## Participate
@@ -469,5 +468,5 @@ This consideration will always involve a necessary trade-off between gains like 
 
 -   Other members of the W3C Privacy Community Group had previously suggested the use of SAA, or an equivalent API; in place of SameParty cookies. Thanks to @jdcauley ([1](https://github.com/WICG/first-party-sets/issues/14#issuecomment-785144990)), @arthuredelstein ([2](https://github.com/WICG/first-party-sets/issues/42)), and @johnwilander ([3](https://lists.w3.org/Archives/Public/public-privacycg/2022Jun/0001.html)).
 -   Browser vendors, web developers, and members of the web community provided valuable feedback during this proposal's incubation in the W3C Privacy Community Group.
--   This proposal includes significant contributions from previous co-editor, David Benjamin.
+-   This proposal includes significant contributions from previous co-editors, David Benjamin, and Harneet Sidhana.
 -   We are also grateful for contributions from Chris Fredrickson and Shuran Huang.
