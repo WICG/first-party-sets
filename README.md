@@ -210,7 +210,7 @@ Requires common ownership.</td>
   </tbody>
 </table>
 
-In adition to the subsets proposed above, we propose a mechanism by which a set can declare ccTLD (country code top-level domain) variants of domains in the same set.
+In addition to the subsets proposed above, we propose a mechanism by which a set can declare ccTLD (country code top-level domain) variants of domains in the same set.
 
 <table>
   <thead>
