@@ -314,10 +314,12 @@ User agents need not perform this normalization on the domains in their static l
 # Clearing Site Data on Set Transitions
 Sites can change which First-Party Set they are a member of, for example through acquisition or divestiture. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
-In order to achieve this, site data needs to be cleared on certain transitions. The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/clear-site-data/#grammardef-), which includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
+In order to achieve this, the browser would need to clear site data of all domains that had certain set transitions, including data that is partitioned. The data type includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
 
  * A user identifier could be stored in any of these storage types.
  * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
+
+When FPS membership changes for a certain site, we believe it’s important and safe to clear its unpartitioned data and all third-party resources partitioned with this site being the top-level. Otherwise this site could store its data in a partition of another site that is not part of the FPS and reclaim it after clearing. We are still discussing whether to clear all this site’s data partitioned by other top-levels [#87](https://github.com/privacycg/first-party-sets/issues/87).
 
 Since member sites can only add/remove themselves to/from FPSs with the consent from the owner, we look at first-party set changes as a site changing its FPS owner.
 
