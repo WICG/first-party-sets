@@ -93,8 +93,6 @@ On the modern web, sites span multiple domains and many sites are owned & operat
     -   uber.com, ubereats.com
 -   Country-specific domains to enable localization 
     -   google.co.in, google.co.uk
--   Common eTLD
-    -   For example, gov.uk, and service.gov.uk are on the Public Suffix List and have UK government agencies/services as subdomains which get treated as separate registrable domains by browsers; but share services such as consent management that rely on access to cross-domain cookies. 
 -   Sandbox domains that users never directly interact with, but exist to isolate user-uploaded content for security reasons. 
     -   google.com, googleusercontent.com
     -   github.com, githubusercontent.com
@@ -115,15 +113,14 @@ This proposal anchors on the use cases described above to develop a framework fo
 -   Support for embedded content from across owned & operated properties (e.g. videos/documents/resources restricted to the user signed in on the top-level site)
 -   Separation of user-uploaded content from other site content for security reasons, while allowing the sandboxed domain access to authentication (and other) cookies. For example, Google sequesters such content on googleusercontent.com, GitHub on githubusercontent.com, CodePen [on](https://blog.codepen.io/2019/10/03/changed-domains-for-iframe-previews/) cdpn.io. Hosting untrusted, compromised content on the same domain where a user is authenticated may result in attackers’ potentially capturing authentication cookies, or login credentials (in case of password managers that scope credentials to domains); and cause harm to users.
     -   Alternative solution: Sandboxed domains can also consider using [partitioned cookies](https://github.com/WICG/CHIPS), if their user flows do not involve the sandboxed domain appearing in top-level contexts.
--   Shared services, such as consent management across domains with a common eTLD suffix; such as gov.uk. Repeatedly asking for cookie consent on individual gov.uk sites may be confusing to users, erode trust in the website’s functioning, and cause fatigue; because users think of all subdomains as being part of one gov.uk website.
 -   Analytics/measurement of user journeys across O&O properties to improve quality of services.
 
 # Applications
 
-In support of the various browser privacy models, first-party sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
+In support of the various browser privacy models, First-Party Sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
 
 -   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](#sameparty-cookies-and-first-party-sets).
--   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same first-party set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
+-   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same First-Party Set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
 -   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
 -   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
 -   Top and/or second level key for cache partitioning, potentially with site opt-in.
@@ -136,7 +133,7 @@ At a high level, a First-Party Set is a collection of domains, for which there i
 
 Throughout the evolution of this proposal, we considered how to define a single boundary that could determine set inclusion. However, formulating a definition or set of criteria that can both acknowledge the complex multi-domain dependence of websites and preserve a limited privacy boundary proved to be challenging. Instead of using a single definition or set of criteria to apply to a range of [use cases](#use-cases), we propose granular criteria and handling to be applied by use case by specifying "subsets."
 
-At time of submission, "set primaries" and "set members" will be declared. Set members could include a range of different domain types, matching up to the different types of use cases (or *subsets*) like ccTLDs or common eTLDs; domains that users never directly interact with, like service or sandbox domains; and domains where users may benefit from a seamless session, like brand or app domains.
+At time of submission, "set primaries" and "set members" will be declared. Set members could include a range of different domain types, matching up to the different types of use cases (or *subsets*) such as domains that users never directly interact with, like service or sandbox domains; and domains where users may benefit from a seamless session, like brand or app domains.
 
 We propose enumerating the range of applicable subsets within a set (beginning with subsets that correlate to the [use cases described above](#use-cases)), requiring that a member domain must meet the definition of a single subset to be part of the set. For example, consider the following table as an example First-Party Sets schema:
 
@@ -154,32 +151,6 @@ We propose enumerating the range of applicable subsets within a set (beginning w
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <td><br>
-ccTLD (country code Top Level Domain)</td>
-      <td><br>
-Reserved for variations for a particular country or a geographical area. <br>
-<br>
-<br>
-<em>Requires common ownership.</em></td>
-      <td><br>
-exampleA.co.uk<br>
-<br>
-exampleA.ca</td>
-    </tr>
-    <tr>
-      <td><br>
-common eTLD (effective Top Level Domain)</td>
-      <td><br>
-Reserved for domains that share a common eTLD as the set primary. These are not <a href="https://www.iana.org/domains/root/db">IANA-managed TLDs</a>, but domains added to the <a href="https://publicsuffix.org/">PSL</a> for improved security isolation.<br>
-<br>
-<br>
-<em>Requires common ownership.</em></td>
-      <td><br>
-exampleA.gov.uk<br>
-<br>
-exampleB.gov.uk</td>
-    </tr>
     <tr>
       <td><br>
 service</td>
@@ -223,20 +194,6 @@ While we think this subset framework has the clear benefit of furthering transpa
   </thead>
   <tbody>
     <tr>
-      <td>ccTLD (country code Top Level Domain)</td>
-      <td>Reserved for variations for a particular country or a geographical area. <br>
-<br>
-Requires common ownership.</td>
-      <td>No limit on domains, auto-grant access</td>
-    </tr>
-    <tr>
-      <td>common eTLD (effective Top Level Domain)</td>
-      <td>Reserved for domains that share a common eTLD as the set primary. These are not <a href="https://www.iana.org/domains/root/db">IANA-managed TLDs</a>, but domains added to the <a href="https://publicsuffix.org/">PSL</a> for improved security isolation.<br>
-<br>
-Requires common ownership.</td>
-      <td>No limit on domains, auto-grant access</td>
-    </tr>
-    <tr>
       <td>service</td>
       <td>Reserved for utility or sandbox domains.<br>
 <br>
@@ -253,6 +210,27 @@ Requires common ownership.</td>
   </tbody>
 </table>
 
+In addition to the subsets proposed above, we propose a mechanism by which a set can declare ccTLD (country code top-level domain) variants of domains in the same set.
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Definition</strong></th>
+      <th><strong>Example</strong></th>
+      <th><strong>Example browser handling policy</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Reserved for variations for a particular country or a geographical area.<br><br>Requires common ownership with the domain it is the variant of.</td>
+      <td>exampleA.co.uk<br><br>exampleA.ca</td>
+      <td>No limit on number of ccTLDs.<br><br>Inherits browser handling policy of the equivalent domain.</td>
+    </tr>
+  </tbody>
+</table>
+
+For example, `exampleA.co.uk` could be considered a ccTLD variant of `exampleA.com`. If `exampleB.com` and `exampleC.com` are listed in the associated subset, the inclusion of `exampleB.co.uk` and `exampleC.co.uk` as ccTLD variants (of `exampleB.com` and `exampleC.com`, respectively) would *not* count against the limit on the number of associated domains, and would be allowed.
+
 ### Abuse mitigation measures
 
 We consider using a public submission process (like a GitHub repository) to be a valuable approach because it facilitates our goal to keep all set submissions public and submitters accountable to users, civil society, and the broader web ecosystem. For example, a mechanism to report potentially invalid sets may be provisioned. We expect public accountability to be a significant deterrent for intentionally miscategorized subsets.
@@ -265,9 +243,7 @@ The following technical checks also help to mitigate abuse:
 
 Additionally, there are other enforcement strategies we could consider to further mitigate abuse. If there is a report regarding a domain specified under the "service" subset, potential reactive enforcement measures could be taken to validate that the domain in question is indeed a "service" subset.
 
-For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of three domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion
-
- of the relationship between domains.
+For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of three domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion of the relationship between domains.
 
 ## Leveraging the Storage Access API
 
@@ -277,25 +253,23 @@ To facilitate the browser's ability to handle each subset differently, we are pr
 
 We'd like to collaborate with the community in evolving the Storage Access API to improve developer and user experience and help the SAA better support the use cases that FPS is intended to solve. One way to do that is through extending the API surface in a way that makes it easier for developers to use the SAA without integrating iframes:
 
-### Extending the Storage Access API
+### Providing capabilities beyond the Storage Access API
 
-SAA currently requires that the API: (a) be invoked from an iframe embedding the origin requesting cross-site cookies access, and that (b) the iframe obtains user activation before making such a request. We anticipate that the majority of site compatibility issues (specifically, those that FPS intends to address) involve instances where user interaction within an iframe is difficult to retrofit, e.g. because of the usage of images or script tags requiring cookies. Additionally, since cross-site subresources may be loaded synchronously by the top-level site, it may be difficult for the subresources to anticipate when asynchronous cookie access via SAA is granted. To address this difficulty, we [propose an extension to the SAA](https://github.com/mreichhoff/requestStorageAccessForSite) that we hope will make it easier for developers to adopt this change.
+SAA currently requires that the API: (a) be invoked from an iframe embedding the origin requesting cross-site cookies access, and that (b) the iframe obtains user activation before making such a request. We anticipate that the majority of site compatibility issues (specifically, those that FPS intends to address) involve instances where user interaction within an iframe is difficult to retrofit, e.g. because of the usage of images or script tags requiring cookies. Additionally, since cross-site subresources may be loaded synchronously by the top-level site, it may be difficult for the subresources to anticipate when asynchronous cookie access via SAA is granted. To address this difficulty, we [propose a new API](https://github.com/mreichhoff/requestStorageAccessForSite) that we hope will make it easier for developers to adopt this change.
 
 Note: Both Firefox and Safari have run into these issues before and have solved them through the application of an internal-only "requestStorageAccessForOrigin" API ([4](https://bugzilla.mozilla.org/show_bug.cgi?id=1724376), [5](https://github.com/WebKit/WebKit/commit/e0690e2f6c7e51bd73b66e038b5d4d86a6f30909#diff-1d194b67d50610776c206cb5faa8f056cf1063dd9743c5a43cab834d43e5434cR253)), that is applied on a case-by-case basis by custom browser scripts (Safari: [6](https://github.com/WebKit/WebKit/blob/a39a03d621e441f3b7ca3a814d1bc0e2b8dd72be/Source/WebCore/page/Quirks.cpp#L1065), [7](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/Quirks.cpp#L1217) Firefox: [8](https://phabricator.services.mozilla.com/D129185), [9](https://phabricator.services.mozilla.com/D124493), [10](https://phabricator.services.mozilla.com/D131643)).
 
-As we continue to flesh out this proposal, we invite feedback from browser vendors, web developers, and members of the web community. We will continue engagement through issues in this repo and through discussions in [WICG](https://www.w3.org/community/wicg/).
+As we continue to flesh out the First-Party Sets proposal, we invite feedback from browser vendors, web developers, and members of the web community. We will continue engagement through issues in this repo and through discussions in [WICG](https://www.w3.org/community/wicg/).
 
 
 ## Administrative controls
 
-For enterprise usage, browsers typically offer administrators options to control web platform behavior. UA policy 
-is unlikely to cover private domains, so browsers might expose administrative options for locally-defined 
-first-party sets.
+For enterprise usage, browsers typically offer administrators options to control web platform behavior. Browsers may expose administrative options for locally-defined First-Party Sets (e.g., for private domains).
 
 # UI Treatment
 
 In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
-domain belongs to, browsers may choose to present UI with information about the First-Party Set owner 
+domain belongs to, browsers may choose to present UI with information about the First-Party Set primary 
 and the members list. One potential location in Chrome is the [Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - this 
 provides requisite information to discerning users, while avoiding the use of valuable screen 
 real-estate or presenting confusing permission prompts. However, browsers are free to choose different
@@ -312,25 +286,25 @@ In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-
 User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
 
 # Clearing Site Data on Set Transitions
-Sites can change which First-Party Set they are a member of, for example through acquisition or divestiture. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
+Sites may need to change which First-Party Set they are a member of. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
 In order to achieve this, site data needs to be cleared on certain transitions. The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/clear-site-data/#grammardef-), which includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
 
  * A user identifier could be stored in any of these storage types.
  * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
 
-Since member sites can only add/remove themselves to/from FPSs with the consent from the owner, we look at first-party set changes as a site changing its FPS owner.
+Since member sites can only add/remove themselves to/from FPSs with the consent from the primary, we look at First-Party Set changes as a site changing its FPS primary.
 
-If a site’s owner changed:
+If a site’s primary changed:
 
-1. If this site had no FPS owner, the site's data won't be cleared.
+1. If this site had no FPS primary, the site's data won't be cleared.
     *   Pro: Avoids adoption pain when a site joins a FPS.
     *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
 2. Otherwise, clear site data of this site.
 
 Potential modification, which adds implementation complexity:
 
-3. If this site's new owner is a site that previously had the same FPS owner as the first site, the site's data won't be cleared. 
+3. If this site's new primary is a site that previously had the same FPS primary as the first site, the site's data won't be cleared. 
     *   Pro: Provides graceful transitions for examples (f) and (g).
     *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
 
@@ -342,31 +316,31 @@ Potential modification, which adds implementation complexity:
 
 ![](./image/FPS_clear_site_data-not_clear.drawio.svg)
 
-a. Site A and Site B create a FPS with Site A as the owner and Site B as the member. Site data will not be cleared.
+a. Site A and Site B create a FPS with Site A as the primary and Site B as the member. Site data will not be cleared.
 
-b. Site C joins the existing FPS as a member site where Site A is the owner. Site data will not be cleared.
+b. Site C joins the existing FPS as a member site where Site A is the primary. Site data will not be cleared.
 
 ---
 
 ![](./image/FPS_clear_site_data-clear.drawio.svg)
 
-c. Given an FPS with owner Site A and members Site B and Site C, if Site D joins this FPS and becomes the new owner; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
+c. Given an FPS with primary Site A and members Site B and Site C, if Site D joins this FPS and becomes the new primary; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
 
-d. Given an FPS with owner Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
+d. Given an FPS with primary Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
 
-e. Given two FPSs, FPS1 has owner Site A and members Site B and Site C and FPS2 has owner Site X and member Site Y, if they join together as one FPS with Site A being the owner, the browser will clear site data for Site X and Site Y.
+e. Given two FPSs, FPS1 has primary Site A and members Site B and Site C and FPS2 has primary Site X and member Site Y, if they join together as one FPS with Site A being the primary, the browser will clear site data for Site X and Site Y.
 
 ---
 
-With the potential modification allowing sites to keep their data if the new set owner was a previous member:
+With the potential modification allowing sites to keep their data if the new set primary was a previous member:
 
 ![](./image/FPS_clear_site_data-potential_modification.drawio.svg)
 
-f. Given an FPS with owner Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the owner and Site A becomes the member, no site data will be cleared.
+f. Given an FPS with primary Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the primary and Site A becomes the member, no site data will be cleared.
 
-g. Given an FPS with owner Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the owner, the browser will clear site data for Site A.
+g. Given an FPS with primary Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the primary, the browser will clear site data for Site A.
 
-h. & i. Given the FPS with owner Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the owner, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
+h. & i. Given the FPS with primary Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the primary, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
 
 # Alternative designs
 
@@ -409,33 +383,33 @@ discussion.
 
 ## Self-attestation and technical enforcement
 
-Instead of having a verification entity check conformance to policy; it may be possible to rely on a combination of:
+Instead of having a verification entity check that domains in a set match the stated use case, it may be possible to rely on a combination of:
 
--   Self-attestation of UA Policy conformance by submitter.
+-   Self-attestation of conformance to the subset definitions by submitter.
 -   Technical consistency checks such as verifying control over domains, and ensuring that no domain appears in more than one set.
 -   Transparency logs documenting all acceptances and deletions to enable accountability and auditability.
--   Mechanism/process for the general public to report potential violations of UA Policy.
+-   Mechanism/process for the general public to report potential misuse of First-Party Sets.
 
-However, at this time we do not believe it is possible to enforce against the formation of consortiums of unrelated entities, and thus will require some form of verification entity to guard against that.
+At this time, a verification entity to detect and enforce against abuses of the First-Party Sets technology has not been engaged. This may change in the future.
 
 ## Origins instead of registrable domains
 
-A first-party set is a collection of origins, but it is specified by registrable domains, which
+A First-Party Set is a collection of origins, but it is specified by registrable domains, which
 carries a dependency on the [public suffix list](https://publicsuffix.org). While this is consistent
 with the various proposed privacy models as well as cookie handling, the security boundary on the
 web is the origin, not registrable domain.
 
 An alternate design would be to instead specify sets by origins directly. In this model, any https
-origin would be a possible first-party set owner, and each origin must individually join a set,
+origin would be a possible First-Party Set primary, and each origin must individually join a set,
 rather than relying on the root as we do here. For continuity with the existing behavior, we would
-then define the registrable domain as the default first-party set for each origin. That is, by
+then define the registrable domain as the default First-Party Set for each origin. That is, by
 default, `https://foo.example.com`, `https://bar.example.com`, and `https://example.com:444` would all be
-in a set owned by `https://example.com`. Defining a set explicitly would override this default set.
+in a set under `https://example.com`. Defining a set explicitly would override this default set.
 
 This would reduce the web's dependency on the public suffix list, which would mitigate [various
 problems](https://github.com/sleevi/psl-problems). For instance, a university may allow students to register arbitrary subdomains at
 `https://foo.university.example`, but did not place `university.example` on the public suffix list,
-either due to compatibility concerns or oversight. With an origin-specified first-party set,
+either due to compatibility concerns or oversight. With an origin-specified First-Party Set,
 individual origins could then detach themselves from the default set to avoid security problems with
 non-origin-based features such as cookies. (Note the
 [\_\_Host- cookie prefix](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.3.2)
@@ -451,13 +425,13 @@ This origin-defined approach has additional complications to resolve:
    set. Thus if `https://foo.bar.example.com` sets a Domain=example.com cookie, `https://example.com`
    can read it, but not `https://bar.example.com`. Other features would need similar updates.
 -  The implicit state should be expressible explicitly, to simplify rollback and deployment,
-   which means first-party set manifests must describe patterns of origins, rather than a simple
+   which means First-Party Set manifests must describe patterns of origins, rather than a simple
    bounded list of domains. In particular, we should support subtree patterns.
--  `https://foo.example.com`'s implicit owner is `https://example.com`. If `https://example.com` then
+-  `https://foo.example.com`'s implicit primary is `https://example.com`. If `https://example.com` then
    forms an explicit set which does not include `https://foo.example.com`, we need to change
    `https://foo.example.com`'s implicit state, perhaps to a singleton set.
 -  This complex set of patterns and implicit behaviors must be reevaluated against existing
-   origins every time a first-party set is updated.
+   origins every time a First-Party Set is updated.
 -  Certificate wildcards (which themselves depend on the public suffix list) don't match an
    entire subtree. This conflicts with wanting to express implicit states above.
 
@@ -486,7 +460,7 @@ This consideration will always involve a necessary trade-off between gains like 
 
 -   We are still exploring how [CHIPS](https://github.com/privacycg/CHIPS) [integrates with](https://developer.chrome.com/docs/privacy-sandbox/chips/#first-party-sets-and-cookie-partitioning) First-Party Sets. We are working on technical changes to that design as well, and will share updates when we have a proposal.
 -   While we've proposed a limit of three domains for the "associated" subset, we seek feedback on whether this would be suitable for ecosystem use cases.
--   We may consider expanding the technical checks, where possible, involved in mitigating abuse (e.g., to validate the ccTLD and common eTLD subset categories).
+-   We may consider expanding the technical checks, where possible, involved in mitigating abuse (e.g., to validate ccTLD variants).
 
 # Acknowledgements
 
