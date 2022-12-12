@@ -9,6 +9,7 @@ Editor: Johann Hofmann, Google https://google.com, johannhof@google.com
 Editor: Kaustubha Govind, Google https://google.com, kaustubhag@google.com
 Abstract: How user agents should integrate with First-Party Sets, a mechanism to declare a collection of related domains as being in a First-Party Set.
 Markup Shorthands: markdown yes
+Default Biblio Display: inline
 </pre>
 <pre class="anchors">
 spec: PSL; urlPrefix: https://publicsuffix.org/list/
@@ -31,6 +32,27 @@ spec: storage-access; urlPrex: https://privacycg.github.io/storage-access/#
     "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md",
     "title": "First-Party Sets Submission Guidelines",
     "publisher": "Google Chrome"
+  },
+  "FPS-LIST": {
+    "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON",
+    "title": "First-Party Sets list",
+    "publisher": "Google Chrome"
+  },
+  "STORAGE-ACCESS": {
+    "href": "https://privacycg.github.io/storage-access/",
+    "title": "Storage Access API",
+    "status": "CG Draft",
+    "deliveredBy": [
+      "https://www.w3.org/community/privacycg/"
+    ]
+  },
+  "CSRF": {
+    "href": "https://owasp.org/www-community/attacks/csrf",
+    "title": "Cross Site Request Forgery (CSRF)"
+  },
+  "CACHE-PROBING": {
+    "href": "https://xsleaks.dev/docs/attacks/cache-probing/",
+    "title": "Cache Probing"
   }
 }
 </pre>
@@ -39,21 +61,23 @@ spec: storage-access; urlPrex: https://privacycg.github.io/storage-access/#
 
 <em>This section is non-normative.</em>
 
-First-Party Sets (“FPS”) provides a framework for developers to declare relationships among sites, to enable limited cross-site cookie access for specific, user-facing purposes. This is facilitated through the use of the [Storage Access API](https://privacycg.github.io/storage-access/).
+First-Party Sets (“FPS”) provides a framework for developers to declare relationships among sites, to enable limited cross-site cookie access for specific, user-facing purposes. This is facilitated through the use of the [[STORAGE-ACCESS]].
 
-This document defines how user agents should integrate with the [First-Party Sets list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON). For a canonical reference of the structure of the FPS list and technical validations that are run at time of submission, please see the [[SUBMISSION-GUIDELINES inline]].
+This document defines how user agents should integrate with the [[FPS-LIST]]. For a canonical reference of the structure of the FPS list and technical validations that are run at time of submission, please see the [[SUBMISSION-GUIDELINES]].
 
 <h2 id="infra">Infrastructure</h2>
 
-This specification depends on the Infra standard. [[!INFRA]]
+This specification depends on the Infra standard. [[!INFRA index]]
 
 <h2 id="list-consumption">List consumption</h2>
 
-User agents should consume the [canonical FPS list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON) on a regular basis (e.g., every 2 weeks) and ship it to individual clients (e.g. a browser application) as an updateable component.
+User agents should consume the canonical [[FPS-LIST]] on a regular basis (e.g., every 2 weeks) and ship it to individual clients (e.g. a browser application) as an updateable component.
+
+ISSUE(wicg/first-party-sets#122): Can we make a recommendation for an update interval here?
 
 Individual clients must [=build the list of first-party sets=] on restart, or on start-up, if newly downloaded. Clients must not re-build the list at any other point in time.
 
-The FPS list is a [=UTF-8=] encoded file containing contents parseable as a JSON object, conforming to the [JSON schema](https://json-schema.org/draft/2020-12/json-schema-core.html) described in the [[SUBMISSION-GUIDELINES inline]].
+The FPS list is a [=UTF-8=] encoded file containing contents parseable as a JSON object, conforming to the [[JSON-SCHEMA index]] described in the [[SUBMISSION-GUIDELINES]].
 
 Note: Conformance to the schema is validated at submission time. Hence, it is not required for the user agent to validate conformance again on the client. The algorithms in this specification describe how user agents should parse the FPS list, and when a particular set should be considered valid from the client’s perspective.
 
@@ -89,7 +113,7 @@ A <dfn export>first-party set</dfn> is a [=/struct=] with the following items:
 
 <dfn for="first-party set">serviceSites</dfn>: A [=/list=] of [=sites=] in the service subset.
 
-Note: For additional context on the meaning of these fields please refer to the [[SUBMISSION-GUIDELINES inline]].
+Note: For additional context on the meaning of these fields please refer to the [[SUBMISSION-GUIDELINES]].
 
 An <dfn>equivalence map</dfn> is an [=ordered map=] from [=/sites=] to [=/lists=] of [=sites=].
 
@@ -125,6 +149,8 @@ To <dfn>parse an equivalence map</dfn> from an ordered map |input|, run the foll
 
 Under FPS, a [=site=] |site1| is considered <dfn>equivalent to</dfn> another [=site=] |site2| given an [=equivalence map=] |equivalents|, if |equivalents|[|site1|] contains |site2| or |equivalents|[|site2|] contains |site1|.
 
+ISSUE(wicg/first-party-sets#123): Should this be renamed to avoid being confused with a mathematical equivalence relation?
+
 To <dfn export>determine the member type</dfn> of a given [=site=] |site| in a given [=first-party set=] |set|, run the following steps:
 
 1. If |site| is [=equivalent to=] |set|’s [=first-party set/primary=] given |set|’s [=first-party set/ccTLDs=], return “primary”.
@@ -141,7 +167,7 @@ To <dfn export>find a first-party set</dfn> for a given [=site=] |site|, run the
     2. If |type| is not “none”, return |set|.
 2. Return null.
 
-Note: The [[SUBMISSION-GUIDELINES inline]] require that each site [can only appear in at most one First-Party set](https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md#set-level-technical-validation), which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.
+Note: The [[SUBMISSION-GUIDELINES]] require that each site can only appear in at most one First-Party set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.
 
 <h2 id="storage-access-integration">Integration with the Storage Access API</h2>
 
@@ -188,6 +214,8 @@ When a [=site=] |site| leaves a [=first-party set=] as the result of building a 
     5. Remove all permission store entries for |descriptor|, where key[0] is |site| or key[1] is |origin|.
     6. Run additional [=implementation-defined=] steps to ensure that any web-accessible storage is removed from |origin|.
 
+ISSUE(wicg/first-party-sets#124): This section should provide more details on how user agents can figure out when a site leaves an FPS.
+
 <h2 id="privacy-consideration">Privacy Considerations</h2>
 
 <h3 id="provide-transparency">Provide user transparency and control</h3>
@@ -198,19 +226,19 @@ A user agent that uses FPS to infer the relationship between two sites should en
 
 Some user agents may choose not to support FPS in specific environments (such as Private Browsing Modes), or at all. All user agents and specifications should be mindful of this in their own API integrations and aim to gracefully fall back to a working solution for users and developers.
 
-For providing access to cross-site cookies, this specification aims to ensure compatibility with non-FPS environments through usage of the Storage Access API, which provides developers an interface to handle rejections to the request and gives user agents flexibility to employ mechanisms such as prompts or heuristics as an alternative to FPS.
+For providing access to cross-site cookies, this specification aims to ensure compatibility with non-FPS environments through usage of the [[STORAGE-ACCESS]], which provides developers an interface to handle rejections to the request and gives user agents flexibility to employ mechanisms such as prompts or heuristics as an alternative to FPS.
 
 <h3 id="prevent-leaks">Prevent privacy leaks from list changes</h3>
 
-Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
+Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the [[STORAGE-ACCESS]], we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
-For this reason, this specification requires user agents to clear any site data and storage-access permission of a given site when a site is removed from a set.
+For this reason, this specification requires user agents to clear any site data and storage-access permissions of a given site when a site is removed from a set.
 
 <h2 id="security-considerations">Security Considerations</h2>
 
 <h3 id="avoid-weakening-boundaries">Avoid weakening new and existing security boundaries</h3>
 
-Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [cache probing](https://xsleaks.dev/docs/attacks/cache-probing/) attacks and third-party cookie blocking makes it much harder to perform [csrf](https://owasp.org/www-community/attacks/csrf) by default. Where user agents intend to use First-Party Sets to replace or extend existing boundaries based on site or origin on the web, it is important to consider not only the effects on privacy, but also on security.
+Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [[CACHE-PROBING]] attacks and third-party cookie blocking makes it much harder to perform [[CSRF]] by default. Where user agents intend to use First-Party Sets to replace or extend existing boundaries based on site or origin on the web, it is important to consider not only the effects on privacy, but also on security.
 
 Sites in a common FPS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an FPS to affect the integrity of other sites in the set.
 
