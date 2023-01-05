@@ -90,7 +90,7 @@ To <dfn>build the list of first-party sets</dfn> from a JSON [=byte sequence=] |
     2. If |entry|[“primary”] does not exist, continue.
     3. Set |set|’s [=first-party set/primary=] to |entry|[“primary”].
     4. Let |ccTLDs| be the result of [=parse an equivalence map|parsing an equivalence map=] from |entry|[“ccTLDs”]. If |ccTLDs| is failure, continue.
-    5. Set set’s ccTLDs to |ccTLDs|.
+    5. Set |set|’s ccTLDs to |ccTLDs|.
     6. Let |serviceSites| be the result of [=parse a subset|parsing a subset=] from |entry|[“serviceSites”]. If the result is failure, continue.
     7. Set |set|’s [=first-party set/serviceSites=] to |serviceSites|.
     8. Let |associatedSites| be the result of [=parse a subset|parsing a subset=] from |entry|[“associatedSites”]. If the result is failure, continue.
@@ -211,7 +211,7 @@ When a [=site=] |site| leaves a [=first-party set=] as the result of building a 
     2. [=Clear cookies for origin=].
     3. [=Clear DOM-accessible storage for origin=].
     4. Let |descriptor| be a newly-created {{PermissionDescriptor}} with {{PermissionDescriptor/name}} initialized to “storage-access”.
-    5. Remove all permission store entries for |descriptor|, where key[0] is |site| or key[1] is |origin|.
+    5. [=Remove a permission store entry|Remove all permission store entries=] for |descriptor|, where key[0] is |site| or key[1] is |origin|.
     6. Run additional [=implementation-defined=] steps to ensure that any web-accessible storage is removed from |origin|.
 
 ISSUE(wicg/first-party-sets#124): This section should provide more details on how user agents can figure out when a site leaves an FPS.
