@@ -81,6 +81,8 @@ The FPS list is a [=UTF-8=] encoded file containing contents parseable as a JSON
 
 Note: Conformance to the schema is validated at submission time. Hence, it is not required for the user agent to validate conformance again on the client. The algorithms in this specification describe how user agents should parse the FPS list, and when a particular set should be considered valid from the client’s perspective.
 
+ISSUE(wicg/first-party-sets#125): Client-side validation may be needed in cases where the [[PSL]] version differs between the server and client.
+
 To <dfn>build the list of first-party sets</dfn> from a JSON [=byte sequence=] |bytes|, the user agent should run the following steps:
 
 1. Let |json| be the result of [=parse JSON bytes to an infra value|parsing JSON bytes to an infra value=] with |bytes|.
@@ -88,6 +90,9 @@ To <dfn>build the list of first-party sets</dfn> from a JSON [=byte sequence=] |
 3. For each |entry| of |json|:
     1. Let |set| be a [=first-party set=].
     2. If |entry|[“primary”] does not exist, continue.
+
+ISSUE(wicg/first-party-sets#126): The specification currently suggests skipping invalid sets (missing primary entries) instead of rejecting the entire list. However, there may be benefit in a full rejection given that the server is expected to hold valid information at all times.
+
     3. Set |set|’s [=first-party set/primary=] to |entry|[“primary”].
     4. Let |ccTLDs| be the result of [=parse an equivalence map|parsing an equivalence map=] from |entry|[“ccTLDs”]. If |ccTLDs| is failure, continue.
     5. Set |set|’s ccTLDs to |ccTLDs|.
