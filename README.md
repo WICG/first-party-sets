@@ -247,6 +247,10 @@ Additionally, there are other enforcement strategies we could consider to furthe
 
 For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of three domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion of the relationship between domains.
 
+## Chrome’s Submission Guidelines and FPS Canonical List
+
+Chrome’s implementation will depend on the  list of First-Party Sets generated via the process described in [Submission Guidelines](https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md). The guidelines aim to provide developers with clear expectations on how to submit sets to the [canonical list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON) that the browser will consume and apply to its behavior. 
+
 ## Leveraging the Storage Access API
 
 To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cookie access within a FPS.
