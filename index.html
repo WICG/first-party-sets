@@ -4,9 +4,9 @@
   <title>User Agent Interaction with First-Party Sets</title>
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
-  <meta content="Bikeshed version 26e85e599, updated Thu Dec 8 15:29:31 2022 -0800" name="generator">
+  <meta content="Bikeshed version d6f2d6445, updated Tue Jan 17 11:25:25 2023 -0800" name="generator">
   <link href="https://wicg.github.io/first-party-sets/" rel="canonical">
-  <meta content="e9b53c8cd540c229e8fd8d7e30df7cb5abedab58" name="document-revision">
+  <meta content="507fcba0bceaa18795e965bb3a8104ecd038917e" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -459,7 +459,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">User Agent Interaction with First-Party Sets</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-01-09">9 January 2023</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-01-19">19 January 2023</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -549,7 +549,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <p class="issue" id="issue-2f53edbf"><a class="self-link" href="#issue-2f53edbf"></a> Can we make a recommendation for an update interval here? <a href="https://github.com/wicg/first-party-sets/issues/122">[Issue #wicg/first-party-sets#122]</a></p>
    <p>Individual clients must <a data-link-type="dfn" href="#build-the-list-of-first-party-sets" id="ref-for-build-the-list-of-first-party-sets">build the list of first-party sets</a> on restart, or on start-up, if newly downloaded. Clients must not re-build the list at any other point in time.</p>
    <p>The FPS list is a <a data-link-type="dfn" href="https://encoding.spec.whatwg.org/#utf-8" id="ref-for-utf-8">UTF-8</a> encoded file containing contents parseable as a JSON object, conforming to the <a data-biblio-display="index" data-link-type="biblio" href="#biblio-json-schema" title="JSON Schema: A Media Type for Describing JSON Documents">[JSON-SCHEMA]</a> described in the <a data-link-type="biblio" href="https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md"><cite>First-Party Sets Submission Guidelines</cite></a>.</p>
-   <p class="note" role="note"><span>Note:</span> Conformance to the schema is validated at submission time. Hence, it is not required for the user agent to validate conformance again on the client. The algorithms in this specification describe how user agents should parse the FPS list, and when a particular set should be considered valid from the client’s perspective.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> Conformance to the schema is validated at submission time. Hence, it is not required for the user agent to validate conformance again on the client. The algorithms in this specification describe how user agents should parse the FPS list, and when a particular set should be considered valid from the client’s perspective.</p>
    <p class="issue" id="issue-bb862ccb"><a class="self-link" href="#issue-bb862ccb"></a> Client-side validation may be needed in cases where the <a data-link-type="biblio" href="#biblio-psl"><cite>Public Suffix List</cite></a> version differs between the server and client. <a href="https://github.com/wicg/first-party-sets/issues/125">[Issue #wicg/first-party-sets#125]</a></p>
    <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="build-the-list-of-first-party-sets">build the list of first-party sets</dfn> from a JSON <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#byte-sequence" id="ref-for-byte-sequence">byte sequence</a> <var>bytes</var>, the user agent should run the following steps:</p>
    <ol>
@@ -593,7 +593,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <p><dfn class="dfn-paneled" data-dfn-for="first-party set" data-dfn-type="dfn" data-noexport id="first-party-set-cctlds">ccTLDs</dfn>: An <a data-link-type="dfn" href="#equivalence-map" id="ref-for-equivalence-map">equivalence map</a>, representing the set’s equivalent country-code top level domains that were specified by the submitter.</p>
    <p><dfn class="dfn-paneled" data-dfn-for="first-party set" data-dfn-type="dfn" data-noexport id="first-party-set-associatedsites">associatedSites</dfn>: A <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list①">list</a> of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site①">sites</a> in the associated subset.</p>
    <p><dfn class="dfn-paneled" data-dfn-for="first-party set" data-dfn-type="dfn" data-noexport id="first-party-set-servicesites">serviceSites</dfn>: A <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list②">list</a> of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site②">sites</a> in the service subset.</p>
-   <p class="note" role="note"><span>Note:</span> For additional context on the meaning of these fields please refer to the <a data-link-type="biblio" href="https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md"><cite>First-Party Sets Submission Guidelines</cite></a>.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> For additional context on the meaning of these fields please refer to the <a data-link-type="biblio" href="https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md"><cite>First-Party Sets Submission Guidelines</cite></a>.</p>
    <p>An <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="equivalence-map">equivalence map</dfn> is an <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#ordered-map" id="ref-for-ordered-map①">ordered map</a> from <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site③">sites</a> to <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#list" id="ref-for-list③">lists</a> of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site④">sites</a>.</p>
    <p>To <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="parse-and-validate-a-site">parse and validate a site</dfn> from a <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#string" id="ref-for-string">string</a> <var>input</var>, run the following steps:</p>
    <ol>
@@ -683,10 +683,10 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Return null.</p>
    </ol>
-   <p class="note" role="note"><span>Note:</span> The <a data-link-type="biblio" href="https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md"><cite>First-Party Sets Submission Guidelines</cite></a> require that each site can only appear in at most one First-Party set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> The <a data-link-type="biblio" href="https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md"><cite>First-Party Sets Submission Guidelines</cite></a> require that each site can only appear in at most one First-Party set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.</p>
    <h2 class="heading settled" data-level="6" id="storage-access-integration"><span class="secno">6. </span><span class="content">Integration with the Storage Access API</span><a class="self-link" href="#storage-access-integration"></a></h2>
    <p>Define the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="limit-for-associated-sites">limit for associated sites</dfn> within a single <a data-link-type="dfn" href="#first-party-set" id="ref-for-first-party-set③">first-party set</a> to be an <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined">implementation-defined</a> value, which is recommended to be 3.</p>
-   <p class="note" role="note"><span>Note:</span> This limit is used when <a data-link-type="dfn" href="#determine-eligibility-for-an-associated-site" id="ref-for-determine-eligibility-for-an-associated-site">determining eligibility for an associated site</a> to only consider the sites listed at the top of the associated subset. It is meant to discourage abuse and help users and user agents understand why a particular first-party set needs to exist. User agents may choose a different number based on this goal.</p>
+   <p class="note" role="note"><span class="marker">Note:</span> This limit is used when <a data-link-type="dfn" href="#determine-eligibility-for-an-associated-site" id="ref-for-determine-eligibility-for-an-associated-site">determining eligibility for an associated site</a> to only consider the sites listed at the top of the associated subset. It is meant to discourage abuse and help users and user agents understand why a particular first-party set needs to exist. User agents may choose a different number based on this goal.</p>
    <p>Modify the <a data-link-type="dfn" href="determine-the-storage-access-policy" id="termref-for-">determine the storage access policy</a> step to insert the following steps before step 3 (running <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined①">implementation-defined</a> steps):</p>
    <ol>
     <li data-md>
