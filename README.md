@@ -20,7 +20,6 @@ being in a First-Party Set.
 - [Goals](#goals)
 - [Non-goals](#non-goals)
 - [Use Cases](#use-cases)
-- [Applications](#applications)
 - [Proposal](#proposal)
   - [Defining a "set" through use case-based "subsets"](#defining-a-set-through-use-case-based-subsets)
     - [Abuse mitigation measures](#abuse-mitigation-measures)
@@ -116,16 +115,6 @@ This proposal anchors on the use cases described above to develop a framework fo
 -   Separation of user-uploaded content from other site content for security reasons, while allowing the sandboxed domain access to authentication (and other) cookies. For example, Google sequesters such content on googleusercontent.com, GitHub on githubusercontent.com, CodePen [on](https://blog.codepen.io/2019/10/03/changed-domains-for-iframe-previews/) cdpn.io. Hosting untrusted, compromised content on the same domain where a user is authenticated may result in attackers’ potentially capturing authentication cookies, or login credentials (in case of password managers that scope credentials to domains); and cause harm to users.
     -   Alternative solution: Sandboxed domains can also consider using [partitioned cookies](https://github.com/WICG/CHIPS), if their user flows do not involve the sandboxed domain appearing in top-level contexts.
 -   Analytics/measurement of user journeys across O&O properties to improve quality of services.
-
-# Applications
-
-In support of the various browser privacy models, First-Party Sets only control when embedded content that would otherwise be considered third-party can access its own state. Examples:
-
--   Sites may annotate individual cookies to be sent across same-party, cross-domain contexts by using the proposed [SameParty cookie attribute](#sameparty-cookies-and-first-party-sets).
--   Top-level key for [partitioned cookies a.k.a “chips”](https://github.com/DCtheTall/CHIPS#partition-by-top-level-context). This allows third-party sites (such as embedded SaaS providers) to provide access to the same user session across multiple top-level sites within the same First-Party Set ([reference use-case](https://github.com/privacycg/first-party-sets/issues/33))
--   Issuing WebID [directed identifiers](https://github.com/WICG/WebID/blob/main/directed_identifiers.md) by First-Party Set, so the same account can be shared across multiple applications or services provided by the same first-party.
--   Applying [Privacy Budget](https://github.com/bslassey/privacy-budget) across an entire First-Party Set, in order to prevent fingerprinting entropy from being accumulated across domains that are able to communicate in an unconstrained manner due to access to cross-domain, same-party cookies.
--   Top and/or second level key for cache partitioning, potentially with site opt-in.
 
 # Proposal
 
