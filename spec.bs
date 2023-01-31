@@ -174,17 +174,9 @@ To <dfn export>find a first-party set</dfn> for a given [=site=] |site|, run the
 
 Note: The [[SUBMISSION-GUIDELINES]] require that each site can only appear in at most one First-Party set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.
 
-<h2 id="storage-access-integration">Integration with the Storage Access API</h2>
-
 Define the <dfn>limit for associated sites</dfn> within a single [=first-party set=] to be an [=implementation-defined=] value, which is recommended to be 3.
 
 Note: This limit is used when [=determine eligibility for an associated site|determining eligibility for an associated site=] to only consider the sites listed at the top of the associated subset. It is meant to discourage abuse and help users and user agents understand why a particular first-party set needs to exist. User agents may choose a different number based on this goal.
-
-Modify the [=determine the storage access policy=] step to insert the following steps before step 3 (running [=implementation-defined=] steps):
-
-1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from key’s embedded origin.
-2. Let |sameSet| be true if |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
-3. Optionally set implicitly granted or implicitly denied based on the value of |sameSet|. This step is [=implementation-defined=].
 
 A [=site=] |embeddedSite| is <dfn export>eligible for same-party membership when embedded within</dfn> a [=site=] |topLevelSite|, if the following steps return true:
 
@@ -204,6 +196,16 @@ To <dfn>determine eligibility for an associated site</dfn> given a [=site=] |sit
 2. Let |index| be the index of |site| in |set|’s [=first-party set/associatedSites=].
 3. If |index| is greater than or equal to the [=limit for associated sites=], return false.
 4. Return true.
+
+<h2 id="storage-access-integration">Integration with the Storage Access API</h2>
+
+Modify {{Document/requestStorageAccess()}} to insert the following steps before step 13.5 (i.e. before [=requesting permission to use=]):
+
+1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
+1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
+1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
+2. Let |sameSet| be true if |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
+3. If |sameSet| is true, the user agent may run <var ignore>process permission state</var> with [=permission/granted=] or [=permission/denied=] . This step is [=implementation-defined=].
 
 <h2 id="handling-changes">Handling first-party set changes</h2>
 
