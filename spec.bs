@@ -11,6 +11,9 @@ Abstract: How user agents should integrate with First-Party Sets, a mechanism to
 Markup Shorthands: markdown yes
 Default Biblio Display: inline
 </pre>
+<pre class=link-defaults>
+spec:webidl; type:dfn; text:resolve
+</pre>
 <pre class="anchors">
 spec: PSL; urlPrefix: https://publicsuffix.org/list/
     type: dfn
@@ -25,6 +28,8 @@ spec: clear-site-data; urlPrefix: https://www.w3.org/TR/clear-site-data/#
 spec: storage-access; urlPrex: https://privacycg.github.io/storage-access/#
     type: dfn
         text: determine the storage access policy; url: determine-the-storage-access-policy
+urlPrefix: https://w3c.github.io/permissions/; spec: permissions
+    text: permissions task source; url: #permissions-task-source; type: dfn
 </pre>
 <pre class="biblio">
 {
@@ -205,7 +210,15 @@ Modify {{Document/requestStorageAccess()}} to insert the following steps before 
 1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
 1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
 2. Let |sameSet| be true if |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
-3. If |sameSet| is true, the user agent may run <var ignore>process permission state</var> with [=permission/granted=] or [=permission/denied=] . This step is [=implementation-defined=].
+3. If |sameSet| is true, the user agent may run <var ignore>process permission state</var> with [=permission/granted=]. This step is [=implementation-defined=].
+
+Modify {{Document/requestStorageAccessForOrigin(origin)}} to insert the following steps before step 13.8 (i.e. before [=requesting permission to use=]):
+
+1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
+1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
+1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
+2. Let |sameSet| be true if |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
+3. If |sameSet| is true, the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var>. This step is [=implementation-defined=].
 
 <h2 id="handling-changes">Handling first-party set changes</h2>
 
