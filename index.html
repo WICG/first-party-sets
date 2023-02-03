@@ -6,7 +6,7 @@
   <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
   <meta content="Bikeshed version 859efb4bd, updated Fri Jan 27 16:04:01 2023 -0800" name="generator">
   <link href="https://wicg.github.io/first-party-sets/" rel="canonical">
-  <meta content="0f872c191c8724033b26aca77e5ce117c4566924" name="document-revision">
+  <meta content="9b349f0fe163f24cb699d3cee755a8569b50387f" name="document-revision">
 <style>/* style-autolinks */
 
 .css.css, .property.property, .descriptor.descriptor {
@@ -459,7 +459,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">User Agent Interaction with First-Party Sets</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-01-30">30 January 2023</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-02-03">3 February 2023</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -684,18 +684,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <p>Return null.</p>
    </ol>
    <p class="note" role="note"><span class="marker">Note:</span> The <a data-link-type="biblio" href="https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md"><cite>First-Party Sets Submission Guidelines</cite></a> require that each site can only appear in at most one First-Party set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.</p>
-   <h2 class="heading settled" data-level="6" id="storage-access-integration"><span class="secno">6. </span><span class="content">Integration with the Storage Access API</span><a class="self-link" href="#storage-access-integration"></a></h2>
    <p>Define the <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="limit-for-associated-sites">limit for associated sites</dfn> within a single <a data-link-type="dfn" href="#first-party-set" id="ref-for-first-party-set③">first-party set</a> to be an <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined">implementation-defined</a> value, which is recommended to be 3.</p>
    <p class="note" role="note"><span class="marker">Note:</span> This limit is used when <a data-link-type="dfn" href="#determine-eligibility-for-an-associated-site" id="ref-for-determine-eligibility-for-an-associated-site">determining eligibility for an associated site</a> to only consider the sites listed at the top of the associated subset. It is meant to discourage abuse and help users and user agents understand why a particular first-party set needs to exist. User agents may choose a different number based on this goal.</p>
-   <p>Modify the <a data-link-type="dfn" href="determine-the-storage-access-policy" id="termref-for-">determine the storage access policy</a> step to insert the following steps before step 3 (running <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined①">implementation-defined</a> steps):</p>
-   <ol>
-    <li data-md>
-     <p>Let <var>embeddedSite</var> be the result of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site" id="ref-for-obtain-a-site①">obtaining a site</a> from key’s embedded origin.</p>
-    <li data-md>
-     <p>Let <var>sameSet</var> be true if <var>embeddedSite</var> is <a data-link-type="dfn" href="#eligible-for-same-party-membership-when-embedded-within" id="ref-for-eligible-for-same-party-membership-when-embedded-within">eligible for same-party membership when embedded within</a> <var>topLevelSite</var>.</p>
-    <li data-md>
-     <p>Optionally set implicitly granted or implicitly denied based on the value of <var>sameSet</var>. This step is <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined②">implementation-defined</a>.</p>
-   </ol>
    <p>A <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site⑨">site</a> <var>embeddedSite</var> is <dfn class="dfn-paneled" data-dfn-type="dfn" data-export id="eligible-for-same-party-membership-when-embedded-within">eligible for same-party membership when embedded within</dfn> a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site①⓪">site</a> <var>topLevelSite</var>, if the following steps return true:</p>
    <ol>
     <li data-md>
@@ -728,6 +718,30 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Return true.</p>
    </ol>
+   <p>A given <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object">environment settings object</a> <var>settings</var> <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="is-same-party-with-its-top-level-embedder">is same-party with its top-level embedder</dfn>, if the following steps return true:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>topLevelSite</var> be the result of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site" id="ref-for-obtain-a-site①">obtaining a site</a> from <var>settings</var>’ <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin" id="ref-for-concept-environment-top-level-origin">top-level origin</a>.</p>
+    <li data-md>
+     <p>Let <var>embeddedSite</var> be the result of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site" id="ref-for-obtain-a-site②">obtaining a site</a> from <var>settings</var>’ <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin" id="ref-for-concept-settings-object-origin">origin</a>.</p>
+    <li data-md>
+     <p>Return whether <var>embeddedSite</var> is <a data-link-type="dfn" href="#eligible-for-same-party-membership-when-embedded-within" id="ref-for-eligible-for-same-party-membership-when-embedded-within">eligible for same-party membership when embedded within</a> <var>topLevelSite</var>.</p>
+   </ol>
+   <h2 class="heading settled" data-level="6" id="storage-access-integration"><span class="secno">6. </span><span class="content">Integration with the Storage Access API</span><a class="self-link" href="#storage-access-integration"></a></h2>
+   <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess" id="ref-for-dom-document-requeststorageaccess">requestStorageAccess()</a></code> to insert the following steps before step 13.5 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use">requesting permission to use</a>):</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>settings</var> be <var>doc</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object" id="ref-for-relevant-settings-object">relevant settings object</a>.</p>
+    <li data-md>
+     <p>If <var>settings</var> <a data-link-type="dfn" href="#is-same-party-with-its-top-level-embedder" id="ref-for-is-same-party-with-its-top-level-embedder">is same-party with its top-level embedder</a>, the user agent may run <var>process permission state</var> with <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-granted" id="ref-for-dfn-granted">granted</a> and abort the remaining steps.</p>
+   </ol>
+   <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin" id="ref-for-dom-document-requeststorageaccessfororigin">requestStorageAccessForOrigin(origin)</a></code> to insert the following steps before step 13.8 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use①">requesting permission to use</a>):</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>settings</var> be <var>doc</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object" id="ref-for-relevant-settings-object①">relevant settings object</a>.</p>
+    <li data-md>
+     <p>If <var>settings</var> <a data-link-type="dfn" href="#is-same-party-with-its-top-level-embedder" id="ref-for-is-same-party-with-its-top-level-embedder①">is same-party with its top-level embedder</a>, the user agent may <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task" id="ref-for-queue-a-global-task">queue a global task</a> on the <a data-link-type="dfn" href="https://w3c.github.io/permissions/#permissions-task-source" id="ref-for-permissions-task-source">permissions task source</a> given <var>global</var> to <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#resolve" id="ref-for-resolve">resolve</a> <var>p</var> and abort the remaining steps.</p>
+   </ol>
    <h2 class="heading settled" data-level="7" id="handling-changes"><span class="secno">7. </span><span class="content">Handling first-party set changes</span><a class="self-link" href="#handling-changes"></a></h2>
    <p>When a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site①②">site</a> <var>site</var> leaves a <a data-link-type="dfn" href="#first-party-set" id="ref-for-first-party-set⑤">first-party set</a> as the result of building a new <a data-link-type="dfn" href="#list-of-first-party-sets" id="ref-for-list-of-first-party-sets③">list of first-party sets</a>, user agents must ensure that it does not retain any access to data or shared identifiers held by other sites in the first-party set by running the following steps:</p>
    <ol>
@@ -736,7 +750,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Let <var>domain</var> be site’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host" id="ref-for-concept-origin-host">host</a>.</p>
     <li data-md>
-     <p>For each <var>origin</var> known to the user agent whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host" id="ref-for-concept-origin-host①">host</a>'s <a data-link-type="dfn" href="https://publicsuffix.org/list/#" id="termref-for-①">registered domain</a> is <var>domain</var>:</p>
+     <p>For each <var>origin</var> known to the user agent whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host" id="ref-for-concept-origin-host①">host</a>'s <a data-link-type="dfn" href="https://publicsuffix.org/list/#" id="termref-for-">registered domain</a> is <var>domain</var>:</p>
      <ol>
       <li data-md>
        <p><a data-link-type="dfn" href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin" id="ref-for-abstract-opdef-clear-cache-for-origin">Clear cache for origin</a>.</p>
@@ -749,7 +763,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
       <li data-md>
        <p><a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry" id="ref-for-dfn-remove-a-permission-store-entry">Remove all permission store entries</a> for <var>descriptor</var>, where key[0] is <var>site</var> or key[1] is <var>origin</var>.</p>
       <li data-md>
-       <p>Run additional <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined③">implementation-defined</a> steps to ensure that any web-accessible storage is removed from <var>origin</var>.</p>
+       <p>Run additional <a data-link-type="dfn" href="https://infra.spec.whatwg.org/#implementation-defined" id="ref-for-implementation-defined①">implementation-defined</a> steps to ensure that any web-accessible storage is removed from <var>origin</var>.</p>
      </ol>
    </ol>
    <p class="issue" id="issue-084bef24"><a class="self-link" href="#issue-084bef24"></a> This section should provide more details on how user agents can figure out when a site leaves an FPS. <a href="https://github.com/wicg/first-party-sets/issues/124">[Issue #wicg/first-party-sets#124]</a></p>
@@ -821,14 +835,15 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <li><a href="#first-party-set-associatedsites">associatedSites</a><span>, in § 4</span>
    <li><a href="#build-the-list-of-first-party-sets">build the list of first-party sets</a><span>, in § 3</span>
    <li><a href="#first-party-set-cctlds">ccTLDs</a><span>, in § 4</span>
-   <li><a href="#determine-eligibility-for-an-associated-site">determine eligibility for an associated site</a><span>, in § 6</span>
+   <li><a href="#determine-eligibility-for-an-associated-site">determine eligibility for an associated site</a><span>, in § 5</span>
    <li><a href="#determine-the-member-type">determine the member type</a><span>, in § 5</span>
-   <li><a href="#eligible-for-same-party-membership-when-embedded-within">eligible for same-party membership when embedded within</a><span>, in § 6</span>
+   <li><a href="#eligible-for-same-party-membership-when-embedded-within">eligible for same-party membership when embedded within</a><span>, in § 5</span>
    <li><a href="#equivalence-map">equivalence map</a><span>, in § 4</span>
    <li><a href="#equivalent-to">equivalent to</a><span>, in § 5</span>
    <li><a href="#find-a-first-party-set">find a first-party set</a><span>, in § 5</span>
    <li><a href="#first-party-set">first-party set</a><span>, in § 4</span>
-   <li><a href="#limit-for-associated-sites">limit for associated sites</a><span>, in § 6</span>
+   <li><a href="#is-same-party-with-its-top-level-embedder">is same-party with its top-level embedder</a><span>, in § 5</span>
+   <li><a href="#limit-for-associated-sites">limit for associated sites</a><span>, in § 5</span>
    <li><a href="#list-of-first-party-sets">list of first-party sets</a><span>, in § 4</span>
    <li><a href="#parse-and-validate-a-site">parse and validate a site</a><span>, in § 4</span>
    <li><a href="#parse-an-equivalence-map">parse an equivalence map</a><span>, in § 4</span>
@@ -860,6 +875,12 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-utf-8">3. List consumption</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-environment-settings-object">
+   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object">https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-environment-settings-object">5. Validating first-party set inclusion</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-concept-origin-host">
    <a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host">https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host</a><b>Referenced in:</b>
    <ul>
@@ -870,7 +891,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <a href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site">https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-obtain-a-site">4. Data Structures</a>
-    <li><a href="#ref-for-obtain-a-site①">6. Integration with the Storage Access API</a>
+    <li><a href="#ref-for-obtain-a-site①">5. Validating first-party set inclusion</a> <a href="#ref-for-obtain-a-site②">(2)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-origin-opaque">
@@ -879,13 +900,36 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-concept-origin-opaque">7. Handling first-party set changes</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-settings-object-origin">
+   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin">https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-settings-object-origin">5. Validating first-party set inclusion</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-queue-a-global-task">
+   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task">https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-queue-a-global-task">6. Integration with the Storage Access API</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-relevant-settings-object">
+   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object">https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-relevant-settings-object">6. Integration with the Storage Access API</a> <a href="#ref-for-relevant-settings-object①">(2)</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-site">
    <a href="https://html.spec.whatwg.org/multipage/browsers.html#site">https://html.spec.whatwg.org/multipage/browsers.html#site</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-site">4. Data Structures</a> <a href="#ref-for-site①">(2)</a> <a href="#ref-for-site②">(3)</a> <a href="#ref-for-site③">(4)</a> <a href="#ref-for-site④">(5)</a>
-    <li><a href="#ref-for-site⑤">5. Validating first-party set inclusion</a> <a href="#ref-for-site⑥">(2)</a> <a href="#ref-for-site⑦">(3)</a> <a href="#ref-for-site⑧">(4)</a>
-    <li><a href="#ref-for-site⑨">6. Integration with the Storage Access API</a> <a href="#ref-for-site①⓪">(2)</a> <a href="#ref-for-site①①">(3)</a>
+    <li><a href="#ref-for-site⑤">5. Validating first-party set inclusion</a> <a href="#ref-for-site⑥">(2)</a> <a href="#ref-for-site⑦">(3)</a> <a href="#ref-for-site⑧">(4)</a> <a href="#ref-for-site⑨">(5)</a> <a href="#ref-for-site①⓪">(6)</a> <a href="#ref-for-site①①">(7)</a>
     <li><a href="#ref-for-site①②">7. Handling first-party set changes</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-concept-environment-top-level-origin">
+   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin">https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-environment-top-level-origin">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-byte-sequence">
@@ -897,8 +941,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
   <aside class="dfn-panel" data-for="term-for-implementation-defined">
    <a href="https://infra.spec.whatwg.org/#implementation-defined">https://infra.spec.whatwg.org/#implementation-defined</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-implementation-defined">6. Integration with the Storage Access API</a> <a href="#ref-for-implementation-defined①">(2)</a> <a href="#ref-for-implementation-defined②">(3)</a>
-    <li><a href="#ref-for-implementation-defined③">7. Handling first-party set changes</a>
+    <li><a href="#ref-for-implementation-defined">5. Validating first-party set inclusion</a>
+    <li><a href="#ref-for-implementation-defined①">7. Handling first-party set changes</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-list">
@@ -938,10 +982,22 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-dom-permissiondescriptor">7. Handling first-party set changes</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-dfn-granted">
+   <a href="https://w3c.github.io/permissions/#dfn-granted">https://w3c.github.io/permissions/#dfn-granted</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dfn-granted">6. Integration with the Storage Access API</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-dom-permissiondescriptor-name">
    <a href="https://w3c.github.io/permissions/#dom-permissiondescriptor-name">https://w3c.github.io/permissions/#dom-permissiondescriptor-name</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-permissiondescriptor-name">7. Handling first-party set changes</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-permissions-task-source">
+   <a href="https://w3c.github.io/permissions/#permissions-task-source">https://w3c.github.io/permissions/#permissions-task-source</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-permissions-task-source">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-dfn-remove-a-permission-store-entry">
@@ -950,16 +1006,28 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-dfn-remove-a-permission-store-entry">7. Handling first-party set changes</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-dfn-request-permission-to-use">
+   <a href="https://w3c.github.io/permissions/#dfn-request-permission-to-use">https://w3c.github.io/permissions/#dfn-request-permission-to-use</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dfn-request-permission-to-use">6. Integration with the Storage Access API</a> <a href="#ref-for-dfn-request-permission-to-use①">(2)</a>
+   </ul>
+  </aside>
   <aside class="dfn-panel" data-for="term-for-">
    <a href="https://publicsuffix.org/list/#">https://publicsuffix.org/list/#</a><b>Referenced in:</b>
    <ul>
     <li><a href="#termref-for-">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-">
-   <a href="determine-the-storage-access-policy">determine-the-storage-access-policy</a><b>Referenced in:</b>
+  <aside class="dfn-panel" data-for="term-for-dom-document-requeststorageaccessfororigin">
+   <a href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin">https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#termref-for-">6. Integration with the Storage Access API</a>
+    <li><a href="#ref-for-dom-document-requeststorageaccessfororigin">6. Integration with the Storage Access API</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="term-for-dom-document-requeststorageaccess">
+   <a href="https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess">https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-dom-document-requeststorageaccess">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="term-for-concept-basic-url-parser">
@@ -980,6 +1048,12 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-concept-url-scheme">4. Data Structures</a>
    </ul>
   </aside>
+  <aside class="dfn-panel" data-for="term-for-resolve">
+   <a href="https://webidl.spec.whatwg.org/#resolve">https://webidl.spec.whatwg.org/#resolve</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-resolve">6. Integration with the Storage Access API</a>
+   </ul>
+  </aside>
   <h3 class="no-num no-ref heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="index">
    <li>
@@ -997,10 +1071,15 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <li>
     <a data-link-type="biblio">[HTML]</a> defines the following terms:
     <ul>
+     <li><span class="dfn-paneled" id="term-for-environment-settings-object">environment settings object</span>
      <li><span class="dfn-paneled" id="term-for-concept-origin-host">host</span>
      <li><span class="dfn-paneled" id="term-for-obtain-a-site">obtain a site</span>
      <li><span class="dfn-paneled" id="term-for-concept-origin-opaque">opaque origin</span>
+     <li><span class="dfn-paneled" id="term-for-concept-settings-object-origin">origin</span>
+     <li><span class="dfn-paneled" id="term-for-queue-a-global-task">queue a global task</span>
+     <li><span class="dfn-paneled" id="term-for-relevant-settings-object">relevant settings object</span>
      <li><span class="dfn-paneled" id="term-for-site">site</span>
+     <li><span class="dfn-paneled" id="term-for-concept-environment-top-level-origin">top-level origin</span>
     </ul>
    <li>
     <a data-link-type="biblio">[INFRA]</a> defines the following terms:
@@ -1017,8 +1096,11 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <a data-link-type="biblio">[PERMISSIONS]</a> defines the following terms:
     <ul>
      <li><span class="dfn-paneled" id="term-for-dom-permissiondescriptor">PermissionDescriptor</span>
+     <li><span class="dfn-paneled" id="term-for-dfn-granted">granted</span>
      <li><span class="dfn-paneled" id="term-for-dom-permissiondescriptor-name">name</span>
+     <li><span class="dfn-paneled" id="term-for-permissions-task-source">permissions task source</span>
      <li><span class="dfn-paneled" id="term-for-dfn-remove-a-permission-store-entry">remove a permission store entry</span>
+     <li><span class="dfn-paneled" id="term-for-dfn-request-permission-to-use">requesting permission to use</span>
     </ul>
    <li>
     <a data-link-type="biblio">[PSL]</a> defines the following terms:
@@ -1026,9 +1108,14 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li><span class="dfn-paneled" id="term-for-">registered domain</span>
     </ul>
    <li>
+    <a data-link-type="biblio">[REQUESTSTORAGEACCESSFORORIGIN]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="term-for-dom-document-requeststorageaccessfororigin">requestStorageAccessForOrigin(origin)</span>
+    </ul>
+   <li>
     <a data-link-type="biblio">[STORAGE-ACCESS]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-①">determine the storage access policy</span>
+     <li><span class="dfn-paneled" id="term-for-dom-document-requeststorageaccess">requestStorageAccess()</span>
     </ul>
    <li>
     <a data-link-type="biblio">[URL]</a> defines the following terms:
@@ -1036,6 +1123,11 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li><span class="dfn-paneled" id="term-for-concept-basic-url-parser">basic url parser</span>
      <li><span class="dfn-paneled" id="term-for-concept-url-origin">origin</span>
      <li><span class="dfn-paneled" id="term-for-concept-url-scheme">scheme</span>
+    </ul>
+   <li>
+    <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
+    <ul>
+     <li><span class="dfn-paneled" id="term-for-resolve">resolve</span>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -1053,12 +1145,16 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <dd>Marcos Caceres; Mike Taylor. <a href="https://w3c.github.io/permissions/"><cite>Permissions</cite></a>. URL: <a href="https://w3c.github.io/permissions/">https://w3c.github.io/permissions/</a>
    <dt id="biblio-psl">[PSL]
    <dd><cite><a href="https://publicsuffix.org/">Public Suffix List</a></cite>.    Mozilla Foundation.
+   <dt id="biblio-requeststorageaccessfororigin">[REQUESTSTORAGEACCESSFORORIGIN]
+   <dd>requestStorageAccessForOrigin API URL: <a href="https://privacycg.github.io/requestStorageAccessForOrigin/">https://privacycg.github.io/requestStorageAccessForOrigin/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-storage-access">[STORAGE-ACCESS]
    <dd><a href="https://privacycg.github.io/storage-access/"><cite>Storage Access API</cite></a>. CG Draft. URL: <a href="https://privacycg.github.io/storage-access/">https://privacycg.github.io/storage-access/</a>
    <dt id="biblio-url">[URL]
    <dd>Anne van Kesteren. <a href="https://url.spec.whatwg.org/"><cite>URL Standard</cite></a>. Living Standard. URL: <a href="https://url.spec.whatwg.org/">https://url.spec.whatwg.org/</a>
+   <dt id="biblio-webidl">[WEBIDL]
+   <dd>Edgar Chen; Timothy Gu. <a href="https://webidl.spec.whatwg.org/"><cite>Web IDL Standard</cite></a>. Living Standard. URL: <a href="https://webidl.spec.whatwg.org/">https://webidl.spec.whatwg.org/</a>
   </dl>
   <h3 class="no-num no-ref heading settled" id="informative"><span class="content">Informative References</span><a class="self-link" href="#informative"></a></h3>
   <dl>
@@ -1100,8 +1196,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <ul>
     <li><a href="#ref-for-first-party-set">3. List consumption</a>
     <li><a href="#ref-for-first-party-set①">4. Data Structures</a>
-    <li><a href="#ref-for-first-party-set②">5. Validating first-party set inclusion</a>
-    <li><a href="#ref-for-first-party-set③">6. Integration with the Storage Access API</a> <a href="#ref-for-first-party-set④">(2)</a>
+    <li><a href="#ref-for-first-party-set②">5. Validating first-party set inclusion</a> <a href="#ref-for-first-party-set③">(2)</a> <a href="#ref-for-first-party-set④">(3)</a>
     <li><a href="#ref-for-first-party-set⑤">7. Handling first-party set changes</a>
    </ul>
   </aside>
@@ -1122,8 +1217,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <b><a href="#first-party-set-associatedsites">#first-party-set-associatedsites</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-first-party-set-associatedsites">3. List consumption</a>
-    <li><a href="#ref-for-first-party-set-associatedsites①">5. Validating first-party set inclusion</a>
-    <li><a href="#ref-for-first-party-set-associatedsites②">6. Integration with the Storage Access API</a> <a href="#ref-for-first-party-set-associatedsites③">(2)</a>
+    <li><a href="#ref-for-first-party-set-associatedsites①">5. Validating first-party set inclusion</a> <a href="#ref-for-first-party-set-associatedsites②">(2)</a> <a href="#ref-for-first-party-set-associatedsites③">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="first-party-set-servicesites">
@@ -1167,32 +1261,37 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
   <aside class="dfn-panel" data-for="determine-the-member-type">
    <b><a href="#determine-the-member-type">#determine-the-member-type</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-determine-the-member-type">5. Validating first-party set inclusion</a>
-    <li><a href="#ref-for-determine-the-member-type①">6. Integration with the Storage Access API</a> <a href="#ref-for-determine-the-member-type②">(2)</a>
+    <li><a href="#ref-for-determine-the-member-type">5. Validating first-party set inclusion</a> <a href="#ref-for-determine-the-member-type①">(2)</a> <a href="#ref-for-determine-the-member-type②">(3)</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="find-a-first-party-set">
    <b><a href="#find-a-first-party-set">#find-a-first-party-set</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-find-a-first-party-set">6. Integration with the Storage Access API</a>
+    <li><a href="#ref-for-find-a-first-party-set">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="limit-for-associated-sites">
    <b><a href="#limit-for-associated-sites">#limit-for-associated-sites</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-limit-for-associated-sites">6. Integration with the Storage Access API</a>
+    <li><a href="#ref-for-limit-for-associated-sites">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="eligible-for-same-party-membership-when-embedded-within">
    <b><a href="#eligible-for-same-party-membership-when-embedded-within">#eligible-for-same-party-membership-when-embedded-within</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eligible-for-same-party-membership-when-embedded-within">6. Integration with the Storage Access API</a>
+    <li><a href="#ref-for-eligible-for-same-party-membership-when-embedded-within">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
   <aside class="dfn-panel" data-for="determine-eligibility-for-an-associated-site">
    <b><a href="#determine-eligibility-for-an-associated-site">#determine-eligibility-for-an-associated-site</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-determine-eligibility-for-an-associated-site">6. Integration with the Storage Access API</a> <a href="#ref-for-determine-eligibility-for-an-associated-site①">(2)</a> <a href="#ref-for-determine-eligibility-for-an-associated-site②">(3)</a>
+    <li><a href="#ref-for-determine-eligibility-for-an-associated-site">5. Validating first-party set inclusion</a> <a href="#ref-for-determine-eligibility-for-an-associated-site①">(2)</a> <a href="#ref-for-determine-eligibility-for-an-associated-site②">(3)</a>
+   </ul>
+  </aside>
+  <aside class="dfn-panel" data-for="is-same-party-with-its-top-level-embedder">
+   <b><a href="#is-same-party-with-its-top-level-embedder">#is-same-party-with-its-top-level-embedder</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-is-same-party-with-its-top-level-embedder">6. Integration with the Storage Access API</a> <a href="#ref-for-is-same-party-with-its-top-level-embedder①">(2)</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
