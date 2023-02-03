@@ -28,6 +28,8 @@ spec: clear-site-data; urlPrefix: https://www.w3.org/TR/clear-site-data/#
 spec: storage-access; urlPrex: https://privacycg.github.io/storage-access/#
     type: dfn
         text: determine the storage access policy; url: determine-the-storage-access-policy
+<!-- Export PR is https://github.com/w3c/permissions/pull/407, but note that we will likely end up
+     not using the permissions task source directly, see https://github.com/privacycg/storage-access/issues/144 -->
 urlPrefix: https://w3c.github.io/permissions/; spec: permissions
     text: permissions task source; url: #permissions-task-source; type: dfn
 </pre>
@@ -202,23 +204,22 @@ To <dfn>determine eligibility for an associated site</dfn> given a [=site=] |sit
 3. If |index| is greater than or equal to the [=limit for associated sites=], return false.
 4. Return true.
 
+A given [=environment settings object=] |settings| <dfn>is same-party with its top-level embedder</dfn>, if the following steps return true:
+1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
+1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
+1. Return whether |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
+
 <h2 id="storage-access-integration">Integration with the Storage Access API</h2>
 
 Modify {{Document/requestStorageAccess()}} to insert the following steps before step 13.5 (i.e. before [=requesting permission to use=]):
 
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
-1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
-1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
-2. Let |sameSet| be true if |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
-3. If |sameSet| is true, the user agent may run <var ignore>process permission state</var> with [=permission/granted=]. This step is [=implementation-defined=].
+1. If |settings| [=is same-party with its top-level embedder=], the user agent may run <var ignore>process permission state</var> with [=permission/granted=] and abort the remaining steps.
 
 Modify {{Document/requestStorageAccessForOrigin(origin)}} to insert the following steps before step 13.8 (i.e. before [=requesting permission to use=]):
 
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
-1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
-1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
-2. Let |sameSet| be true if |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
-3. If |sameSet| is true, the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var>. This step is [=implementation-defined=].
+1. If |settings| [=is same-party with its top-level embedder=], the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var> and abort the remaining steps.
 
 <h2 id="handling-changes">Handling first-party set changes</h2>
 
