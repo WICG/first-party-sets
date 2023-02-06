@@ -5,8 +5,9 @@ Level: None
 Status: w3c/CG-DRAFT
 Group: WICG
 URL: https://wicg.github.io/first-party-sets/
-Editor: Johann Hofmann, Google https://google.com, johannhof@google.com
+Editor: Chris Fredrickson, Google https://google.com, cfredric@google.com
 Editor: Kaustubha Govind, Google https://google.com, kaustubhag@google.com
+Editor: Johann Hofmann, Google https://google.com, johannhof@google.com
 Abstract: How user agents should integrate with First-Party Sets, a mechanism to declare a collection of related domains as being in a First-Party Set.
 Markup Shorthands: markdown yes
 Default Biblio Display: inline
