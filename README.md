@@ -5,6 +5,7 @@ being in a First-Party Set.
 
 ## Editors:
 
+- [Chris Fredrickson](https://github.com/cfredric), Google
 - [Kaustubha Govind](https://github.com/krgovind), Google
 - [Johann Hofmann](https://github.com/johannhof), Google
 
