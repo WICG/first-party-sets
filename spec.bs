@@ -210,6 +210,11 @@ A given [=environment settings object=] |settings| <dfn>is same-party with its t
 1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment settings object/origin=].
 1. Return whether |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
 
+A given [=environment settings object=] |settings| and [=/origin=] |origin| <dfn>are same-party in an embedding context</dfn>, if the following steps return true:
+1. Let |topLevelSite| be the result of [=obtain a site|obtaining a site=] from |settings|' [=environment/top-level origin=].
+1. Let |embeddedSite| be the result of [=obtain a site|obtaining a site=] from |origin|.
+1. Return whether |embeddedSite| is [=eligible for same-party membership when embedded within=] |topLevelSite|.
+
 <h2 id="storage-access-integration">Integration with the Storage Access API</h2>
 
 Modify {{Document/requestStorageAccess()}} to insert the following steps before step 13.5 (i.e. before [=requesting permission to use=]):
@@ -217,10 +222,10 @@ Modify {{Document/requestStorageAccess()}} to insert the following steps before 
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
 1. If |settings| [=is same-party with its top-level embedder=], the user agent may run <var ignore>process permission state</var> with [=permission/granted=] and abort the remaining steps.
 
-Modify {{Document/requestStorageAccessForOrigin(origin)}} to insert the following steps before step 13.8 (i.e. before [=requesting permission to use=]):
+Modify {{Document/requestStorageAccessForOrigin(requestedOrigin)}} to insert the following steps before step 13.8 (i.e. before [=requesting permission to use=]):
 
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
-1. If |settings| [=is same-party with its top-level embedder=], the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var> and abort the remaining steps.
+1. If |settings| and <var ignore>requestedOrigin</var> [=are same-party in an embedding context=], the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var> and abort the remaining steps.
 
 <h2 id="handling-changes">Handling first-party set changes</h2>
 
