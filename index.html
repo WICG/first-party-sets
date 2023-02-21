@@ -4,11 +4,10 @@
   <title>User Agent Interaction with First-Party Sets</title>
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
-  <meta content="Bikeshed version 859efb4bd, updated Fri Jan 27 16:04:01 2023 -0800" name="generator">
+  <meta content="Bikeshed version f043d3484, updated Fri Feb 17 10:53:48 2023 -0800" name="generator">
   <link href="https://wicg.github.io/first-party-sets/" rel="canonical">
-  <meta content="55f438768800453b6631bcdcf3883703a171889f" name="document-revision">
+  <meta content="5b2690d64077eb506f79f71a868bffb9df1141e8" name="document-revision">
 <style>/* style-autolinks */
-
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
     font-size: inherit;
@@ -68,7 +67,8 @@ pre .property::before, pre .property::after {
 
 [data-link-type=biblio] {
     white-space: pre;
-}</style>
+}
+</style>
 <style>/* style-colors */
 
 /* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
@@ -177,9 +177,9 @@ pre .property::before, pre .property::after {
     --outdated-shadow: red;
 
     --editedrec-bg: darkorange;
-}</style>
+}
+</style>
 <style>/* style-counters */
-
 body {
     counter-reset: example figure issue;
 }
@@ -206,9 +206,9 @@ figcaption {
 }
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
-}</style>
+}
+</style>
 <style>/* style-dfn-panel */
-
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
@@ -216,10 +216,10 @@ figcaption:not(.no-marker)::before {
 .dfn-panel {
     position: absolute;
     z-index: 35;
-    height: auto;
-    width: -webkit-fit-content;
-    width: fit-content;
+    width: 20em;
+    min-width: min-content;
     max-width: 300px;
+    height: auto;
     max-height: 500px;
     overflow: auto;
     padding: 0.5em 0.75em;
@@ -227,6 +227,7 @@ figcaption:not(.no-marker)::before {
     background: var(--dfnpanel-bg);
     color: var(--dfnpanel-text);
     border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
 }
 .dfn-panel:not(.on) { display: none; }
 .dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
@@ -249,7 +250,6 @@ figcaption:not(.no-marker)::before {
 .dfn-paneled { cursor: pointer; }
 </style>
 <style>/* style-issues */
-
 a[href].issue-return {
     float: right;
     float: inline-end;
@@ -259,7 +259,6 @@ a[href].issue-return {
 }
 </style>
 <style>/* style-md-lists */
-
 /* This is a weird hack for me not yet following the commonmark spec
    regarding paragraph and lists. */
 [data-md] > :first-child {
@@ -267,7 +266,8 @@ a[href].issue-return {
 }
 [data-md] > :last-child {
     margin-bottom: 0;
-}</style>
+}
+</style>
 <style>/* style-selflinks */
 
 :root {
@@ -441,6 +441,7 @@ dfn > a.self-link::before      { content: "#"; }
        which is quite common in practice... */
     img { background: white; }
 }
+
 @media (prefers-color-scheme: dark) {
     :root {
         --selflink-text: black;
@@ -454,12 +455,13 @@ dfn > a.self-link::before      { content: "#"; }
         --dfnpanel-bg: #222;
         --dfnpanel-text: var(--text);
     }
-}</style>
+}
+</style>
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">User Agent Interaction with First-Party Sets</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-02-13">13 February 2023</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-02-21">21 February 2023</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -728,6 +730,15 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Return whether <var>embeddedSite</var> is <a data-link-type="dfn" href="#eligible-for-same-party-membership-when-embedded-within" id="ref-for-eligible-for-same-party-membership-when-embedded-within">eligible for same-party membership when embedded within</a> <var>topLevelSite</var>.</p>
    </ol>
+   <p>A given <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object" id="ref-for-environment-settings-object①">environment settings object</a> <var>settings</var> and <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin" id="ref-for-concept-origin">origin</a> <var>origin</var> <dfn class="dfn-paneled" data-dfn-type="dfn" data-noexport id="are-same-party-in-an-embedding-context">are same-party in an embedding context</dfn>, if the following steps return true:</p>
+   <ol>
+    <li data-md>
+     <p>Let <var>topLevelSite</var> be the result of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site" id="ref-for-obtain-a-site③">obtaining a site</a> from <var>settings</var>’ <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin" id="ref-for-concept-environment-top-level-origin①">top-level origin</a>.</p>
+    <li data-md>
+     <p>Let <var>embeddedSite</var> be the result of <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site" id="ref-for-obtain-a-site④">obtaining a site</a> from <var>origin</var>.</p>
+    <li data-md>
+     <p>Return whether <var>embeddedSite</var> is <a data-link-type="dfn" href="#eligible-for-same-party-membership-when-embedded-within" id="ref-for-eligible-for-same-party-membership-when-embedded-within①">eligible for same-party membership when embedded within</a> <var>topLevelSite</var>.</p>
+   </ol>
    <h2 class="heading settled" data-level="6" id="storage-access-integration"><span class="secno">6. </span><span class="content">Integration with the Storage Access API</span><a class="self-link" href="#storage-access-integration"></a></h2>
    <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess" id="ref-for-dom-document-requeststorageaccess">requestStorageAccess()</a></code> to insert the following steps before step 13.5 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use">requesting permission to use</a>):</p>
    <ol>
@@ -736,12 +747,12 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>If <var>settings</var> <a data-link-type="dfn" href="#is-same-party-with-its-top-level-embedder" id="ref-for-is-same-party-with-its-top-level-embedder">is same-party with its top-level embedder</a>, the user agent may run <var>process permission state</var> with <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-granted" id="ref-for-dfn-granted">granted</a> and abort the remaining steps.</p>
    </ol>
-   <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin" id="ref-for-dom-document-requeststorageaccessfororigin">requestStorageAccessForOrigin(origin)</a></code> to insert the following steps before step 13.8 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use①">requesting permission to use</a>):</p>
+   <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin" id="ref-for-dom-document-requeststorageaccessfororigin">requestStorageAccessForOrigin(requestedOrigin)</a></code> to insert the following steps before step 13.8 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use①">requesting permission to use</a>):</p>
    <ol>
     <li data-md>
      <p>Let <var>settings</var> be <var>doc</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object" id="ref-for-relevant-settings-object①">relevant settings object</a>.</p>
     <li data-md>
-     <p>If <var>settings</var> <a data-link-type="dfn" href="#is-same-party-with-its-top-level-embedder" id="ref-for-is-same-party-with-its-top-level-embedder①">is same-party with its top-level embedder</a>, the user agent may <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task" id="ref-for-queue-a-global-task">queue a global task</a> on the <a data-link-type="dfn" href="https://w3c.github.io/permissions/#permissions-task-source" id="ref-for-permissions-task-source">permissions task source</a> given <var>global</var> to <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#resolve" id="ref-for-resolve">resolve</a> <var>p</var> and abort the remaining steps.</p>
+     <p>If <var>settings</var> and <var>requestedOrigin</var> <a data-link-type="dfn" href="#are-same-party-in-an-embedding-context" id="ref-for-are-same-party-in-an-embedding-context">are same-party in an embedding context</a>, the user agent may <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task" id="ref-for-queue-a-global-task">queue a global task</a> on the <a data-link-type="dfn" href="https://w3c.github.io/permissions/#permissions-task-source" id="ref-for-permissions-task-source">permissions task source</a> given <var>global</var> to <a data-link-type="dfn" href="https://webidl.spec.whatwg.org/#resolve" id="ref-for-resolve">resolve</a> <var>p</var> and abort the remaining steps.</p>
    </ol>
    <h2 class="heading settled" data-level="7" id="handling-changes"><span class="secno">7. </span><span class="content">Handling first-party set changes</span><a class="self-link" href="#handling-changes"></a></h2>
    <p>When a <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#site" id="ref-for-site①②">site</a> <var>site</var> leaves a <a data-link-type="dfn" href="#first-party-set" id="ref-for-first-party-set⑤">first-party set</a> as the result of building a new <a data-link-type="dfn" href="#list-of-first-party-sets" id="ref-for-list-of-first-party-sets③">list of first-party sets</a>, user agents must ensure that it does not retain any access to data or shared identifiers held by other sites in the first-party set by running the following steps:</p>
@@ -751,7 +762,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>Let <var>domain</var> be site’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host" id="ref-for-concept-origin-host">host</a>.</p>
     <li data-md>
-     <p>For each <var>origin</var> known to the user agent whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host" id="ref-for-concept-origin-host①">host</a>'s <a data-link-type="dfn" href="https://publicsuffix.org/list/#" id="termref-for-">registered domain</a> is <var>domain</var>:</p>
+     <p>For each <var>origin</var> known to the user agent whose <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host" id="ref-for-concept-origin-host①">host</a>'s <a data-link-type="dfn" href="https://publicsuffix.org/list/#" id="ref-for-03bc925cbe5a07b6f4595535c7a0bd36">registered domain</a> is <var>domain</var>:</p>
      <ol>
       <li data-md>
        <p><a data-link-type="dfn" href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin" id="ref-for-abstract-opdef-clear-cache-for-origin">Clear cache for origin</a>.</p>
@@ -833,6 +844,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
   <h2 class="no-num no-ref heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num no-ref heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="index">
+   <li><a href="#are-same-party-in-an-embedding-context">are same-party in an embedding context</a><span>, in § 5</span>
    <li><a href="#first-party-set-associatedsites">associatedSites</a><span>, in § 4</span>
    <li><a href="#build-the-list-of-first-party-sets">build the list of first-party sets</a><span>, in § 3</span>
    <li><a href="#first-party-set-cctlds">ccTLDs</a><span>, in § 4</span>
@@ -852,205 +864,211 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <li><a href="#first-party-set-primary">primary</a><span>, in § 4</span>
    <li><a href="#first-party-set-servicesites">serviceSites</a><span>, in § 4</span>
   </ul>
-  <aside class="dfn-panel" data-for="term-for-abstract-opdef-clear-cache-for-origin">
-   <a href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin">https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-217c8763883835816bac246786597d6a" class="dfn-panel" data-for="217c8763883835816bac246786597d6a" id="infopanel-for-217c8763883835816bac246786597d6a">
+   <span id="infopaneltitle-for-217c8763883835816bac246786597d6a" style="display:none">Info about the 'clear cache for origin' external reference.</span><a href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin">https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-clear-cache-for-origin">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-abstract-opdef-clear-cookies-for-origin">
-   <a href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin">https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-8e4f22f690ac0235dfb4e1c1b12c1d76" class="dfn-panel" data-for="8e4f22f690ac0235dfb4e1c1b12c1d76" id="infopanel-for-8e4f22f690ac0235dfb4e1c1b12c1d76">
+   <span id="infopaneltitle-for-8e4f22f690ac0235dfb4e1c1b12c1d76" style="display:none">Info about the 'clear cookies for origin' external reference.</span><a href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin">https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-clear-cookies-for-origin">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-abstract-opdef-clear-dom-accessible-storage-for-origin">
-   <a href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin">https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-402e442cf36bb3f6a853e88f51e9c698" class="dfn-panel" data-for="402e442cf36bb3f6a853e88f51e9c698" id="infopanel-for-402e442cf36bb3f6a853e88f51e9c698">
+   <span id="infopaneltitle-for-402e442cf36bb3f6a853e88f51e9c698" style="display:none">Info about the 'clear dom-accessible storage for origin' external reference.</span><a href="https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin">https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-abstract-opdef-clear-dom-accessible-storage-for-origin">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-utf-8">
-   <a href="https://encoding.spec.whatwg.org/#utf-8">https://encoding.spec.whatwg.org/#utf-8</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-8297ed8dbe5ddc8d52a433d25b082796" class="dfn-panel" data-for="8297ed8dbe5ddc8d52a433d25b082796" id="infopanel-for-8297ed8dbe5ddc8d52a433d25b082796">
+   <span id="infopaneltitle-for-8297ed8dbe5ddc8d52a433d25b082796" style="display:none">Info about the 'utf-8' external reference.</span><a href="https://encoding.spec.whatwg.org/#utf-8">https://encoding.spec.whatwg.org/#utf-8</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-utf-8">3. List consumption</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-environment-settings-object">
-   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object">https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-d815dc723d8b4fe4b1166e2013ec62b7" class="dfn-panel" data-for="d815dc723d8b4fe4b1166e2013ec62b7" id="infopanel-for-d815dc723d8b4fe4b1166e2013ec62b7">
+   <span id="infopaneltitle-for-d815dc723d8b4fe4b1166e2013ec62b7" style="display:none">Info about the 'environment settings object' external reference.</span><a href="https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object">https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-environment-settings-object">5. Validating first-party set inclusion</a>
+    <li><a href="#ref-for-environment-settings-object">5. Validating first-party set inclusion</a> <a href="#ref-for-environment-settings-object①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-origin-host">
-   <a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host">https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-0a8d192cb885d336f16ead79b570c196" class="dfn-panel" data-for="0a8d192cb885d336f16ead79b570c196" id="infopanel-for-0a8d192cb885d336f16ead79b570c196">
+   <span id="infopaneltitle-for-0a8d192cb885d336f16ead79b570c196" style="display:none">Info about the 'host' external reference.</span><a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host">https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-origin-host">7. Handling first-party set changes</a> <a href="#ref-for-concept-origin-host①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-obtain-a-site">
-   <a href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site">https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-27e69640e8fd1e1522b5ace8391212ba" class="dfn-panel" data-for="27e69640e8fd1e1522b5ace8391212ba" id="infopanel-for-27e69640e8fd1e1522b5ace8391212ba">
+   <span id="infopaneltitle-for-27e69640e8fd1e1522b5ace8391212ba" style="display:none">Info about the 'obtain a site' external reference.</span><a href="https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site">https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-obtain-a-site">4. Data Structures</a>
-    <li><a href="#ref-for-obtain-a-site①">5. Validating first-party set inclusion</a> <a href="#ref-for-obtain-a-site②">(2)</a>
+    <li><a href="#ref-for-obtain-a-site①">5. Validating first-party set inclusion</a> <a href="#ref-for-obtain-a-site②">(2)</a> <a href="#ref-for-obtain-a-site③">(3)</a> <a href="#ref-for-obtain-a-site④">(4)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-origin-opaque">
-   <a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque">https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-23307d34220e7159f8e5d8c231db141f" class="dfn-panel" data-for="23307d34220e7159f8e5d8c231db141f" id="infopanel-for-23307d34220e7159f8e5d8c231db141f">
+   <span id="infopaneltitle-for-23307d34220e7159f8e5d8c231db141f" style="display:none">Info about the 'opaque origin' external reference.</span><a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque">https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-origin-opaque">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-settings-object-origin">
-   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin">https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-e66f9f7d45934e77669cb907bd0c7636" class="dfn-panel" data-for="e66f9f7d45934e77669cb907bd0c7636" id="infopanel-for-e66f9f7d45934e77669cb907bd0c7636">
+   <span id="infopaneltitle-for-e66f9f7d45934e77669cb907bd0c7636" style="display:none">Info about the 'origin' external reference.</span><a href="https://html.spec.whatwg.org/multipage/browsers.html#concept-origin">https://html.spec.whatwg.org/multipage/browsers.html#concept-origin</a><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-concept-origin">5. Validating first-party set inclusion</a>
+   </ul>
+  </aside>
+  <aside aria-labelledby="infopaneltitle-for-a95cc6f0be910557a60537e0256920b2" class="dfn-panel" data-for="a95cc6f0be910557a60537e0256920b2" id="infopanel-for-a95cc6f0be910557a60537e0256920b2">
+   <span id="infopaneltitle-for-a95cc6f0be910557a60537e0256920b2" style="display:none">Info about the 'origin (for environment settings object)' external reference.</span><a href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin">https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-settings-object-origin">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-queue-a-global-task">
-   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task">https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-a8756513b792b8f203588906035a13bb" class="dfn-panel" data-for="a8756513b792b8f203588906035a13bb" id="infopanel-for-a8756513b792b8f203588906035a13bb">
+   <span id="infopaneltitle-for-a8756513b792b8f203588906035a13bb" style="display:none">Info about the 'queue a global task' external reference.</span><a href="https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task">https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-queue-a-global-task">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-relevant-settings-object">
-   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object">https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-bfb9cb6617f81a424ab20212af73bae3" class="dfn-panel" data-for="bfb9cb6617f81a424ab20212af73bae3" id="infopanel-for-bfb9cb6617f81a424ab20212af73bae3">
+   <span id="infopaneltitle-for-bfb9cb6617f81a424ab20212af73bae3" style="display:none">Info about the 'relevant settings object' external reference.</span><a href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object">https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-relevant-settings-object">6. Integration with the Storage Access API</a> <a href="#ref-for-relevant-settings-object①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-site">
-   <a href="https://html.spec.whatwg.org/multipage/browsers.html#site">https://html.spec.whatwg.org/multipage/browsers.html#site</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-f7e6800046257cc9fe726534da6b862b" class="dfn-panel" data-for="f7e6800046257cc9fe726534da6b862b" id="infopanel-for-f7e6800046257cc9fe726534da6b862b">
+   <span id="infopaneltitle-for-f7e6800046257cc9fe726534da6b862b" style="display:none">Info about the 'site' external reference.</span><a href="https://html.spec.whatwg.org/multipage/browsers.html#site">https://html.spec.whatwg.org/multipage/browsers.html#site</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-site">4. Data Structures</a> <a href="#ref-for-site①">(2)</a> <a href="#ref-for-site②">(3)</a> <a href="#ref-for-site③">(4)</a> <a href="#ref-for-site④">(5)</a>
     <li><a href="#ref-for-site⑤">5. Validating first-party set inclusion</a> <a href="#ref-for-site⑥">(2)</a> <a href="#ref-for-site⑦">(3)</a> <a href="#ref-for-site⑧">(4)</a> <a href="#ref-for-site⑨">(5)</a> <a href="#ref-for-site①⓪">(6)</a> <a href="#ref-for-site①①">(7)</a>
     <li><a href="#ref-for-site①②">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-environment-top-level-origin">
-   <a href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin">https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-fad46e4a016cd6e3ca0c81a3c004e4c3" class="dfn-panel" data-for="fad46e4a016cd6e3ca0c81a3c004e4c3" id="infopanel-for-fad46e4a016cd6e3ca0c81a3c004e4c3">
+   <span id="infopaneltitle-for-fad46e4a016cd6e3ca0c81a3c004e4c3" style="display:none">Info about the 'top-level origin' external reference.</span><a href="https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin">https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-concept-environment-top-level-origin">5. Validating first-party set inclusion</a>
+    <li><a href="#ref-for-concept-environment-top-level-origin">5. Validating first-party set inclusion</a> <a href="#ref-for-concept-environment-top-level-origin①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-byte-sequence">
-   <a href="https://infra.spec.whatwg.org/#byte-sequence">https://infra.spec.whatwg.org/#byte-sequence</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-6a3d87a2ff9ed36e37a82055f7e141de" class="dfn-panel" data-for="6a3d87a2ff9ed36e37a82055f7e141de" id="infopanel-for-6a3d87a2ff9ed36e37a82055f7e141de">
+   <span id="infopaneltitle-for-6a3d87a2ff9ed36e37a82055f7e141de" style="display:none">Info about the 'byte sequence' external reference.</span><a href="https://infra.spec.whatwg.org/#byte-sequence">https://infra.spec.whatwg.org/#byte-sequence</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-byte-sequence">3. List consumption</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-implementation-defined">
-   <a href="https://infra.spec.whatwg.org/#implementation-defined">https://infra.spec.whatwg.org/#implementation-defined</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-fd74d8159933c4a74d0b23390bed43e3" class="dfn-panel" data-for="fd74d8159933c4a74d0b23390bed43e3" id="infopanel-for-fd74d8159933c4a74d0b23390bed43e3">
+   <span id="infopaneltitle-for-fd74d8159933c4a74d0b23390bed43e3" style="display:none">Info about the 'implementation-defined' external reference.</span><a href="https://infra.spec.whatwg.org/#implementation-defined">https://infra.spec.whatwg.org/#implementation-defined</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-implementation-defined">5. Validating first-party set inclusion</a>
     <li><a href="#ref-for-implementation-defined①">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-list">
-   <a href="https://infra.spec.whatwg.org/#list">https://infra.spec.whatwg.org/#list</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-fafd38d2108e357bcc9a6fd7f3cd04a7" class="dfn-panel" data-for="fafd38d2108e357bcc9a6fd7f3cd04a7" id="infopanel-for-fafd38d2108e357bcc9a6fd7f3cd04a7">
+   <span id="infopaneltitle-for-fafd38d2108e357bcc9a6fd7f3cd04a7" style="display:none">Info about the 'list' external reference.</span><a href="https://infra.spec.whatwg.org/#list">https://infra.spec.whatwg.org/#list</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-list">4. Data Structures</a> <a href="#ref-for-list①">(2)</a> <a href="#ref-for-list②">(3)</a> <a href="#ref-for-list③">(4)</a> <a href="#ref-for-list④">(5)</a> <a href="#ref-for-list⑤">(6)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-ordered-map">
-   <a href="https://infra.spec.whatwg.org/#ordered-map">https://infra.spec.whatwg.org/#ordered-map</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-6f2e2caca6e93162e900d159efe5b573" class="dfn-panel" data-for="6f2e2caca6e93162e900d159efe5b573" id="infopanel-for-6f2e2caca6e93162e900d159efe5b573">
+   <span id="infopaneltitle-for-6f2e2caca6e93162e900d159efe5b573" style="display:none">Info about the 'ordered map' external reference.</span><a href="https://infra.spec.whatwg.org/#ordered-map">https://infra.spec.whatwg.org/#ordered-map</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-ordered-map">3. List consumption</a>
     <li><a href="#ref-for-ordered-map①">4. Data Structures</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-parse-json-bytes-to-an-infra-value">
-   <a href="https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value">https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-6d6a1917020b804433381e1c662ee64f" class="dfn-panel" data-for="6d6a1917020b804433381e1c662ee64f" id="infopanel-for-6d6a1917020b804433381e1c662ee64f">
+   <span id="infopaneltitle-for-6d6a1917020b804433381e1c662ee64f" style="display:none">Info about the 'parse json bytes to an infra value' external reference.</span><a href="https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value">https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-parse-json-bytes-to-an-infra-value">3. List consumption</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-string">
-   <a href="https://infra.spec.whatwg.org/#string">https://infra.spec.whatwg.org/#string</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-40b59bc325bd4d66701dfd8b7f1847c0" class="dfn-panel" data-for="40b59bc325bd4d66701dfd8b7f1847c0" id="infopanel-for-40b59bc325bd4d66701dfd8b7f1847c0">
+   <span id="infopaneltitle-for-40b59bc325bd4d66701dfd8b7f1847c0" style="display:none">Info about the 'string' external reference.</span><a href="https://infra.spec.whatwg.org/#string">https://infra.spec.whatwg.org/#string</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-string">4. Data Structures</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-struct">
-   <a href="https://infra.spec.whatwg.org/#struct">https://infra.spec.whatwg.org/#struct</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-3ee316b93eb2dbe81d01a666cce50f9b" class="dfn-panel" data-for="3ee316b93eb2dbe81d01a666cce50f9b" id="infopanel-for-3ee316b93eb2dbe81d01a666cce50f9b">
+   <span id="infopaneltitle-for-3ee316b93eb2dbe81d01a666cce50f9b" style="display:none">Info about the 'struct' external reference.</span><a href="https://infra.spec.whatwg.org/#struct">https://infra.spec.whatwg.org/#struct</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-struct">4. Data Structures</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-permissiondescriptor">
-   <a href="https://w3c.github.io/permissions/#dom-permissiondescriptor">https://w3c.github.io/permissions/#dom-permissiondescriptor</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-43348714678be2dd068b6e59f237b20f" class="dfn-panel" data-for="43348714678be2dd068b6e59f237b20f" id="infopanel-for-43348714678be2dd068b6e59f237b20f">
+   <span id="infopaneltitle-for-43348714678be2dd068b6e59f237b20f" style="display:none">Info about the 'PermissionDescriptor' external reference.</span><a href="https://w3c.github.io/permissions/#dom-permissiondescriptor">https://w3c.github.io/permissions/#dom-permissiondescriptor</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-permissiondescriptor">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dfn-granted">
-   <a href="https://w3c.github.io/permissions/#dfn-granted">https://w3c.github.io/permissions/#dfn-granted</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-697f6a092b2d003a98fd492ec23942db" class="dfn-panel" data-for="697f6a092b2d003a98fd492ec23942db" id="infopanel-for-697f6a092b2d003a98fd492ec23942db">
+   <span id="infopaneltitle-for-697f6a092b2d003a98fd492ec23942db" style="display:none">Info about the 'granted' external reference.</span><a href="https://w3c.github.io/permissions/#dfn-granted">https://w3c.github.io/permissions/#dfn-granted</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dfn-granted">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-permissiondescriptor-name">
-   <a href="https://w3c.github.io/permissions/#dom-permissiondescriptor-name">https://w3c.github.io/permissions/#dom-permissiondescriptor-name</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-ead23067700e8f952e9e56b02297f81d" class="dfn-panel" data-for="ead23067700e8f952e9e56b02297f81d" id="infopanel-for-ead23067700e8f952e9e56b02297f81d">
+   <span id="infopaneltitle-for-ead23067700e8f952e9e56b02297f81d" style="display:none">Info about the 'name' external reference.</span><a href="https://w3c.github.io/permissions/#dom-permissiondescriptor-name">https://w3c.github.io/permissions/#dom-permissiondescriptor-name</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-permissiondescriptor-name">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-permissions-task-source">
-   <a href="https://w3c.github.io/permissions/#permissions-task-source">https://w3c.github.io/permissions/#permissions-task-source</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-073cfa170359aab618d74bf28b7be2ab" class="dfn-panel" data-for="073cfa170359aab618d74bf28b7be2ab" id="infopanel-for-073cfa170359aab618d74bf28b7be2ab">
+   <span id="infopaneltitle-for-073cfa170359aab618d74bf28b7be2ab" style="display:none">Info about the 'permissions task source' external reference.</span><a href="https://w3c.github.io/permissions/#permissions-task-source">https://w3c.github.io/permissions/#permissions-task-source</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-permissions-task-source">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dfn-remove-a-permission-store-entry">
-   <a href="https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry">https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-19f972b95b516f43de1b42fcca3a3cdf" class="dfn-panel" data-for="19f972b95b516f43de1b42fcca3a3cdf" id="infopanel-for-19f972b95b516f43de1b42fcca3a3cdf">
+   <span id="infopaneltitle-for-19f972b95b516f43de1b42fcca3a3cdf" style="display:none">Info about the 'remove a permission store entry' external reference.</span><a href="https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry">https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dfn-remove-a-permission-store-entry">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dfn-request-permission-to-use">
-   <a href="https://w3c.github.io/permissions/#dfn-request-permission-to-use">https://w3c.github.io/permissions/#dfn-request-permission-to-use</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-7761fb406c4d8cdb685b810244d5e5a6" class="dfn-panel" data-for="7761fb406c4d8cdb685b810244d5e5a6" id="infopanel-for-7761fb406c4d8cdb685b810244d5e5a6">
+   <span id="infopaneltitle-for-7761fb406c4d8cdb685b810244d5e5a6" style="display:none">Info about the 'requesting permission to use' external reference.</span><a href="https://w3c.github.io/permissions/#dfn-request-permission-to-use">https://w3c.github.io/permissions/#dfn-request-permission-to-use</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dfn-request-permission-to-use">6. Integration with the Storage Access API</a> <a href="#ref-for-dfn-request-permission-to-use①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-">
-   <a href="https://publicsuffix.org/list/#">https://publicsuffix.org/list/#</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-03bc925cbe5a07b6f4595535c7a0bd36" class="dfn-panel" data-for="03bc925cbe5a07b6f4595535c7a0bd36" id="infopanel-for-03bc925cbe5a07b6f4595535c7a0bd36">
+   <span id="infopaneltitle-for-03bc925cbe5a07b6f4595535c7a0bd36" style="display:none">Info about the 'registered domain' external reference.</span><a href="https://publicsuffix.org/list/#">https://publicsuffix.org/list/#</a><b>Referenced in:</b>
    <ul>
-    <li><a href="#termref-for-">7. Handling first-party set changes</a>
+    <li><a href="#ref-for-03bc925cbe5a07b6f4595535c7a0bd36">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-document-requeststorageaccessfororigin">
-   <a href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin">https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-5f6245b998f89d9e8a1ee12f3b3d138b" class="dfn-panel" data-for="5f6245b998f89d9e8a1ee12f3b3d138b" id="infopanel-for-5f6245b998f89d9e8a1ee12f3b3d138b">
+   <span id="infopaneltitle-for-5f6245b998f89d9e8a1ee12f3b3d138b" style="display:none">Info about the 'requestStorageAccessForOrigin(requestedOrigin)' external reference.</span><a href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin">https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfororigin</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-document-requeststorageaccessfororigin">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-dom-document-requeststorageaccess">
-   <a href="https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess">https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-34f832b77e75095936c8a50644147995" class="dfn-panel" data-for="34f832b77e75095936c8a50644147995" id="infopanel-for-34f832b77e75095936c8a50644147995">
+   <span id="infopaneltitle-for-34f832b77e75095936c8a50644147995" style="display:none">Info about the 'requestStorageAccess()' external reference.</span><a href="https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess">https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-document-requeststorageaccess">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-basic-url-parser">
-   <a href="https://url.spec.whatwg.org/#concept-basic-url-parser">https://url.spec.whatwg.org/#concept-basic-url-parser</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-c987db82bff8391efc8df0e932e3e94f" class="dfn-panel" data-for="c987db82bff8391efc8df0e932e3e94f" id="infopanel-for-c987db82bff8391efc8df0e932e3e94f">
+   <span id="infopaneltitle-for-c987db82bff8391efc8df0e932e3e94f" style="display:none">Info about the 'basic url parser' external reference.</span><a href="https://url.spec.whatwg.org/#concept-basic-url-parser">https://url.spec.whatwg.org/#concept-basic-url-parser</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-basic-url-parser">4. Data Structures</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-url-origin">
-   <a href="https://url.spec.whatwg.org/#concept-url-origin">https://url.spec.whatwg.org/#concept-url-origin</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-eb0e1698348a5ae30cd3aa882b6dff01" class="dfn-panel" data-for="eb0e1698348a5ae30cd3aa882b6dff01" id="infopanel-for-eb0e1698348a5ae30cd3aa882b6dff01">
+   <span id="infopaneltitle-for-eb0e1698348a5ae30cd3aa882b6dff01" style="display:none">Info about the 'origin' external reference.</span><a href="https://url.spec.whatwg.org/#concept-url-origin">https://url.spec.whatwg.org/#concept-url-origin</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-url-origin">4. Data Structures</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-concept-url-scheme">
-   <a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-67f83ca6d3c695660bfc2f054f534ffb" class="dfn-panel" data-for="67f83ca6d3c695660bfc2f054f534ffb" id="infopanel-for-67f83ca6d3c695660bfc2f054f534ffb">
+   <span id="infopaneltitle-for-67f83ca6d3c695660bfc2f054f534ffb" style="display:none">Info about the 'scheme' external reference.</span><a href="https://url.spec.whatwg.org/#concept-url-scheme">https://url.spec.whatwg.org/#concept-url-scheme</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-concept-url-scheme">4. Data Structures</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="term-for-resolve">
-   <a href="https://webidl.spec.whatwg.org/#resolve">https://webidl.spec.whatwg.org/#resolve</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-f4f973f92274819781816b033aea1f11" class="dfn-panel" data-for="f4f973f92274819781816b033aea1f11" id="infopanel-for-f4f973f92274819781816b033aea1f11">
+   <span id="infopaneltitle-for-f4f973f92274819781816b033aea1f11" style="display:none">Info about the 'resolve' external reference.</span><a href="https://webidl.spec.whatwg.org/#resolve">https://webidl.spec.whatwg.org/#resolve</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-resolve">6. Integration with the Storage Access API</a>
    </ul>
@@ -1060,75 +1078,76 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <li>
     <a data-link-type="biblio">[CLEAR-SITE-DATA]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-abstract-opdef-clear-cache-for-origin">clear cache for origin</span>
-     <li><span class="dfn-paneled" id="term-for-abstract-opdef-clear-cookies-for-origin">clear cookies for origin</span>
-     <li><span class="dfn-paneled" id="term-for-abstract-opdef-clear-dom-accessible-storage-for-origin">clear dom-accessible storage for origin</span>
+     <li><span class="dfn-paneled" id="217c8763883835816bac246786597d6a">clear cache for origin</span>
+     <li><span class="dfn-paneled" id="8e4f22f690ac0235dfb4e1c1b12c1d76">clear cookies for origin</span>
+     <li><span class="dfn-paneled" id="402e442cf36bb3f6a853e88f51e9c698">clear dom-accessible storage for origin</span>
     </ul>
    <li>
     <a data-link-type="biblio">[ENCODING]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-utf-8">utf-8</span>
+     <li><span class="dfn-paneled" id="8297ed8dbe5ddc8d52a433d25b082796">utf-8</span>
     </ul>
    <li>
     <a data-link-type="biblio">[HTML]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-environment-settings-object">environment settings object</span>
-     <li><span class="dfn-paneled" id="term-for-concept-origin-host">host</span>
-     <li><span class="dfn-paneled" id="term-for-obtain-a-site">obtain a site</span>
-     <li><span class="dfn-paneled" id="term-for-concept-origin-opaque">opaque origin</span>
-     <li><span class="dfn-paneled" id="term-for-concept-settings-object-origin">origin</span>
-     <li><span class="dfn-paneled" id="term-for-queue-a-global-task">queue a global task</span>
-     <li><span class="dfn-paneled" id="term-for-relevant-settings-object">relevant settings object</span>
-     <li><span class="dfn-paneled" id="term-for-site">site</span>
-     <li><span class="dfn-paneled" id="term-for-concept-environment-top-level-origin">top-level origin</span>
+     <li><span class="dfn-paneled" id="d815dc723d8b4fe4b1166e2013ec62b7">environment settings object</span>
+     <li><span class="dfn-paneled" id="0a8d192cb885d336f16ead79b570c196">host</span>
+     <li><span class="dfn-paneled" id="27e69640e8fd1e1522b5ace8391212ba">obtain a site</span>
+     <li><span class="dfn-paneled" id="23307d34220e7159f8e5d8c231db141f">opaque origin</span>
+     <li><span class="dfn-paneled" id="e66f9f7d45934e77669cb907bd0c7636">origin</span>
+     <li><span class="dfn-paneled" id="a95cc6f0be910557a60537e0256920b2">origin <small>(for environment settings object)</small></span>
+     <li><span class="dfn-paneled" id="a8756513b792b8f203588906035a13bb">queue a global task</span>
+     <li><span class="dfn-paneled" id="bfb9cb6617f81a424ab20212af73bae3">relevant settings object</span>
+     <li><span class="dfn-paneled" id="f7e6800046257cc9fe726534da6b862b">site</span>
+     <li><span class="dfn-paneled" id="fad46e4a016cd6e3ca0c81a3c004e4c3">top-level origin</span>
     </ul>
    <li>
     <a data-link-type="biblio">[INFRA]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-byte-sequence">byte sequence</span>
-     <li><span class="dfn-paneled" id="term-for-implementation-defined">implementation-defined</span>
-     <li><span class="dfn-paneled" id="term-for-list">list</span>
-     <li><span class="dfn-paneled" id="term-for-ordered-map">ordered map</span>
-     <li><span class="dfn-paneled" id="term-for-parse-json-bytes-to-an-infra-value">parse json bytes to an infra value</span>
-     <li><span class="dfn-paneled" id="term-for-string">string</span>
-     <li><span class="dfn-paneled" id="term-for-struct">struct</span>
+     <li><span class="dfn-paneled" id="6a3d87a2ff9ed36e37a82055f7e141de">byte sequence</span>
+     <li><span class="dfn-paneled" id="fd74d8159933c4a74d0b23390bed43e3">implementation-defined</span>
+     <li><span class="dfn-paneled" id="fafd38d2108e357bcc9a6fd7f3cd04a7">list</span>
+     <li><span class="dfn-paneled" id="6f2e2caca6e93162e900d159efe5b573">ordered map</span>
+     <li><span class="dfn-paneled" id="6d6a1917020b804433381e1c662ee64f">parse json bytes to an infra value</span>
+     <li><span class="dfn-paneled" id="40b59bc325bd4d66701dfd8b7f1847c0">string</span>
+     <li><span class="dfn-paneled" id="3ee316b93eb2dbe81d01a666cce50f9b">struct</span>
     </ul>
    <li>
     <a data-link-type="biblio">[PERMISSIONS]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-dom-permissiondescriptor">PermissionDescriptor</span>
-     <li><span class="dfn-paneled" id="term-for-dfn-granted">granted</span>
-     <li><span class="dfn-paneled" id="term-for-dom-permissiondescriptor-name">name</span>
-     <li><span class="dfn-paneled" id="term-for-permissions-task-source">permissions task source</span>
-     <li><span class="dfn-paneled" id="term-for-dfn-remove-a-permission-store-entry">remove a permission store entry</span>
-     <li><span class="dfn-paneled" id="term-for-dfn-request-permission-to-use">requesting permission to use</span>
+     <li><span class="dfn-paneled" id="43348714678be2dd068b6e59f237b20f">PermissionDescriptor</span>
+     <li><span class="dfn-paneled" id="697f6a092b2d003a98fd492ec23942db">granted</span>
+     <li><span class="dfn-paneled" id="ead23067700e8f952e9e56b02297f81d">name</span>
+     <li><span class="dfn-paneled" id="073cfa170359aab618d74bf28b7be2ab">permissions task source</span>
+     <li><span class="dfn-paneled" id="19f972b95b516f43de1b42fcca3a3cdf">remove a permission store entry</span>
+     <li><span class="dfn-paneled" id="7761fb406c4d8cdb685b810244d5e5a6">requesting permission to use</span>
     </ul>
    <li>
     <a data-link-type="biblio">[PSL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-">registered domain</span>
+     <li><span class="dfn-paneled" id="03bc925cbe5a07b6f4595535c7a0bd36">registered domain</span>
     </ul>
    <li>
     <a data-link-type="biblio">[REQUESTSTORAGEACCESSFORORIGIN]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-dom-document-requeststorageaccessfororigin">requestStorageAccessForOrigin(origin)</span>
+     <li><span class="dfn-paneled" id="5f6245b998f89d9e8a1ee12f3b3d138b">requestStorageAccessForOrigin(requestedOrigin)</span>
     </ul>
    <li>
     <a data-link-type="biblio">[STORAGE-ACCESS]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-dom-document-requeststorageaccess">requestStorageAccess()</span>
+     <li><span class="dfn-paneled" id="34f832b77e75095936c8a50644147995">requestStorageAccess()</span>
     </ul>
    <li>
     <a data-link-type="biblio">[URL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-concept-basic-url-parser">basic url parser</span>
-     <li><span class="dfn-paneled" id="term-for-concept-url-origin">origin</span>
-     <li><span class="dfn-paneled" id="term-for-concept-url-scheme">scheme</span>
+     <li><span class="dfn-paneled" id="c987db82bff8391efc8df0e932e3e94f">basic url parser</span>
+     <li><span class="dfn-paneled" id="eb0e1698348a5ae30cd3aa882b6dff01">origin</span>
+     <li><span class="dfn-paneled" id="67f83ca6d3c695660bfc2f054f534ffb">scheme</span>
     </ul>
    <li>
     <a data-link-type="biblio">[WEBIDL]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="term-for-resolve">resolve</span>
+     <li><span class="dfn-paneled" id="f4f973f92274819781816b033aea1f11">resolve</span>
     </ul>
   </ul>
   <h2 class="no-num no-ref heading settled" id="references"><span class="content">References</span><a class="self-link" href="#references"></a></h2>
@@ -1178,22 +1197,22 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <div class="issue"> Should this be renamed to avoid being confused with a mathematical equivalence relation? <a href="https://github.com/wicg/first-party-sets/issues/123">[Issue #wicg/first-party-sets#123]</a> <a class="issue-return" href="#issue-7a693f54" title="Jump to section">↵</a></div>
    <div class="issue"> This section should provide more details on how user agents can figure out when a site leaves an FPS. <a href="https://github.com/wicg/first-party-sets/issues/124">[Issue #wicg/first-party-sets#124]</a> <a class="issue-return" href="#issue-084bef24" title="Jump to section">↵</a></div>
   </div>
-  <aside class="dfn-panel" data-for="build-the-list-of-first-party-sets">
-   <b><a href="#build-the-list-of-first-party-sets">#build-the-list-of-first-party-sets</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-build-the-list-of-first-party-sets" class="dfn-panel" data-for="build-the-list-of-first-party-sets" id="infopanel-for-build-the-list-of-first-party-sets">
+   <span id="infopaneltitle-for-build-the-list-of-first-party-sets" style="display:none">Info about the 'build the list of first-party sets' definition.</span><b><a href="#build-the-list-of-first-party-sets">#build-the-list-of-first-party-sets</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-build-the-list-of-first-party-sets">3. List consumption</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="list-of-first-party-sets">
-   <b><a href="#list-of-first-party-sets">#list-of-first-party-sets</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-list-of-first-party-sets" class="dfn-panel" data-for="list-of-first-party-sets" id="infopanel-for-list-of-first-party-sets">
+   <span id="infopaneltitle-for-list-of-first-party-sets" style="display:none">Info about the 'list of first-party sets' definition.</span><b><a href="#list-of-first-party-sets">#list-of-first-party-sets</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-list-of-first-party-sets">3. List consumption</a> <a href="#ref-for-list-of-first-party-sets①">(2)</a>
     <li><a href="#ref-for-list-of-first-party-sets②">5. Validating first-party set inclusion</a>
     <li><a href="#ref-for-list-of-first-party-sets③">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="first-party-set">
-   <b><a href="#first-party-set">#first-party-set</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-first-party-set" class="dfn-panel" data-for="first-party-set" id="infopanel-for-first-party-set">
+   <span id="infopaneltitle-for-first-party-set" style="display:none">Info about the 'first-party set' definition.</span><b><a href="#first-party-set">#first-party-set</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-first-party-set">3. List consumption</a>
     <li><a href="#ref-for-first-party-set①">4. Data Structures</a>
@@ -1201,153 +1220,213 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-first-party-set⑤">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="first-party-set-primary">
-   <b><a href="#first-party-set-primary">#first-party-set-primary</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-first-party-set-primary" class="dfn-panel" data-for="first-party-set-primary" id="infopanel-for-first-party-set-primary">
+   <span id="infopaneltitle-for-first-party-set-primary" style="display:none">Info about the 'primary' definition.</span><b><a href="#first-party-set-primary">#first-party-set-primary</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-first-party-set-primary">3. List consumption</a>
     <li><a href="#ref-for-first-party-set-primary①">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="first-party-set-cctlds">
-   <b><a href="#first-party-set-cctlds">#first-party-set-cctlds</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-first-party-set-cctlds" class="dfn-panel" data-for="first-party-set-cctlds" id="infopanel-for-first-party-set-cctlds">
+   <span id="infopaneltitle-for-first-party-set-cctlds" style="display:none">Info about the 'ccTLDs' definition.</span><b><a href="#first-party-set-cctlds">#first-party-set-cctlds</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-first-party-set-cctlds">5. Validating first-party set inclusion</a> <a href="#ref-for-first-party-set-cctlds①">(2)</a> <a href="#ref-for-first-party-set-cctlds②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="first-party-set-associatedsites">
-   <b><a href="#first-party-set-associatedsites">#first-party-set-associatedsites</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-first-party-set-associatedsites" class="dfn-panel" data-for="first-party-set-associatedsites" id="infopanel-for-first-party-set-associatedsites">
+   <span id="infopaneltitle-for-first-party-set-associatedsites" style="display:none">Info about the 'associatedSites' definition.</span><b><a href="#first-party-set-associatedsites">#first-party-set-associatedsites</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-first-party-set-associatedsites">3. List consumption</a>
     <li><a href="#ref-for-first-party-set-associatedsites①">5. Validating first-party set inclusion</a> <a href="#ref-for-first-party-set-associatedsites②">(2)</a> <a href="#ref-for-first-party-set-associatedsites③">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="first-party-set-servicesites">
-   <b><a href="#first-party-set-servicesites">#first-party-set-servicesites</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-first-party-set-servicesites" class="dfn-panel" data-for="first-party-set-servicesites" id="infopanel-for-first-party-set-servicesites">
+   <span id="infopaneltitle-for-first-party-set-servicesites" style="display:none">Info about the 'serviceSites' definition.</span><b><a href="#first-party-set-servicesites">#first-party-set-servicesites</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-first-party-set-servicesites">3. List consumption</a>
     <li><a href="#ref-for-first-party-set-servicesites①">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="equivalence-map">
-   <b><a href="#equivalence-map">#equivalence-map</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-equivalence-map" class="dfn-panel" data-for="equivalence-map" id="infopanel-for-equivalence-map">
+   <span id="infopaneltitle-for-equivalence-map" style="display:none">Info about the 'equivalence map' definition.</span><b><a href="#equivalence-map">#equivalence-map</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-equivalence-map">4. Data Structures</a> <a href="#ref-for-equivalence-map①">(2)</a>
     <li><a href="#ref-for-equivalence-map②">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="parse-and-validate-a-site">
-   <b><a href="#parse-and-validate-a-site">#parse-and-validate-a-site</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-parse-and-validate-a-site" class="dfn-panel" data-for="parse-and-validate-a-site" id="infopanel-for-parse-and-validate-a-site">
+   <span id="infopaneltitle-for-parse-and-validate-a-site" style="display:none">Info about the 'parse and validate a site' definition.</span><b><a href="#parse-and-validate-a-site">#parse-and-validate-a-site</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-parse-and-validate-a-site">4. Data Structures</a> <a href="#ref-for-parse-and-validate-a-site①">(2)</a> <a href="#ref-for-parse-and-validate-a-site②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="parse-a-subset">
-   <b><a href="#parse-a-subset">#parse-a-subset</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-parse-a-subset" class="dfn-panel" data-for="parse-a-subset" id="infopanel-for-parse-a-subset">
+   <span id="infopaneltitle-for-parse-a-subset" style="display:none">Info about the 'parse a subset' definition.</span><b><a href="#parse-a-subset">#parse-a-subset</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-parse-a-subset">3. List consumption</a> <a href="#ref-for-parse-a-subset①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="parse-an-equivalence-map">
-   <b><a href="#parse-an-equivalence-map">#parse-an-equivalence-map</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-parse-an-equivalence-map" class="dfn-panel" data-for="parse-an-equivalence-map" id="infopanel-for-parse-an-equivalence-map">
+   <span id="infopaneltitle-for-parse-an-equivalence-map" style="display:none">Info about the 'parse an equivalence map' definition.</span><b><a href="#parse-an-equivalence-map">#parse-an-equivalence-map</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-parse-an-equivalence-map">3. List consumption</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="equivalent-to">
-   <b><a href="#equivalent-to">#equivalent-to</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-equivalent-to" class="dfn-panel" data-for="equivalent-to" id="infopanel-for-equivalent-to">
+   <span id="infopaneltitle-for-equivalent-to" style="display:none">Info about the 'equivalent to' definition.</span><b><a href="#equivalent-to">#equivalent-to</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-equivalent-to">5. Validating first-party set inclusion</a> <a href="#ref-for-equivalent-to①">(2)</a> <a href="#ref-for-equivalent-to②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="determine-the-member-type">
-   <b><a href="#determine-the-member-type">#determine-the-member-type</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-determine-the-member-type" class="dfn-panel" data-for="determine-the-member-type" id="infopanel-for-determine-the-member-type">
+   <span id="infopaneltitle-for-determine-the-member-type" style="display:none">Info about the 'determine the member type' definition.</span><b><a href="#determine-the-member-type">#determine-the-member-type</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-determine-the-member-type">5. Validating first-party set inclusion</a> <a href="#ref-for-determine-the-member-type①">(2)</a> <a href="#ref-for-determine-the-member-type②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="find-a-first-party-set">
-   <b><a href="#find-a-first-party-set">#find-a-first-party-set</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-find-a-first-party-set" class="dfn-panel" data-for="find-a-first-party-set" id="infopanel-for-find-a-first-party-set">
+   <span id="infopaneltitle-for-find-a-first-party-set" style="display:none">Info about the 'find a first-party set' definition.</span><b><a href="#find-a-first-party-set">#find-a-first-party-set</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-find-a-first-party-set">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="limit-for-associated-sites">
-   <b><a href="#limit-for-associated-sites">#limit-for-associated-sites</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-limit-for-associated-sites" class="dfn-panel" data-for="limit-for-associated-sites" id="infopanel-for-limit-for-associated-sites">
+   <span id="infopaneltitle-for-limit-for-associated-sites" style="display:none">Info about the 'limit for associated sites' definition.</span><b><a href="#limit-for-associated-sites">#limit-for-associated-sites</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-limit-for-associated-sites">5. Validating first-party set inclusion</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="eligible-for-same-party-membership-when-embedded-within">
-   <b><a href="#eligible-for-same-party-membership-when-embedded-within">#eligible-for-same-party-membership-when-embedded-within</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-eligible-for-same-party-membership-when-embedded-within" class="dfn-panel" data-for="eligible-for-same-party-membership-when-embedded-within" id="infopanel-for-eligible-for-same-party-membership-when-embedded-within">
+   <span id="infopaneltitle-for-eligible-for-same-party-membership-when-embedded-within" style="display:none">Info about the 'eligible for same-party membership when embedded within' definition.</span><b><a href="#eligible-for-same-party-membership-when-embedded-within">#eligible-for-same-party-membership-when-embedded-within</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-eligible-for-same-party-membership-when-embedded-within">5. Validating first-party set inclusion</a>
+    <li><a href="#ref-for-eligible-for-same-party-membership-when-embedded-within">5. Validating first-party set inclusion</a> <a href="#ref-for-eligible-for-same-party-membership-when-embedded-within①">(2)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="determine-eligibility-for-an-associated-site">
-   <b><a href="#determine-eligibility-for-an-associated-site">#determine-eligibility-for-an-associated-site</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-determine-eligibility-for-an-associated-site" class="dfn-panel" data-for="determine-eligibility-for-an-associated-site" id="infopanel-for-determine-eligibility-for-an-associated-site">
+   <span id="infopaneltitle-for-determine-eligibility-for-an-associated-site" style="display:none">Info about the 'determine eligibility for an associated site' definition.</span><b><a href="#determine-eligibility-for-an-associated-site">#determine-eligibility-for-an-associated-site</a></b><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-determine-eligibility-for-an-associated-site">5. Validating first-party set inclusion</a> <a href="#ref-for-determine-eligibility-for-an-associated-site①">(2)</a> <a href="#ref-for-determine-eligibility-for-an-associated-site②">(3)</a>
    </ul>
   </aside>
-  <aside class="dfn-panel" data-for="is-same-party-with-its-top-level-embedder">
-   <b><a href="#is-same-party-with-its-top-level-embedder">#is-same-party-with-its-top-level-embedder</a></b><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-is-same-party-with-its-top-level-embedder" class="dfn-panel" data-for="is-same-party-with-its-top-level-embedder" id="infopanel-for-is-same-party-with-its-top-level-embedder">
+   <span id="infopaneltitle-for-is-same-party-with-its-top-level-embedder" style="display:none">Info about the 'is same-party with its top-level embedder' definition.</span><b><a href="#is-same-party-with-its-top-level-embedder">#is-same-party-with-its-top-level-embedder</a></b><b>Referenced in:</b>
    <ul>
-    <li><a href="#ref-for-is-same-party-with-its-top-level-embedder">6. Integration with the Storage Access API</a> <a href="#ref-for-is-same-party-with-its-top-level-embedder①">(2)</a>
+    <li><a href="#ref-for-is-same-party-with-its-top-level-embedder">6. Integration with the Storage Access API</a>
+   </ul>
+  </aside>
+  <aside aria-labelledby="infopaneltitle-for-are-same-party-in-an-embedding-context" class="dfn-panel" data-for="are-same-party-in-an-embedding-context" id="infopanel-for-are-same-party-in-an-embedding-context">
+   <span id="infopaneltitle-for-are-same-party-in-an-embedding-context" style="display:none">Info about the 'are same-party in an embedding context' definition.</span><b><a href="#are-same-party-in-an-embedding-context">#are-same-party-in-an-embedding-context</a></b><b>Referenced in:</b>
+   <ul>
+    <li><a href="#ref-for-are-same-party-in-an-embedding-context">6. Integration with the Storage Access API</a>
    </ul>
   </aside>
 <script>/* script-dfn-panel */
-
-document.body.addEventListener("click", function(e) {
-    var queryAll = function(sel) { return [].slice.call(document.querySelectorAll(sel)); }
-    // Find the dfn element or panel, if any, that was clicked on.
-    var el = e.target;
-    var target;
-    var hitALink = false;
-    while(el.parentElement) {
-        if(el.tagName == "A") {
-            // Clicking on a link in a <dfn> shouldn't summon the panel
-            hitALink = true;
-        }
-        if(el.classList.contains("dfn-paneled")) {
-            target = "dfn";
-            break;
-        }
-        if(el.classList.contains("dfn-panel")) {
-            target = "dfn-panel";
-            break;
-        }
-        el = el.parentElement;
+"use strict";
+{
+    function queryAll(sel) {
+        return [].slice.call(document.querySelectorAll(sel));
     }
-    if(target != "dfn-panel") {
+
+    // Add popup behavior to all dfns to show the corresponding dfn-panel.
+    var dfns = document.querySelectorAll('.dfn-paneled');
+    for (let dfn of dfns) { insertDfnPopupAction(dfn); }
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+
+    function hideAllDfnPanels() {
         // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(function(el){
-            el.classList.remove("on");
-            el.classList.remove("activated");
-        });
-    }
-    if(target == "dfn" && !hitALink) {
-        // open the panel
-        var dfnPanel = document.querySelector(".dfn-panel[data-for='" + el.id + "']");
-        if(dfnPanel) {
-            dfnPanel.classList.add("on");
-            var rect = el.getBoundingClientRect();
-            dfnPanel.style.left = window.scrollX + rect.right + 5 + "px";
-            dfnPanel.style.top = window.scrollY + rect.top + "px";
-            var panelRect = dfnPanel.getBoundingClientRect();
-            var panelWidth = panelRect.right - panelRect.left;
-            if(panelRect.right > document.body.scrollWidth && (rect.left - (panelWidth + 5)) > 0) {
-                // Reposition, because the panel is overflowing
-                dfnPanel.style.left = window.scrollX + rect.left - (panelWidth + 5) + "px";
-            }
-        } else {
-            console.log("Couldn't find .dfn-panel[data-for='" + el.id + "']");
-        }
-    } else if(target == "dfn-panel") {
-        // Switch it to "activated" state, which pins it.
-        el.classList.add("activated");
-        el.style.left = null;
-        el.style.top = null;
+        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
     }
 
-});
+    function showDfnPanel(dfnPanel, dfn) {
+        hideAllDfnPanels(); // Only display one at this time.
+        dfn.setAttribute("aria-expanded", "true");
+        dfnPanel.classList.add("on");
+        dfnPanel.style.left = "5px";
+        dfnPanel.style.top = "0px";
+        const panelRect = dfnPanel.getBoundingClientRect();
+        const panelWidth = panelRect.right - panelRect.left;
+        if (panelRect.right > document.body.scrollWidth) {
+            // Panel's overflowing the screen.
+            // Just drop it below the dfn and flip it rightward instead.
+            // This still wont' fix things if the screen is *really* wide,
+            // but fixing that's a lot harder without 'anchor()'.
+            dfnPanel.style.top = "1.5em";
+            dfnPanel.style.left = "auto";
+            dfnPanel.style.right = "0px";
+        }
+    }
+
+    function pinDfnPanel(dfnPanel) {
+        // Switch it to "activated" state, which pins it.
+        dfnPanel.classList.add("activated");
+        dfnPanel.style.left = null;
+        dfnPanel.style.top = null;
+    }
+
+    function hideDfnPanel(dfnPanel, dfn) {
+        if(!dfn) {
+            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
+        }
+        dfn.setAttribute("aria-expanded", "false")
+        dfnPanel.classList.remove("on");
+        dfnPanel.classList.remove("activated");
+    }
+
+    function toggleDfnPanel(dfnPanel, dfn) {
+        if(dfnPanel.classList.contains("on")) {
+            hideDfnPanel(dfnPanel, dfn);
+        } else {
+            showDfnPanel(dfnPanel, dfn);
+        }
+    }
+
+    function insertDfnPopupAction(dfn) {
+        // Find dfn panel
+        const dfnPanel = document.querySelector(`.dfn-panel[data-for='${dfn.id}']`);
+        if (dfnPanel) {
+            const panelWrapper = document.createElement('span');
+            panelWrapper.appendChild(dfnPanel);
+            panelWrapper.style.position = "relative";
+            panelWrapper.style.height = "0px";
+            dfn.insertAdjacentElement("afterend", panelWrapper);
+            dfn.setAttribute('role', 'button');
+            dfn.setAttribute('aria-expanded', 'false')
+            dfn.tabIndex = 0;
+            dfn.classList.add('has-dfn-panel');
+            dfn.addEventListener('click', (event) => {
+                showDfnPanel(dfnPanel, dfn);
+                event.stopPropagation();
+            });
+            dfn.addEventListener('keypress', (event) => {
+                const kc = event.keyCode;
+                // 32->Space, 13->Enter
+                if(kc == 32 || kc == 13) {
+                    toggleDfnPanel(dfnPanel, dfn);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            });
+
+            dfnPanel.addEventListener('click', (event) => {
+                pinDfnPanel(dfnPanel);
+                event.stopPropagation();
+            });
+
+            dfnPanel.addEventListener('keydown', (event) => {
+                if(event.keyCode == 27) { // Escape key
+                    hideDfnPanel(dfnPanel, dfn);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }
+            })
+
+        } else {
+            console.log("Couldn't find .dfn-panel[data-for='" + dfn.id + "']");
+        }
+    }
+}
 </script>
