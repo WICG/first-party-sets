@@ -222,7 +222,7 @@ Modify {{Document/requestStorageAccess()}} to insert the following steps before 
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
 1. If |settings| [=is same-party with its top-level embedder=], the user agent may run <var ignore>process permission state</var> with [=permission/granted=] and abort the remaining steps.
 
-Modify {{Document/requestStorageAccessForOrigin(requestedOrigin)}} to insert the following steps before step 13.8 (i.e. before [=requesting permission to use=]):
+Modify {{Document/requestStorageAccessFor(requestedOrigin)}} to insert the following steps before step 13.8 (i.e. before [=requesting permission to use=]):
 
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
 1. If |settings| and <var ignore>requestedOrigin</var> [=are same-party in an embedding context=], the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var> and abort the remaining steps.
