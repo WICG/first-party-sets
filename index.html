@@ -4,9 +4,9 @@
   <title>User Agent Interaction with First-Party Sets</title>
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
-  <meta content="Bikeshed version d9f9c3533, updated Fri Mar 10 11:31:29 2023 -0800" name="generator">
+  <meta content="Bikeshed version d9bd89757, updated Thu Mar 23 10:06:53 2023 -0700" name="generator">
   <link href="https://wicg.github.io/first-party-sets/" rel="canonical">
-  <meta content="772fe552eda6decd151074915c03becf46033f8b" name="document-revision">
+  <meta content="b55f2a2fe7b8831d743c04d28720d45ba50d9757" name="document-revision">
 <style>/* style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -461,7 +461,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">User Agent Interaction with First-Party Sets</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-03-20">20 March 2023</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-04-03">3 April 2023</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -747,7 +747,7 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li data-md>
      <p>If <var>settings</var> <a data-link-type="dfn" href="#is-same-party-with-its-top-level-embedder" id="ref-for-is-same-party-with-its-top-level-embedder">is same-party with its top-level embedder</a>, the user agent may run <var>process permission state</var> with <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-granted" id="ref-for-dfn-granted">granted</a> and abort the remaining steps.</p>
    </ol>
-   <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfor" id="ref-for-dom-document-requeststorageaccessfor">requestStorageAccessFor(requestedOrigin)</a></code> to insert the following steps before step 13.8 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use①">requesting permission to use</a>):</p>
+   <p>Modify <code class="idl"><a data-link-type="idl" href="https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor" id="ref-for-dom-document-requeststorageaccessfor">requestStorageAccessFor(requestedOrigin)</a></code> to insert the following steps before step 13.8 (i.e. before <a data-link-type="dfn" href="https://w3c.github.io/permissions/#dfn-request-permission-to-use" id="ref-for-dfn-request-permission-to-use①">requesting permission to use</a>):</p>
    <ol>
     <li data-md>
      <p>Let <var>settings</var> be <var>doc</var>’s <a data-link-type="dfn" href="https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object" id="ref-for-relevant-settings-object①">relevant settings object</a>.</p>
@@ -1037,8 +1037,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
     <li><a href="#ref-for-03bc925cbe5a07b6f4595535c7a0bd36">7. Handling first-party set changes</a>
    </ul>
   </aside>
-  <aside aria-labelledby="infopaneltitle-for-79a0031061afb0ba60f204c7a9eb2d61" class="dfn-panel" data-for="79a0031061afb0ba60f204c7a9eb2d61" id="infopanel-for-79a0031061afb0ba60f204c7a9eb2d61">
-   <span id="infopaneltitle-for-79a0031061afb0ba60f204c7a9eb2d61" style="display:none">Info about the 'requestStorageAccessFor(requestedOrigin)' external reference.</span><a href="https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfor">https://privacycg.github.io/requestStorageAccessForOrigin/#dom-document-requeststorageaccessfor</a><b>Referenced in:</b>
+  <aside aria-labelledby="infopaneltitle-for-d51e5911fb88dd097ed87ab4239f31f5" class="dfn-panel" data-for="d51e5911fb88dd097ed87ab4239f31f5" id="infopanel-for-d51e5911fb88dd097ed87ab4239f31f5">
+   <span id="infopaneltitle-for-d51e5911fb88dd097ed87ab4239f31f5" style="display:none">Info about the 'requestStorageAccessFor(requestedOrigin)' external reference.</span><a href="https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor">https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor</a><b>Referenced in:</b>
    <ul>
     <li><a href="#ref-for-dom-document-requeststorageaccessfor">6. Integration with the Storage Access API</a>
    </ul>
@@ -1128,9 +1128,9 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
      <li><span class="dfn-paneled" id="03bc925cbe5a07b6f4595535c7a0bd36">registered domain</span>
     </ul>
    <li>
-    <a data-link-type="biblio">[REQUESTSTORAGEACCESSFORORIGIN]</a> defines the following terms:
+    <a data-link-type="biblio">[REQUESTSTORAGEACCESSFOR]</a> defines the following terms:
     <ul>
-     <li><span class="dfn-paneled" id="79a0031061afb0ba60f204c7a9eb2d61">requestStorageAccessFor(requestedOrigin)</span>
+     <li><span class="dfn-paneled" id="d51e5911fb88dd097ed87ab4239f31f5">requestStorageAccessFor(requestedOrigin)</span>
     </ul>
    <li>
     <a data-link-type="biblio">[STORAGE-ACCESS]</a> defines the following terms:
@@ -1165,8 +1165,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <dd>Marcos Caceres; Mike Taylor. <a href="https://w3c.github.io/permissions/"><cite>Permissions</cite></a>. URL: <a href="https://w3c.github.io/permissions/">https://w3c.github.io/permissions/</a>
    <dt id="biblio-psl">[PSL]
    <dd><cite><a href="https://publicsuffix.org/">Public Suffix List</a></cite>.    Mozilla Foundation.
-   <dt id="biblio-requeststorageaccessfororigin">[REQUESTSTORAGEACCESSFORORIGIN]
-   <dd>requestStorageAccessFor API URL: <a href="https://privacycg.github.io/requestStorageAccessForOrigin/">https://privacycg.github.io/requestStorageAccessForOrigin/</a>
+   <dt id="biblio-requeststorageaccessfor">[REQUESTSTORAGEACCESSFOR]
+   <dd>requestStorageAccessFor API URL: <a href="https://privacycg.github.io/requestStorageAccessFor/">https://privacycg.github.io/requestStorageAccessFor/</a>
    <dt id="biblio-rfc2119">[RFC2119]
    <dd>S. Bradner. <a href="https://datatracker.ietf.org/doc/html/rfc2119"><cite>Key words for use in RFCs to Indicate Requirement Levels</cite></a>. March 1997. Best Current Practice. URL: <a href="https://datatracker.ietf.org/doc/html/rfc2119">https://datatracker.ietf.org/doc/html/rfc2119</a>
    <dt id="biblio-storage-access">[STORAGE-ACCESS]
