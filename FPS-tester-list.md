@@ -42,3 +42,4 @@ The usefulness of this page depends on testers sharing information and updates.
 |[VWO](https://vwo.com)|Conversion Rate Optimization|2022-2023||[E-mail](mailto:support@vwo.com)|
 |[Kasatria Technologies Sdn Bhd](https://kasatria.com)|User Journey Analysis|2023-02 ~||[E-mail](mailto:analytics@kasatria.com)|
 |[Clarin](https://www.clarin.com)|Newspapers - Publisher|2023-03|| [E-mail](mfranco@clarin.com)|
+|[La Nacion](https://www.lanacion.com.ar)|Newspapers - Publisher|2023-03|| [E-mail](OLarquitectura@lanacion.com.ar)|
