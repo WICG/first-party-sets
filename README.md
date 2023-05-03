@@ -99,8 +99,8 @@ On the modern web, sites span multiple domains and many sites are owned & operat
     -   google.com, googleusercontent.com
     -   github.com, githubusercontent.com
 -   Service domains that users never directly interact with, but provide services across the same organization’s sites. 
-        -   github.com, githubassets.com
-        -   facebook.com, fbcdn.net
+    -   github.com, githubassets.com
+    -   facebook.com, fbcdn.net
 
 **Note:** The above have been provided only to serve as real-world illustrative assumed examples of collections of domains that are owned by the same organization; and have not all been validated with the site owners.
 
