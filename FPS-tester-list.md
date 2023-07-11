@@ -44,3 +44,4 @@ The usefulness of this page depends on testers sharing information and updates.
 |[Clarin](https://www.clarin.com)|Newspapers - Publisher|2023-03|| [E-mail](mfranco@clarin.com)|
 |[La Nacion](https://www.lanacion.com.ar)|Newspapers - Publisher|2023-03|| [E-mail](OLarquitectura@lanacion.com.ar)|
 |[Le Figaro CCM-Benchmark](https://www.lefigaro.fr)|Newspapers - Publisher|2023-07|| [E-mail](dmangin@lefigaro.fr)|
+| Vocento | Publisher |2023| | privacysandbox@vocento.com |
