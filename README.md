@@ -284,7 +284,11 @@ User agents need not perform this normalization on the domains in their static l
 # Clearing Site Data on Set Transitions
 Sites may need to change which First-Party Set they are a member of. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
-In order to achieve this, site data needs to be cleared on certain transitions. The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/clear-site-data/#grammardef-), which includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
+In order to achieve this, the browser must clear site data after a site undergoes certain transitions, before starting any fetches that depend on that data/storage.
+
+> **_NOTE_**: most fetches do not depend on data that needs to be cleared, so browsers should try to optimize for request latency.
+
+The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/clear-site-data/#grammardef-), which includes cookies, storage, cache, as well as execution contexts (documents, workers, etc.). We don’t differentiate between different types of site data because:
 
  * A user identifier could be stored in any of these storage types.
  * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
