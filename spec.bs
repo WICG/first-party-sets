@@ -259,7 +259,9 @@ For providing access to cross-site cookies, this specification aims to ensure co
 
 Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the [[STORAGE-ACCESS]], we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
-For this reason, this specification requires user agents to clear any site data and storage-access permissions of a given site when a site is removed from a set.
+For this reason, this specification requires user agents to clear any site data and storage-access permissions of a given site when a site is removed from a set, before starting any fetches that rely on those permissions or site data.
+
+Note: most fetches do not depend on data that needs to be cleared, so browsers should try to optimize for request latency.
 
 <h2 id="security-considerations">Security Considerations</h2>
 
