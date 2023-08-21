@@ -261,7 +261,7 @@ Developers may submit changes to their sets to add or remove sites. Since member
 
 For this reason, this specification requires user agents to clear any site data and storage-access permissions of a given site when a site is removed from a set, before starting any fetches that rely on those permissions or site data.
 
-Note: most fetches do not depend on data that needs to be cleared, so browsers should try to optimize for request latency.
+Note: Most fetches do not depend on data that needs to be cleared, so user agents are advised to optimize for request latency.
 
 <h2 id="security-considerations">Security Considerations</h2>
 
