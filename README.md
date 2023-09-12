@@ -1,4 +1,4 @@
-# Related Website Sets (formerly known as: Firt-Party Sets)
+# Related Website Sets (formerly known as: First-Party Sets)
 
 This document proposes a new web platform mechanism to declare a collection of related domains as
 being in a Related Website Set. This proposal was previously named First-Party Sets.
