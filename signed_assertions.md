@@ -23,7 +23,7 @@ To avoid operational challenges for sites, the signer makes the latest assertion
 Note any duplicate domains in the assertions and members attribute should compress well with gzip.
 
 
-# Declaring a First Party Set
+# Declaring a Related Website Set
 
 A related website set is identified by one _owner_ registered domain and a list of _secondary_ registered domains. (See [alternative designs](https://github.com/privacycg/first-party-sets#alternative-designs) for a discussion of origins vs registered domains.)
 
