@@ -65,7 +65,7 @@ The browser then imposes additional constraints on the owner's manifest:
 *   Entries in `members` that are not registrable domains are ignored.
 *   Only entries in `members` that meet [UA policy](https://github.com/privacycg/first-party-sets#ua-policy) will be accepted. The others will be ignored. If the owner is not covered by UA policy, the entire set is rejected.
 
-## Discovering First Party Sets
+## Discovering Related Website Sets
 
 
 By default, every registrable domain is implicitly owned by itself. The browser discovers related website sets as it makes network requests and stores the related website set owner for each domain. On a top-level navigation, websites may send a `Sec-Related-Website-Set` response header to inform the browser of its related website set owner. For example `https://b.example/some/page` may send the following header:
@@ -114,7 +114,7 @@ Changing a domain's set owner clears all state, including service worker registr
 
 If a document has a service worker attached, its subresource fetches go through the service worker. This does _not_ trigger related website set logic as this fetch is, at this point, a funny IPC. If the service worker makes a request in response, the related website set logic will fire as above.
 
-Finally, if a site already has a service worker, it should still be able to deploy related website sets. However that service worker effectively translates navigation fetches into subresource fetches, and only top-level navigations discover new sets. We resolve this by moving `Sec-Fetch-Party-Set` header processing to the navigation logic. If the header is present, whether it came from the network directly or the service worker, we attempt to validate the set. This is fine because the header is not directly trusted.
+Finally, if a site already has a service worker, it should still be able to deploy related website sets. However that service worker effectively translates navigation fetches into subresource fetches, and only top-level navigations discover new sets. We resolve this by moving `Sec-Related-Website-Set` header processing to the navigation logic. If the header is present, whether it came from the network directly or the service worker, we attempt to validate the set. This is fine because the header is not directly trusted.
 
 
 ## Open questions
