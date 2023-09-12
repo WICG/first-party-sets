@@ -1,6 +1,6 @@
-# First-Party Sets Tester List
+# Related Website Sets Tester List
 
-## Ecosystem Testing of First-Party Sets
+## Ecosystem Testing of Related Website Sets
 
 The purpose of this page is to consolidate testing information which is currently distributed across various GitHub issues, company blogs, social posts, etc.
 The usefulness of this page depends on testers sharing information and updates.
@@ -11,7 +11,7 @@ The usefulness of this page depends on testers sharing information and updates.
 
 - Not evaluative. The purpose of this page is to consolidate links to information published by Privacy Sandbox testers.  Editors will review submissions for relevance and to ensure general conformance to the guidelines above, but are not evaluating or endorsing the information provided.
 
-- Editors will regularly review and approve submissions that meet the guidelines below. If you believe that an error has been submitted, please create an issue in the First-Party Sets repository with the words '[Tester List]' in the subject and the Editors will respond in short order.
+- Editors will regularly review and approve submissions that meet the guidelines below. If you believe that an error has been submitted, please create an issue in the Related Website Sets repository with the words '[Tester List]' in the subject and the Editors will respond in short order.
 
 ## Guidelines
 
@@ -27,7 +27,7 @@ The usefulness of this page depends on testers sharing information and updates.
 
 ## How to submit
 
-1. On the First-Party Sets GitHub page, navigate to the document in the main table called ‘FPS-tester-list.md’
+1. On the Related Website Sets GitHub page, navigate to the document in the main table called ‘FPS-tester-list.md’
 
 1. Click the ‘pencil’ icon on the right side to edit the table and add your information
     1. Use the | to make sure that the information that you provide correctly shows up in each cell
