@@ -1,7 +1,7 @@
-# First-Party Sets
+# Related Website Sets (formerly known as: First-Party Sets)
 
 This document proposes a new web platform mechanism to declare a collection of related domains as
-being in a First-Party Set.
+being in a Related Website Set. This proposal was previously named First-Party Sets.
 
 ## Editors:
 
@@ -56,7 +56,7 @@ some notion of first-party. In defining this scope, we must balance two goals: t
 small enough to meet the user's privacy expectations, yet large enough to provide the user's desired
 functionality on the site they are interacting with.
 
-First-Party Sets (FPS) is a web platform mechanism, proposed within the context of browser efforts to phase out support for third-party cookies, through which site authors of multi-domain sites may declare relationships between domains such that the browser may understand the relationships and handle cookie access accordingly.
+Related Website Sets (RWS) is a web platform mechanism, proposed within the context of browser efforts to phase out support for third-party cookies, through which site authors of multi-domain sites may declare relationships between domains such that the browser may understand the relationships and handle cookie access accordingly.
 
 The core principle of allowing browsers to treat collections of *known related sites* differently from otherwise *unrelated sites* is grounded in ideas that had been previously discussed in the W3C (such as [Affiliated Domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12)), the now defunct IETF [DBOUND](https://datatracker.ietf.org/doc/html/draft-sullivan-dbound-problem-statement-02) working group, and previously deployed in some browsers (such as the [Disconnect.me entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json)).
 
@@ -119,7 +119,7 @@ This proposal anchors on the use cases described above to develop a framework fo
 
 # Proposal
 
-At a high level, a First-Party Set is a collection of domains, for which there is a single "set primary" and potentially multiple "set members." Only site authors will be able to submit their own set, and they will be required to declare the relationship between each "set member" to its "set primary." This declaration will be grounded in the [use cases](#heading=h.4t8m5gy1pn0r) described above and defined by "subsets."
+At a high level, a Related Website Set is a collection of domains, for which there is a single "set primary" and potentially multiple "set members." Only site authors will be able to submit their own set, and they will be required to declare the relationship between each "set member" to its "set primary." This declaration will be grounded in the [use cases](#heading=h.4t8m5gy1pn0r) described above and defined by "subsets."
 
 ## Defining a "set" through use case-based "subsets"
 
@@ -127,7 +127,7 @@ Throughout the evolution of this proposal, we considered how to define a single 
 
 At time of submission, "set primaries" and "set members" will be declared. Set members could include a range of different domain types, matching up to the different types of use cases (or *subsets*) such as domains that users never directly interact with, like service or sandbox domains; and domains where users may benefit from a seamless session, like brand or app domains.
 
-We propose enumerating the range of applicable subsets within a set (beginning with subsets that correlate to the [use cases described above](#use-cases)), requiring that a member domain must meet the definition of a single subset to be part of the set. For example, consider the following table as an example First-Party Sets schema:
+We propose enumerating the range of applicable subsets within a set (beginning with subsets that correlate to the [use cases described above](#use-cases)), requiring that a member domain must meet the definition of a single subset to be part of the set. For example, consider the following table as an example Related Website Sets schema:
 
 **Set primary:** exampleA.com
 
@@ -229,7 +229,7 @@ We consider using a public submission process (like a GitHub repository) to be a
 
 The following technical checks also help to mitigate abuse:
 
--   Mutual exclusivity to ensure a domain isn't part of multiple First-Party Sets
+-   Mutual exclusivity to ensure a domain isn't part of multiple Related Website Sets
 -   `.well-known` file check on all domains to ensure authorized submissions
 -   Check against the [Public Suffix List](https://publicsuffix.org/) to ensure that sets are composed of valid registrable domains
 
@@ -237,52 +237,52 @@ Additionally, there are other enforcement strategies we could consider to furthe
 
 For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of three domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion of the relationship between domains.
 
-## Chrome’s Submission Guidelines and FPS Canonical List
+## Chrome’s Submission Guidelines and RWS Canonical List
 
-Chrome’s implementation will depend on the  list of First-Party Sets generated via the process described in [Submission Guidelines](https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md). The guidelines aim to provide developers with clear expectations on how to submit sets to the [canonical list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON) that the browser will consume and apply to its behavior. 
+Chrome’s implementation will depend on the  list of Related Website Sets generated via the process described in [Submission Guidelines](https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md). The guidelines aim to provide developers with clear expectations on how to submit sets to the [canonical list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON) that the browser will consume and apply to its behavior. 
 
 ## Leveraging the Storage Access API
 
-To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cookie access within a FPS.
+To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cookie access within a RWS.
 
- With the SAA, sites may actively request cross-site cookie access, and user-agents may [make their own decisions](https://privacycg.github.io/storage-access/#ua-policy) on whether to automatically grant or deny the request or choose to prompt the user. We propose that browsers supporting FPS incorporate set membership information into this decision. In other words, browsers may choose to automatically grant cross-site access when the requesting site is in the same FPS, or in a particular subset of the same FPS, as the top-level site.
+ With the SAA, sites may actively request cross-site cookie access, and user-agents may [make their own decisions](https://privacycg.github.io/storage-access/#ua-policy) on whether to automatically grant or deny the request or choose to prompt the user. We propose that browsers supporting RWS incorporate set membership information into this decision. In other words, browsers may choose to automatically grant cross-site access when the requesting site is in the same RWS, or in a particular subset of the same RWS, as the top-level site.
 
-We'd like to collaborate with the community in evolving the Storage Access API to improve developer and user experience and help the SAA better support the use cases that FPS is intended to solve. One way to do that is through extending the API surface in a way that makes it easier for developers to use the SAA without integrating iframes:
+We'd like to collaborate with the community in evolving the Storage Access API to improve developer and user experience and help the SAA better support the use cases that RWS is intended to solve. One way to do that is through extending the API surface in a way that makes it easier for developers to use the SAA without integrating iframes:
 
 ### Providing capabilities beyond the Storage Access API
 
-SAA currently requires that the API: (a) be invoked from an iframe embedding the origin requesting cross-site cookies access, and that (b) the iframe obtains user activation before making such a request. We anticipate that the majority of site compatibility issues (specifically, those that FPS intends to address) involve instances where user interaction within an iframe is difficult to retrofit, e.g. because of the usage of images or script tags requiring cookies. Additionally, since cross-site subresources may be loaded synchronously by the top-level site, it may be difficult for the subresources to anticipate when asynchronous cookie access via SAA is granted. To address this difficulty, we [propose a new API](https://github.com/mreichhoff/requestStorageAccessForSite) that we hope will make it easier for developers to adopt this change.
+SAA currently requires that the API: (a) be invoked from an iframe embedding the origin requesting cross-site cookies access, and that (b) the iframe obtains user activation before making such a request. We anticipate that the majority of site compatibility issues (specifically, those that RWS intends to address) involve instances where user interaction within an iframe is difficult to retrofit, e.g. because of the usage of images or script tags requiring cookies. Additionally, since cross-site subresources may be loaded synchronously by the top-level site, it may be difficult for the subresources to anticipate when asynchronous cookie access via SAA is granted. To address this difficulty, we [propose a new API](https://github.com/mreichhoff/requestStorageAccessForSite) that we hope will make it easier for developers to adopt this change.
 
 Note: Both Firefox and Safari have run into these issues before and have solved them through the application of an internal-only "requestStorageAccessForOrigin" API ([4](https://bugzilla.mozilla.org/show_bug.cgi?id=1724376), [5](https://github.com/WebKit/WebKit/commit/e0690e2f6c7e51bd73b66e038b5d4d86a6f30909#diff-1d194b67d50610776c206cb5faa8f056cf1063dd9743c5a43cab834d43e5434cR253)), that is applied on a case-by-case basis by custom browser scripts (Safari: [6](https://github.com/WebKit/WebKit/blob/a39a03d621e441f3b7ca3a814d1bc0e2b8dd72be/Source/WebCore/page/Quirks.cpp#L1065), [7](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/Quirks.cpp#L1217) Firefox: [8](https://phabricator.services.mozilla.com/D129185), [9](https://phabricator.services.mozilla.com/D124493), [10](https://phabricator.services.mozilla.com/D131643)).
 
-As we continue to flesh out the First-Party Sets proposal, we invite feedback from browser vendors, web developers, and members of the web community. We will continue engagement through issues in this repo and through discussions in [WICG](https://www.w3.org/community/wicg/).
+As we continue to flesh out the Related Website Sets proposal, we invite feedback from browser vendors, web developers, and members of the web community. We will continue engagement through issues in this repo and through discussions in [WICG](https://www.w3.org/community/wicg/).
 
 
 ## Administrative controls
 
-For enterprise usage, browsers typically offer administrators options to control web platform behavior. Browsers may expose administrative options for locally-defined First-Party Sets (e.g., for private domains).
+For enterprise usage, browsers typically offer administrators options to control web platform behavior. Browsers may expose administrative options for locally-defined Related Website Sets (e.g., for private domains).
 
 # UI Treatment
 
-In order to provide transparency to users regarding the First-Party Set that a web page’s top-level 
-domain belongs to, browsers may choose to present UI with information about the First-Party Set primary 
+In order to provide transparency to users regarding the Related Website Set that a web page’s top-level 
+domain belongs to, browsers may choose to present UI with information about the Related Website Set primary 
 and the members list. One potential location in Chrome is the [Origin/Page Info Bubble](https://www.chromium.org/Home/chromium-security/enamel/goals-for-the-origin-info-bubble) - this 
 provides requisite information to discerning users, while avoiding the use of valuable screen 
 real-estate or presenting confusing permission prompts. However, browsers are free to choose different
 presentation based on their UI patterns, or adjust as informed by user research.
 
-Note that First-Party Sets also gives browsers the opportunity to group per-site controls (such as 
+Note that Related Website Sets also gives browsers the opportunity to group per-site controls (such as 
 those at `chrome://settings/content/all`) by the “first-party” boundary instead of eTLD+1, which is 
 not always the correct site boundary.
 
 # Domain Schemes
 
-In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a First-Party Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
+In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-handshake) spec, user agents must "normalize" WebSocket schemes to HTTP(S) when determining whether a particular domain is a member of a Related Website Set. I.e. `ws://` must be mapped to `http://`, and `wss://` must be mapped to `https://`, before the lookup is performed.
 
 User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
 
 # Clearing Site Data on Set Transitions
-Sites may need to change which First-Party Set they are a member of. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
+Sites may need to change which Related Website Set they are a member of. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the RWSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one Related Website Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
 In order to achieve this, the browser must clear site data after a site undergoes certain transitions, before starting any fetches that depend on that data/storage.
 
@@ -293,18 +293,18 @@ The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/c
  * A user identifier could be stored in any of these storage types.
  * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
 
-Since member sites can only add/remove themselves to/from FPSs with the consent from the primary, we look at First-Party Set changes as a site changing its FPS primary.
+Since member sites can only add/remove themselves to/from RWSs with the consent from the primary, we look at Related Website Set changes as a site changing its RWS primary.
 
 If a site’s primary changed:
 
-1. If this site had no FPS primary, the site's data won't be cleared.
-    *   Pro: Avoids adoption pain when a site joins a FPS.
+1. If this site had no RWS primary, the site's data won't be cleared.
+    *   Pro: Avoids adoption pain when a site joins a RWS.
     *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
 2. Otherwise, clear site data of this site.
 
 Potential modification, which adds implementation complexity:
 
-3. If this site's new primary is a site that previously had the same FPS primary as the first site, the site's data won't be cleared. 
+3. If this site's new primary is a site that previously had the same RWS primary as the first site, the site's data won't be cleared. 
     *   Pro: Provides graceful transitions for examples (f) and (g).
     *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
 
@@ -316,19 +316,19 @@ Potential modification, which adds implementation complexity:
 
 ![](./images/FPS_clear_site_data-not_clear.drawio.svg)
 
-a. Site A and Site B create a FPS with Site A as the primary and Site B as the member. Site data will not be cleared.
+a. Site A and Site B create a RWS with Site A as the primary and Site B as the member. Site data will not be cleared.
 
-b. Site C joins the existing FPS as a member site where Site A is the primary. Site data will not be cleared.
+b. Site C joins the existing RWS as a member site where Site A is the primary. Site data will not be cleared.
 
 ---
 
 ![](./images/FPS_clear_site_data-clear.drawio.svg)
 
-c. Given an FPS with primary Site A and members Site B and Site C, if Site D joins this FPS and becomes the new primary; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
+c. Given an RWS with primary Site A and members Site B and Site C, if Site D joins this RWS and becomes the new primary; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
 
-d. Given an FPS with primary Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
+d. Given an RWS with primary Site A and members Site B and Site C, if Site B leaves the RWS, the browser will clear site data for Site B.
 
-e. Given two FPSs, FPS1 has primary Site A and members Site B and Site C and FPS2 has primary Site X and member Site Y, if they join together as one FPS with Site A being the primary, the browser will clear site data for Site X and Site Y.
+e. Given two RWSs, RWS1 has primary Site A and members Site B and Site C and RWS2 has primary Site X and member Site Y, if they join together as one RWS with Site A being the primary, the browser will clear site data for Site X and Site Y.
 
 ---
 
@@ -336,17 +336,17 @@ With the potential modification allowing sites to keep their data if the new set
 
 ![](./images/FPS_clear_site_data-potential_modification.drawio.svg)
 
-f. Given an FPS with primary Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the primary and Site A becomes the member, no site data will be cleared.
+f. Given an RWS with primary Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the primary and Site A becomes the member, no site data will be cleared.
 
-g. Given an FPS with primary Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the primary, the browser will clear site data for Site A.
+g. Given an RWS with primary Site A and members Site B and Site C, if Site A leaves the RWS and Site B becomes the primary, the browser will clear site data for Site A.
 
-h. & i. Given the FPS with primary Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the primary, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
+h. & i. Given the RWS with primary Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the primary, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
 
 # Alternative designs
 
 ## Synchronous cross-site cookie access within same-party contexts
 
-Where a Storage Access API invocation is automatically granted due to membership in the same First-Party Set, a similar effect may be achieved by user agents always allowing cross-site cookie access across sites within the same set. Such cookie access may be subject to rules such as [SameSite](https://web.dev/samesite-cookies-explained/), and depend on specification of a cookie attribute such as [SameParty](https://github.com/cfredric/sameparty). This would allow for synchronous cookie access on subresource requests, and, for most part, allows legacy same-party flows to continue functioning with minimal adoption costs involved for site authors. However, it prevents browsers' ability to mediate these flows and potentially intervene on behalf of users. Additionally, Storage Access API is already the preferred mechanism for gaining cross-site cookie access on major browsers such as Safari and Firefox. 
+Where a Storage Access API invocation is automatically granted due to membership in the same Related Website Set, a similar effect may be achieved by user agents always allowing cross-site cookie access across sites within the same set. Such cookie access may be subject to rules such as [SameSite](https://web.dev/samesite-cookies-explained/), and depend on specification of a cookie attribute such as [SameParty](https://github.com/cfredric/sameparty). This would allow for synchronous cookie access on subresource requests, and, for most part, allows legacy same-party flows to continue functioning with minimal adoption costs involved for site authors. However, it prevents browsers' ability to mediate these flows and potentially intervene on behalf of users. Additionally, Storage Access API is already the preferred mechanism for gaining cross-site cookie access on major browsers such as Safari and Firefox. 
 
 ## Signed Assertions and set discovery instead of static lists
 
@@ -365,17 +365,17 @@ verification of the legal entity associated with the website a certificate is
 issued for and encode information about this legal entity in the certificate
 itself. It might be possible to match this information for sites presenting EV
 certificates (or use the subjectAltName on a single EV certificate) to build
-First-Party Sets. This could be used in place of [Signed Assertions](signed_assertions.md)
+Related Website Sets. This could be used in place of [Signed Assertions](signed_assertions.md)
 as part of a dynamic set discovery mechanism.
 
 However, such an automatic mechanism would result in a very tight coupling of
-identity and feature exposure through First-Party Sets to the existing certificate
+identity and feature exposure through Related Website Sets to the existing certificate
 infrastructure.
 
 It's likely that this would negatively impact the deployment and use of
 encryption on the web, for example by forcing sites to obtain EV certificates
 as the only way to ensure continued functionality. A revocation of a certificate
-that is used for FPS would have grave implications (such as deletion of all local
+that is used for RWS would have grave implications (such as deletion of all local
 data through the Clear Site Data mechanism) and thus complicate the revocation process.
 
 See [Issue 12](https://github.com/privacycg/first-party-sets/issues/12) for an extended
@@ -388,28 +388,28 @@ Instead of having a verification entity check that domains in a set match the st
 -   Self-attestation of conformance to the subset definitions by submitter.
 -   Technical consistency checks such as verifying control over domains, and ensuring that no domain appears in more than one set.
 -   Transparency logs documenting all acceptances and deletions to enable accountability and auditability.
--   Mechanism/process for the general public to report potential misuse of First-Party Sets.
+-   Mechanism/process for the general public to report potential misuse of Related Website Sets.
 
-At this time, a verification entity to detect and enforce against abuses of the First-Party Sets technology has not been engaged. This may change in the future.
+At this time, a verification entity to detect and enforce against abuses of the Related Website Sets technology has not been engaged. This may change in the future.
 
 ## Origins instead of registrable domains
 
-A First-Party Set is a collection of origins, but it is specified by registrable domains, which
+A Related Website Set is a collection of origins, but it is specified by registrable domains, which
 carries a dependency on the [public suffix list](https://publicsuffix.org). While this is consistent
 with the various proposed privacy models as well as cookie handling, the security boundary on the
 web is the origin, not registrable domain.
 
 An alternate design would be to instead specify sets by origins directly. In this model, any https
-origin would be a possible First-Party Set primary, and each origin must individually join a set,
+origin would be a possible Related Website Set primary, and each origin must individually join a set,
 rather than relying on the root as we do here. For continuity with the existing behavior, we would
-then define the registrable domain as the default First-Party Set for each origin. That is, by
+then define the registrable domain as the default Related Website Set for each origin. That is, by
 default, `https://foo.example.com`, `https://bar.example.com`, and `https://example.com:444` would all be
 in a set under `https://example.com`. Defining a set explicitly would override this default set.
 
 This would reduce the web's dependency on the public suffix list, which would mitigate [various
 problems](https://github.com/sleevi/psl-problems). For instance, a university may allow students to register arbitrary subdomains at
 `https://foo.university.example`, but did not place `university.example` on the public suffix list,
-either due to compatibility concerns or oversight. With an origin-specified First-Party Set,
+either due to compatibility concerns or oversight. With an origin-specified Related Website Set,
 individual origins could then detach themselves from the default set to avoid security problems with
 non-origin-based features such as cookies. (Note the
 [\_\_Host- cookie prefix](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.3.2)
@@ -421,17 +421,17 @@ This origin-defined approach has additional complications to resolve:
    domains, not origins. Those features should not transitively join two different sets. For
    instance, we must account for one set containing `https://foo.bar.example.com` and
    `https://example.com`, but not `https://bar.example.com`. For cookies, we can say that cookies
-   remember the set which created them and we match both the Domain attribute and the first-party
+   remember the set which created them and we match both the Domain attribute and the related website
    set. Thus if `https://foo.bar.example.com` sets a Domain=example.com cookie, `https://example.com`
    can read it, but not `https://bar.example.com`. Other features would need similar updates.
 -  The implicit state should be expressible explicitly, to simplify rollback and deployment,
-   which means First-Party Set manifests must describe patterns of origins, rather than a simple
+   which means Related Website Set manifests must describe patterns of origins, rather than a simple
    bounded list of domains. In particular, we should support subtree patterns.
 -  `https://foo.example.com`'s implicit primary is `https://example.com`. If `https://example.com` then
    forms an explicit set which does not include `https://foo.example.com`, we need to change
    `https://foo.example.com`'s implicit state, perhaps to a singleton set.
 -  This complex set of patterns and implicit behaviors must be reevaluated against existing
-   origins every time a First-Party Set is updated.
+   origins every time a Related Website Set is updated.
 -  Certificate wildcards (which themselves depend on the public suffix list) don't match an
    entire subtree. This conflicts with wanting to express implicit states above.
 
@@ -442,11 +442,11 @@ this is worthwhile.
 
 ## Avoid weakening new and existing security boundaries
 
-Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [cache probing](https://xsleaks.dev/docs/attacks/cache-probing/) attacks and third-party cookie blocking makes it much harder to perform [CSRF](https://owasp.org/www-community/attacks/csrf) by default. Where user agents intend to use First-Party Sets to replace or extend existing boundaries based on *site* or *origin* on the web, it is important to consider not only the effects on privacy, but also on security.
+Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [cache probing](https://xsleaks.dev/docs/attacks/cache-probing/) attacks and third-party cookie blocking makes it much harder to perform [CSRF](https://owasp.org/www-community/attacks/csrf) by default. Where user agents intend to use Related Website Sets to replace or extend existing boundaries based on *site* or *origin* on the web, it is important to consider not only the effects on privacy, but also on security.
 
-Sites in a common FPS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an FPS to affect the integrity of other sites in the set.
+Sites in a common RWS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an RWS to affect the integrity of other sites in the set.
 
-This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. Site owners should be aware of the potential security implications of creating an FPS and form only the smallest possible set of domains that encompasses user workflows/journeys across an application, especially when some origins in the set opt into features that may leave them open to potential attacks from other origins in the set.
+This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. Site owners should be aware of the potential security implications of creating an RWS and form only the smallest possible set of domains that encompasses user workflows/journeys across an application, especially when some origins in the set opt into features that may leave them open to potential attacks from other origins in the set.
 
 # Prior Art
 
@@ -458,7 +458,7 @@ This consideration will always involve a necessary trade-off between gains like 
 
 # Open question(s)
 
--   We are still exploring how [CHIPS](https://github.com/privacycg/CHIPS) [integrates with](https://developer.chrome.com/docs/privacy-sandbox/chips/#first-party-sets-and-cookie-partitioning) First-Party Sets. We are working on technical changes to that design as well, and will share updates when we have a proposal.
+-   We are still exploring how [CHIPS](https://github.com/privacycg/CHIPS) [integrates with](https://developer.chrome.com/docs/privacy-sandbox/chips/#first-party-sets-and-cookie-partitioning) Related Website Sets. We are working on technical changes to that design as well, and will share updates when we have a proposal.
 -   While we've proposed a limit of three domains for the "associated" subset, we seek feedback on whether this would be suitable for ecosystem use cases.
 -   We may consider expanding the technical checks, where possible, involved in mitigating abuse (e.g., to validate ccTLD variants).
 
