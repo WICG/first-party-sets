@@ -6,7 +6,7 @@ In this document, we propose an alternative solution to shipping a static list o
 
 Assertions are delivered in the `assertions` field, which contains a dictionary mapping from signer name to signed assertion. Browsers ignore unused assertions. This format allows sites to serve assertions from multiple signers, so they can handle policy variations more smoothly. In particular, we expect policies to evolve over time, so browser vendors may wish to run their own signers. Note these assertions solve a different problem from the Web PKI and are delivered differently. However, many of the lessons are analogous.
 
-As with a static list, signers maintain a full list of currently checked domains. They should publish this list at a well-known location, such as `https://fps-signer.example/first-party-sets.json`. Although browsers will not consume the list directly, this allows others to audit the list. The signer may wish to incorporate a [Certificate-Transparency-like](https://tools.ietf.org/html/rfc6962) mechanism for stronger guarantees.
+As with a static list, signers maintain a full list of currently checked domains. They should publish this list at a well-known location, such as `https://rws-signer.example/related-website-sets.json`. Although browsers will not consume the list directly, this allows others to audit the list. The signer may wish to incorporate a [Certificate-Transparency-like](https://tools.ietf.org/html/rfc6962) mechanism for stronger guarantees.
 
 The signer then regularly produces fresh signed assertions for the current list state. For extensibility, the exact format and contents of this assertion are signer-specific (browsers completely ignore unknown signers, so there is no need for a common format). However, there should be a recommended format to avoid common mistakes. Each signed assertion must contain:
 
@@ -18,7 +18,7 @@ The signer then regularly produces fresh signed assertions for the current list 
 
 Assertion lifetimes should be kept short, say two weeks. This reduces the lifetime of any mistakes. The browser vendor may also maintain a blocklist of revoked assertions to react more quickly, but the reduced lifetime reduces the size of such a list.
 
-To avoid operational challenges for sites, the signer makes the latest assertions available at a well-known location, such as `https://fps-signer.example/assertions/<owner-domain>`. We will provide automated tooling to refresh the manifest from these assertions, and sites with more specialized needs can build their own. To support such automation, the URL patterns must be standard across signers.
+To avoid operational challenges for sites, the signer makes the latest assertions available at a well-known location, such as `https://rws-signer.example/assertions/<owner-domain>`. We will provide automated tooling to refresh the manifest from these assertions, and sites with more specialized needs can build their own. To support such automation, the URL patterns must be standard across signers.
 
 Note any duplicate domains in the assertions and members attribute should compress well with gzip.
 
@@ -32,28 +32,28 @@ An origin is in a given related website set if:
 *   Its scheme is https; and
 *   Its registered domain is either the owner or is one of the secondary domains.
 
-The browser will consider domains to be members of a set if the domains opt in and the set meets [UA policy](https://github.com/privacycg/first-party-sets#ua-policy), to incorporate both [user and site needs](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies). Domains opt in by hosting a JSON manifest at `https://<domain>/.well-known/first-party-set`. The secondary domains point to the owning domain while the owning domain lists the members of the set, a version number to trigger updates, and a set of signed assertions to inform UA policy ([details below](https://github.com/privacycg/first-party-sets#ua-policy)).
+The browser will consider domains to be members of a set if the domains opt in and the set meets [UA policy](https://github.com/privacycg/first-party-sets#ua-policy), to incorporate both [user and site needs](https://www.w3.org/TR/html-design-principles/#priority-of-constituencies). Domains opt in by hosting a JSON manifest at `https://<domain>/.well-known/related-website-set`. The secondary domains point to the owning domain while the owning domain lists the members of the set, a version number to trigger updates, and a set of signed assertions to inform UA policy ([details below](https://github.com/privacycg/first-party-sets#ua-policy)).
 
 Suppose `a.example`, `b.example`, and `c.example` wish to form a related website set, owned by `a.example`. The sites would then serve the following resources, with signed assertions served in the `assertions` field of the owner manifest:
 
 
 ```
-https://a.example/.well-known/first-party-set
+https://a.example/.well-known/related-website-set
 {
   "owner": "a.example",
   "version": 1,
   "members": ["b.example", "c.example"],
   "assertions": { 
-    "chrome-fps-v1" : "<base64 contents...>",
-    "firefox-fps-v1" : "<base64 contents...>",
-    "safari-fps-v1": "<base64 contents...>"
+    "chrome-rws-v1" : "<base64 contents...>",
+    "firefox-rws-v1" : "<base64 contents...>",
+    "safari-rws-v1": "<base64 contents...>"
   }
 }
 
-https://b.example/.well-known/first-party-set
+https://b.example/.well-known/related-website-set
 { "owner": "a.example" }
 
-https://c.example/.well-known/first-party-set
+https://c.example/.well-known/related-website-set
 { "owner": "a.example" }
 ```
 
@@ -76,7 +76,7 @@ By default, every registrable domain is implicitly owned by itself. The browser 
 ```
 
 
-If this header does not match the browser's current information for `b.example` (either the owner does not match, or its saved related website set manifest is too old or does not exist), the browser pauses navigation to fetch the two manifest resources. Here, it would fetch `https://a.example/.well-known/first-party-set` and `https://b.example/.well-known/first-party-set`.
+If this header does not match the browser's current information for `b.example` (either the owner does not match, or its saved related website set manifest is too old or does not exist), the browser pauses navigation to fetch the two manifest resources. Here, it would fetch `https://a.example/.well-known/related-website-set` and `https://b.example/.well-known/related-website-set`.
 
 These requests must be uncredentialed and with suitably partitioned network caches to not leak cross-site information. In particular, the fetch must not share caches with browsing activity under `a.example`. See also discussion on [cross-site tracking vectors](https://github.com/privacycg/first-party-sets#cross-site-tracking-vectors).
 
@@ -125,4 +125,4 @@ Finally, if a site already has a service worker, it should still be able to depl
 *   Should the recommended format include extensions? Too many extension points, particularly around cryptographic algorithms, can introduce complexity and security risks.
 *   Should the assertions treat the owner as distinct from the member domains, or is a flat list sufficient? That is, is the signer’s policy likely to treat the owner distinct from other members?
 
-Extensibility by signer names means formats can always be extended by updating browsers to expect new signers. But we must ensure that this does not increase operational burden on sites by designing the tooling correctly. For instance, the `chrome-fps-v1` and `chrome-fps-v2` signers could share an assertion URL, which provides a set of assertions. The tooling would then automatically include each in the manifest.
+Extensibility by signer names means formats can always be extended by updating browsers to expect new signers. But we must ensure that this does not increase operational burden on sites by designing the tooling correctly. For instance, the `chrome-rws-v1` and `chrome-rws-v2` signers could share an assertion URL, which provides a set of assertions. The tooling would then automatically include each in the manifest.
