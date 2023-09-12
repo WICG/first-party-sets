@@ -1,5 +1,5 @@
 <pre class='metadata'>
-Title: User Agent Interaction with First-Party Sets
+Title: User Agent Interaction with Related Website Sets
 Shortname: first-party-sets
 Level: None
 Status: w3c/CG-DRAFT
@@ -8,7 +8,7 @@ URL: https://wicg.github.io/first-party-sets/
 Editor: Chris Fredrickson, Google https://google.com, cfredric@google.com
 Editor: Kaustubha Govind, Google https://google.com, kaustubhag@google.com
 Editor: Johann Hofmann, Google https://google.com, johannhof@google.com
-Abstract: How user agents should integrate with First-Party Sets, a mechanism to declare a collection of related domains as being in a First-Party Set.
+Abstract: How user agents should integrate with Related Website Sets, a mechanism to declare a collection of related domains as being in a Related Website Set.
 Markup Shorthands: markdown yes
 Default Biblio Display: inline
 </pre>
@@ -38,12 +38,12 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
 {
   "SUBMISSION-GUIDELINES": {
     "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md",
-    "title": "First-Party Sets Submission Guidelines",
+    "title": "Related Website Sets Submission Guidelines",
     "publisher": "Google Chrome"
   },
   "FPS-LIST": {
     "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON",
-    "title": "First-Party Sets list",
+    "title": "Related Website Sets list",
     "publisher": "Google Chrome"
   },
   "STORAGE-ACCESS": {
@@ -69,7 +69,7 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
 
 <em>This section is non-normative.</em>
 
-First-Party Sets (“FPS”) provides a framework for developers to declare relationships among sites, to enable limited cross-site cookie access for specific, user-facing purposes. This is facilitated through the use of the [[STORAGE-ACCESS]].
+Related Website Sets (“RWS”) provides a framework for developers to declare relationships among sites, to enable limited cross-site cookie access for specific, user-facing purposes. This is facilitated through the use of the [[STORAGE-ACCESS]].
 
 This document defines how user agents should integrate with the [[FPS-LIST]]. For a canonical reference of the structure of the FPS list and technical validations that are run at time of submission, please see the [[SUBMISSION-GUIDELINES]].
 
@@ -83,7 +83,7 @@ User agents should consume the canonical [[FPS-LIST]] on a regular basis (e.g., 
 
 ISSUE(wicg/first-party-sets#122): Can we make a recommendation for an update interval here?
 
-Individual clients must [=build the list of first-party sets=] on restart, or on start-up, if newly downloaded. Clients must not re-build the list at any other point in time.
+Individual clients must [=build the list of related website sets=] on restart, or on start-up, if newly downloaded. Clients must not re-build the list at any other point in time.
 
 The FPS list is a [=UTF-8=] encoded file containing contents parseable as a JSON object, conforming to the [[JSON-SCHEMA index]] described in the [[SUBMISSION-GUIDELINES]].
 
@@ -91,40 +91,40 @@ Note: Conformance to the schema is validated at submission time. Hence, it is no
 
 ISSUE(wicg/first-party-sets#125): Client-side validation may be needed in cases where the [[PSL]] version differs between the server and client.
 
-To <dfn>build the list of first-party sets</dfn> from a JSON [=byte sequence=] |bytes|, the user agent should run the following steps:
+To <dfn>build the list of related website sets</dfn> from a JSON [=byte sequence=] |bytes|, the user agent should run the following steps:
 
 1. Let |json| be the result of [=parse JSON bytes to an infra value|parsing JSON bytes to an infra value=] with |bytes|.
 2. If |json| is a parsing exception, or if |json| is not an [=ordered map=], or if |json|[“sets”] does not exist, return and optionally retry fetching the list, or perform other error recovery tasks.
 3. For each |entry| of |json|:
-    1. Let |set| be a [=first-party set=].
+    1. Let |set| be a [=related website set=].
     2. If |entry|[“primary”] does not exist, continue.
 
 ISSUE(wicg/first-party-sets#126): The specification currently suggests skipping invalid sets (missing primary entries) instead of rejecting the entire list. However, there may be benefit in a full rejection given that the server is expected to hold valid information at all times.
 
-    3. Set |set|’s [=first-party set/primary=] to |entry|[“primary”].
+    3. Set |set|’s [=related website set/primary=] to |entry|[“primary”].
     4. Let |ccTLDs| be the result of [=parse an equivalence map|parsing an equivalence map=] from |entry|[“ccTLDs”]. If |ccTLDs| is failure, continue.
     5. Set |set|’s ccTLDs to |ccTLDs|.
     6. Let |serviceSites| be the result of [=parse a subset|parsing a subset=] from |entry|[“serviceSites”]. If the result is failure, continue.
-    7. Set |set|’s [=first-party set/serviceSites=] to |serviceSites|.
+    7. Set |set|’s [=related website set/serviceSites=] to |serviceSites|.
     8. Let |associatedSites| be the result of [=parse a subset|parsing a subset=] from |entry|[“associatedSites”]. If the result is failure, continue.
-    9. Set |set|’s [=first-party set/associatedSites=] to |associatedSites|.
-    10. Add |set| to the user agent’s [=list of first-party sets=].
+    9. Set |set|’s [=related website set/associatedSites=] to |associatedSites|.
+    10. Add |set| to the user agent’s [=list of related website sets=].
 
-User agents may opt to pre-process the list into a different format before delivery to the client, e.g. for optimization reasons, as long as they ensure that the client will eventually hold a valid [=list of first-party sets=] as defined in this specification.
+User agents may opt to pre-process the list into a different format before delivery to the client, e.g. for optimization reasons, as long as they ensure that the client will eventually hold a valid [=list of related website sets=] as defined in this specification.
 
 <h2 id="data-structures">Data Structures</h2>
 
-The user agent maintains a global <dfn export>list of first-party sets</dfn>, which is a [=/list=] of [=first-party sets=].
+The user agent maintains a global <dfn export>list of related website sets</dfn>, which is a [=/list=] of [=related website sets=].
 
-A <dfn export>first-party set</dfn> is a [=/struct=] with the following items:
+A <dfn export>related website set</dfn> is a [=/struct=] with the following items:
 
-<dfn for="first-party set">primary</dfn>: A [=site=] that represents the set’s primary domain.
+<dfn for="related website set">primary</dfn>: A [=site=] that represents the set’s primary domain.
 
-<dfn for="first-party set">ccTLDs</dfn>: An [=equivalence map=], representing the set’s equivalent country-code top level domains that were specified by the submitter.
+<dfn for="related website set">ccTLDs</dfn>: An [=equivalence map=], representing the set’s equivalent country-code top level domains that were specified by the submitter.
 
-<dfn for="first-party set">associatedSites</dfn>: A [=/list=] of [=sites=] in the associated subset.
+<dfn for="related website set">associatedSites</dfn>: A [=/list=] of [=sites=] in the associated subset.
 
-<dfn for="first-party set">serviceSites</dfn>: A [=/list=] of [=sites=] in the service subset.
+<dfn for="related website set">serviceSites</dfn>: A [=/list=] of [=sites=] in the service subset.
 
 Note: For additional context on the meaning of these fields please refer to the [[SUBMISSION-GUIDELINES]].
 
@@ -158,37 +158,37 @@ To <dfn>parse an equivalence map</dfn> from an ordered map |input|, run the foll
     7. Set |map|[|keySite|] to |equivalents|.
 6. Return |map|.
 
-<h2 id="validating-inclusion">Validating first-party set inclusion</h2>
+<h2 id="validating-inclusion">Validating related website set inclusion</h2>
 
 Under FPS, a [=site=] |site1| is considered <dfn>equivalent to</dfn> another [=site=] |site2| given an [=equivalence map=] |equivalents|, if |equivalents|[|site1|] contains |site2| or |equivalents|[|site2|] contains |site1|.
 
 ISSUE(wicg/first-party-sets#123): Should this be renamed to avoid being confused with a mathematical equivalence relation?
 
-To <dfn export>determine the member type</dfn> of a given [=site=] |site| in a given [=first-party set=] |set|, run the following steps:
+To <dfn export>determine the member type</dfn> of a given [=site=] |site| in a given [=related website set=] |set|, run the following steps:
 
-1. If |site| is [=equivalent to=] |set|’s [=first-party set/primary=] given |set|’s [=first-party set/ccTLDs=], return “primary”.
-2. For each |associatedSite| of |set|'s [=first-party set/associatedSites=]:
-    1. If |site| is [=equivalent to=] |associatedSite| given |set|’s [=first-party set/ccTLDs=], return “associated”.
-3. For each |serviceSite| of |set|'s [=first-party set/serviceSites=]:
-    2. If |site| is [=equivalent to=] |serviceSite| given |set|’s [=first-party set/ccTLDs=], return “service”.
+1. If |site| is [=equivalent to=] |set|’s [=related website set/primary=] given |set|’s [=related website set/ccTLDs=], return “primary”.
+2. For each |associatedSite| of |set|'s [=related website set/associatedSites=]:
+    1. If |site| is [=equivalent to=] |associatedSite| given |set|’s [=related website set/ccTLDs=], return “associated”.
+3. For each |serviceSite| of |set|'s [=related website set/serviceSites=]:
+    2. If |site| is [=equivalent to=] |serviceSite| given |set|’s [=related website set/ccTLDs=], return “service”.
 4. Return “none”.
 
-To <dfn export>find a first-party set</dfn> for a given [=site=] |site|, run the following steps:
+To <dfn export>find a related website set</dfn> for a given [=site=] |site|, run the following steps:
 
-1. For each |set| of the user agent’s [=list of first-party sets=]:
+1. For each |set| of the user agent’s [=list of related website sets=]:
     1. Let |type| be the [=determine the member type|member type=] of |site| in |set|.
     2. If |type| is not “none”, return |set|.
 2. Return null.
 
-Note: The [[SUBMISSION-GUIDELINES]] require that each site can only appear in at most one First-Party set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of first-party sets when performing these steps.
+Note: The [[SUBMISSION-GUIDELINES]] require that each site can only appear in at most one Related Website set, which is validated at submission time. For this reason, user agents do not need to be concerned with the order of the list of related website sets when performing these steps.
 
-Define the <dfn>limit for associated sites</dfn> within a single [=first-party set=] to be an [=implementation-defined=] value, which is recommended to be 3.
+Define the <dfn>limit for associated sites</dfn> within a single [=related website set=] to be an [=implementation-defined=] value, which is recommended to be 3.
 
-Note: This limit is used when [=determine eligibility for an associated site|determining eligibility for an associated site=] to only consider the sites listed at the top of the associated subset. It is meant to discourage abuse and help users and user agents understand why a particular first-party set needs to exist. User agents may choose a different number based on this goal.
+Note: This limit is used when [=determine eligibility for an associated site|determining eligibility for an associated site=] to only consider the sites listed at the top of the associated subset. It is meant to discourage abuse and help users and user agents understand why a particular related website set needs to exist. User agents may choose a different number based on this goal.
 
 A [=site=] |embeddedSite| is <dfn export>eligible for same-party membership when embedded within</dfn> a [=site=] |topLevelSite|, if the following steps return true:
 
-1. Let |set| be the result of [=find a first-party set|finding a first-party set=] for |topLevelSite|.
+1. Let |set| be the result of [=find a related website set|finding a related website set=] for |topLevelSite|.
 2. If |set| is null, return false.
 3. Let |topLevelType| be the [=determine the member type|member type=] of |topLevelSite| in |set|.
 4. If |topLevelType| is “associated” and the result of [=determine eligibility for an associated site|determining eligibility for an associated site=] given |topLevelSite| and |set| is false, return false.
@@ -198,10 +198,10 @@ A [=site=] |embeddedSite| is <dfn export>eligible for same-party membership when
 8. If |type| is “associated”, return the result of [=determine eligibility for an associated site|determining eligibility for an associated site=] given |embeddedSite| and |set|.
 9. Return true.
 
-To <dfn>determine eligibility for an associated site</dfn> given a [=site=] |site| and a [=first-party set=] |set|, run the following steps:
+To <dfn>determine eligibility for an associated site</dfn> given a [=site=] |site| and a [=related website set=] |set|, run the following steps:
 
-1. If |set|’s [=first-party set/associatedSites=] does not contain |site|, return false.
-2. Let |index| be the index of |site| in |set|’s [=first-party set/associatedSites=].
+1. If |set|’s [=related website set/associatedSites=] does not contain |site|, return false.
+2. Let |index| be the index of |site| in |set|’s [=related website set/associatedSites=].
 3. If |index| is greater than or equal to the [=limit for associated sites=], return false.
 4. Return true.
 
@@ -227,9 +227,9 @@ Modify {{Document/requestStorageAccessFor(requestedOrigin)}} to insert the follo
 1. Let |settings| be <var ignore>doc</var>'s [=relevant settings object=].
 1. If |settings| and <var ignore>requestedOrigin</var> [=are same-party in an embedding context=], the user agent may [=queue a global task=] on the [=permissions task source=] given <var ignore>global</var> to [=resolve=] <var ignore>p</var> and abort the remaining steps.
 
-<h2 id="handling-changes">Handling first-party set changes</h2>
+<h2 id="handling-changes">Handling related website set changes</h2>
 
-When a [=site=] |site| leaves a [=first-party set=] as the result of building a new [=list of first-party sets=], user agents must ensure that it does not retain any access to data or shared identifiers held by other sites in the first-party set by running the following steps:
+When a [=site=] |site| leaves a [=related website set=] as the result of building a new [=list of related website sets=], user agents must ensure that it does not retain any access to data or shared identifiers held by other sites in the related website set by running the following steps:
 
 1. Assert that |site| is not an [=opaque origin=].
 2. Let |domain| be site’s [=origin/host=].
@@ -257,7 +257,7 @@ For providing access to cross-site cookies, this specification aims to ensure co
 
 <h3 id="prevent-leaks">Prevent privacy leaks from list changes</h3>
 
-Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the [[STORAGE-ACCESS]], we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one First-Party Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
+Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the [[STORAGE-ACCESS]], we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one Related Website Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
 For this reason, this specification requires user agents to clear any site data and storage-access permissions of a given site when a site is removed from a set, before starting any fetches that rely on those permissions or site data.
 
@@ -267,7 +267,7 @@ Note: Most fetches do not depend on data that needs to be cleared, so user agent
 
 <h3 id="avoid-weakening-boundaries">Avoid weakening new and existing security boundaries</h3>
 
-Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [[CACHE-PROBING]] attacks and third-party cookie blocking makes it much harder to perform [[CSRF]] by default. Where user agents intend to use First-Party Sets to replace or extend existing boundaries based on site or origin on the web, it is important to consider not only the effects on privacy, but also on security.
+Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [[CACHE-PROBING]] attacks and third-party cookie blocking makes it much harder to perform [[CSRF]] by default. Where user agents intend to use Related Website Sets to replace or extend existing boundaries based on site or origin on the web, it is important to consider not only the effects on privacy, but also on security.
 
 Sites in a common FPS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an FPS to affect the integrity of other sites in the set.
 
