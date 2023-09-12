@@ -41,7 +41,7 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
     "title": "Related Website Sets Submission Guidelines",
     "publisher": "Google Chrome"
   },
-  "FPS-LIST": {
+  "RWS-LIST": {
     "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON",
     "title": "Related Website Sets list",
     "publisher": "Google Chrome"
@@ -71,7 +71,7 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
 
 Related Website Sets (“RWS”) provides a framework for developers to declare relationships among sites, to enable limited cross-site cookie access for specific, user-facing purposes. This is facilitated through the use of the [[STORAGE-ACCESS]].
 
-This document defines how user agents should integrate with the [[FPS-LIST]]. For a canonical reference of the structure of the FPS list and technical validations that are run at time of submission, please see the [[SUBMISSION-GUIDELINES]].
+This document defines how user agents should integrate with the [[RWS-LIST]]. For a canonical reference of the structure of the RWS list and technical validations that are run at time of submission, please see the [[SUBMISSION-GUIDELINES]].
 
 <h2 id="infra">Infrastructure</h2>
 
@@ -79,15 +79,15 @@ This specification depends on the Infra standard. [[!INFRA index]]
 
 <h2 id="list-consumption">List consumption</h2>
 
-User agents should consume the canonical [[FPS-LIST]] on a regular basis (e.g., every 2 weeks) and ship it to individual clients (e.g. a browser application) as an updateable component.
+User agents should consume the canonical [[RWS-LIST]] on a regular basis (e.g., every 2 weeks) and ship it to individual clients (e.g. a browser application) as an updateable component.
 
 ISSUE(wicg/first-party-sets#122): Can we make a recommendation for an update interval here?
 
 Individual clients must [=build the list of related website sets=] on restart, or on start-up, if newly downloaded. Clients must not re-build the list at any other point in time.
 
-The FPS list is a [=UTF-8=] encoded file containing contents parseable as a JSON object, conforming to the [[JSON-SCHEMA index]] described in the [[SUBMISSION-GUIDELINES]].
+The RWS list is a [=UTF-8=] encoded file containing contents parseable as a JSON object, conforming to the [[JSON-SCHEMA index]] described in the [[SUBMISSION-GUIDELINES]].
 
-Note: Conformance to the schema is validated at submission time. Hence, it is not required for the user agent to validate conformance again on the client. The algorithms in this specification describe how user agents should parse the FPS list, and when a particular set should be considered valid from the client’s perspective.
+Note: Conformance to the schema is validated at submission time. Hence, it is not required for the user agent to validate conformance again on the client. The algorithms in this specification describe how user agents should parse the RWS list, and when a particular set should be considered valid from the client’s perspective.
 
 ISSUE(wicg/first-party-sets#125): Client-side validation may be needed in cases where the [[PSL]] version differs between the server and client.
 
@@ -160,7 +160,7 @@ To <dfn>parse an equivalence map</dfn> from an ordered map |input|, run the foll
 
 <h2 id="validating-inclusion">Validating related website set inclusion</h2>
 
-Under FPS, a [=site=] |site1| is considered <dfn>equivalent to</dfn> another [=site=] |site2| given an [=equivalence map=] |equivalents|, if |equivalents|[|site1|] contains |site2| or |equivalents|[|site2|] contains |site1|.
+Under RWS, a [=site=] |site1| is considered <dfn>equivalent to</dfn> another [=site=] |site2| given an [=equivalence map=] |equivalents|, if |equivalents|[|site1|] contains |site2| or |equivalents|[|site2|] contains |site1|.
 
 ISSUE(wicg/first-party-sets#123): Should this be renamed to avoid being confused with a mathematical equivalence relation?
 
@@ -241,23 +241,23 @@ When a [=site=] |site| leaves a [=related website set=] as the result of buildin
     5. [=Remove a permission store entry|Remove all permission store entries=] for |descriptor|, where key[0] is |site| or key[1] is |origin|.
     6. Run additional [=implementation-defined=] steps to ensure that any web-accessible storage is removed from |origin|.
 
-ISSUE(wicg/first-party-sets#124): This section should provide more details on how user agents can figure out when a site leaves an FPS.
+ISSUE(wicg/first-party-sets#124): This section should provide more details on how user agents can figure out when a site leaves an RWS.
 
 <h2 id="privacy-consideration">Privacy Considerations</h2>
 
 <h3 id="provide-transparency">Provide user transparency and control</h3>
 
-A user agent that uses FPS to infer the relationship between two sites should ensure that its users are informed about this user agent choice and give users the opportunity to view and control choices made by the user agent.
+A user agent that uses RWS to infer the relationship between two sites should ensure that its users are informed about this user agent choice and give users the opportunity to view and control choices made by the user agent.
 
-<h3 id="ensure-compatibility">Ensure compatibility with non-FPS environments</h3>
+<h3 id="ensure-compatibility">Ensure compatibility with non-RWS environments</h3>
 
-Some user agents may choose not to support FPS in specific environments (such as Private Browsing Modes), or at all. All user agents and specifications should be mindful of this in their own API integrations and aim to gracefully fall back to a working solution for users and developers.
+Some user agents may choose not to support RWS in specific environments (such as Private Browsing Modes), or at all. All user agents and specifications should be mindful of this in their own API integrations and aim to gracefully fall back to a working solution for users and developers.
 
-For providing access to cross-site cookies, this specification aims to ensure compatibility with non-FPS environments through usage of the [[STORAGE-ACCESS]], which provides developers an interface to handle rejections to the request and gives user agents flexibility to employ mechanisms such as prompts or heuristics as an alternative to FPS.
+For providing access to cross-site cookies, this specification aims to ensure compatibility with non-RWS environments through usage of the [[STORAGE-ACCESS]], which provides developers an interface to handle rejections to the request and gives user agents flexibility to employ mechanisms such as prompts or heuristics as an alternative to RWS.
 
 <h3 id="prevent-leaks">Prevent privacy leaks from list changes</h3>
 
-Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the [[STORAGE-ACCESS]], we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one Related Website Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
+Developers may submit changes to their sets to add or remove sites. Since membership in a set could provide access to cross-site cookies via automatic grants of the [[STORAGE-ACCESS]], we need to pay attention to these transitions so that they don’t link user identities across all the RWSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one Related Website Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
 For this reason, this specification requires user agents to clear any site data and storage-access permissions of a given site when a site is removed from a set, before starting any fetches that rely on those permissions or site data.
 
@@ -269,7 +269,7 @@ Note: Most fetches do not depend on data that needs to be cleared, so user agent
 
 Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [[CACHE-PROBING]] attacks and third-party cookie blocking makes it much harder to perform [[CSRF]] by default. Where user agents intend to use Related Website Sets to replace or extend existing boundaries based on site or origin on the web, it is important to consider not only the effects on privacy, but also on security.
 
-Sites in a common FPS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an FPS to affect the integrity of other sites in the set.
+Sites in a common RWS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an RWS to affect the integrity of other sites in the set.
 
 This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. 
 
