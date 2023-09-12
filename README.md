@@ -56,7 +56,7 @@ some notion of first-party. In defining this scope, we must balance two goals: t
 small enough to meet the user's privacy expectations, yet large enough to provide the user's desired
 functionality on the site they are interacting with.
 
-Related Website Sets (FPS) is a web platform mechanism, proposed within the context of browser efforts to phase out support for third-party cookies, through which site authors of multi-domain sites may declare relationships between domains such that the browser may understand the relationships and handle cookie access accordingly.
+Related Website Sets (RWS) is a web platform mechanism, proposed within the context of browser efforts to phase out support for third-party cookies, through which site authors of multi-domain sites may declare relationships between domains such that the browser may understand the relationships and handle cookie access accordingly.
 
 The core principle of allowing browsers to treat collections of *known related sites* differently from otherwise *unrelated sites* is grounded in ideas that had been previously discussed in the W3C (such as [Affiliated Domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12)), the now defunct IETF [DBOUND](https://datatracker.ietf.org/doc/html/draft-sullivan-dbound-problem-statement-02) working group, and previously deployed in some browsers (such as the [Disconnect.me entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json)).
 
@@ -237,21 +237,21 @@ Additionally, there are other enforcement strategies we could consider to furthe
 
 For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of three domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion of the relationship between domains.
 
-## Chrome’s Submission Guidelines and FPS Canonical List
+## Chrome’s Submission Guidelines and RWS Canonical List
 
 Chrome’s implementation will depend on the  list of Related Website Sets generated via the process described in [Submission Guidelines](https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md). The guidelines aim to provide developers with clear expectations on how to submit sets to the [canonical list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON) that the browser will consume and apply to its behavior. 
 
 ## Leveraging the Storage Access API
 
-To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cookie access within a FPS.
+To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cookie access within a RWS.
 
- With the SAA, sites may actively request cross-site cookie access, and user-agents may [make their own decisions](https://privacycg.github.io/storage-access/#ua-policy) on whether to automatically grant or deny the request or choose to prompt the user. We propose that browsers supporting FPS incorporate set membership information into this decision. In other words, browsers may choose to automatically grant cross-site access when the requesting site is in the same FPS, or in a particular subset of the same FPS, as the top-level site.
+ With the SAA, sites may actively request cross-site cookie access, and user-agents may [make their own decisions](https://privacycg.github.io/storage-access/#ua-policy) on whether to automatically grant or deny the request or choose to prompt the user. We propose that browsers supporting RWS incorporate set membership information into this decision. In other words, browsers may choose to automatically grant cross-site access when the requesting site is in the same RWS, or in a particular subset of the same RWS, as the top-level site.
 
-We'd like to collaborate with the community in evolving the Storage Access API to improve developer and user experience and help the SAA better support the use cases that FPS is intended to solve. One way to do that is through extending the API surface in a way that makes it easier for developers to use the SAA without integrating iframes:
+We'd like to collaborate with the community in evolving the Storage Access API to improve developer and user experience and help the SAA better support the use cases that RWS is intended to solve. One way to do that is through extending the API surface in a way that makes it easier for developers to use the SAA without integrating iframes:
 
 ### Providing capabilities beyond the Storage Access API
 
-SAA currently requires that the API: (a) be invoked from an iframe embedding the origin requesting cross-site cookies access, and that (b) the iframe obtains user activation before making such a request. We anticipate that the majority of site compatibility issues (specifically, those that FPS intends to address) involve instances where user interaction within an iframe is difficult to retrofit, e.g. because of the usage of images or script tags requiring cookies. Additionally, since cross-site subresources may be loaded synchronously by the top-level site, it may be difficult for the subresources to anticipate when asynchronous cookie access via SAA is granted. To address this difficulty, we [propose a new API](https://github.com/mreichhoff/requestStorageAccessForSite) that we hope will make it easier for developers to adopt this change.
+SAA currently requires that the API: (a) be invoked from an iframe embedding the origin requesting cross-site cookies access, and that (b) the iframe obtains user activation before making such a request. We anticipate that the majority of site compatibility issues (specifically, those that RWS intends to address) involve instances where user interaction within an iframe is difficult to retrofit, e.g. because of the usage of images or script tags requiring cookies. Additionally, since cross-site subresources may be loaded synchronously by the top-level site, it may be difficult for the subresources to anticipate when asynchronous cookie access via SAA is granted. To address this difficulty, we [propose a new API](https://github.com/mreichhoff/requestStorageAccessForSite) that we hope will make it easier for developers to adopt this change.
 
 Note: Both Firefox and Safari have run into these issues before and have solved them through the application of an internal-only "requestStorageAccessForOrigin" API ([4](https://bugzilla.mozilla.org/show_bug.cgi?id=1724376), [5](https://github.com/WebKit/WebKit/commit/e0690e2f6c7e51bd73b66e038b5d4d86a6f30909#diff-1d194b67d50610776c206cb5faa8f056cf1063dd9743c5a43cab834d43e5434cR253)), that is applied on a case-by-case basis by custom browser scripts (Safari: [6](https://github.com/WebKit/WebKit/blob/a39a03d621e441f3b7ca3a814d1bc0e2b8dd72be/Source/WebCore/page/Quirks.cpp#L1065), [7](https://github.com/WebKit/WebKit/blob/main/Source/WebCore/page/Quirks.cpp#L1217) Firefox: [8](https://phabricator.services.mozilla.com/D129185), [9](https://phabricator.services.mozilla.com/D124493), [10](https://phabricator.services.mozilla.com/D131643)).
 
@@ -282,7 +282,7 @@ In accordance with the [Fetch](https://fetch.spec.whatwg.org/#websocket-opening-
 User agents need not perform this normalization on the domains in their static lists; user agents may reject static lists that include non-HTTPS domains.
 
 # Clearing Site Data on Set Transitions
-Sites may need to change which Related Website Set they are a member of. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the FPSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one Related Website Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
+Sites may need to change which Related Website Set they are a member of. Since membership in a set could provide access to cross-site cookies via automatic grants of the Storage Access API, we need to pay attention to these transitions so that they don’t link user identities across all the RWSs they’ve historically been in. In particular, we must ensure that a domain cannot transfer a user identifier from one Related Website Set to another when it changes its set membership. While a set member may not always request and be granted access to cross-site cookies, for the sake of simplicity of handling set transitions, we propose to treat such access as always granted.
 
 In order to achieve this, the browser must clear site data after a site undergoes certain transitions, before starting any fetches that depend on that data/storage.
 
@@ -293,18 +293,18 @@ The clearing should behave like [`Clear-Site-Data: "*"`](https://www.w3.org/TR/c
  * A user identifier could be stored in any of these storage types.
  * Clearing just a few of the types would break sites that expect different types of data to be consistent with each other.
 
-Since member sites can only add/remove themselves to/from FPSs with the consent from the primary, we look at Related Website Set changes as a site changing its FPS primary.
+Since member sites can only add/remove themselves to/from RWSs with the consent from the primary, we look at Related Website Set changes as a site changing its RWS primary.
 
 If a site’s primary changed:
 
-1. If this site had no FPS primary, the site's data won't be cleared.
-    *   Pro: Avoids adoption pain when a site joins a FPS.
+1. If this site had no RWS primary, the site's data won't be cleared.
+    *   Pro: Avoids adoption pain when a site joins a RWS.
     *   Con: Unclear how this lines up with user expectations about access to browsing history prior to set formation.
 2. Otherwise, clear site data of this site.
 
 Potential modification, which adds implementation complexity:
 
-3. If this site's new primary is a site that previously had the same FPS primary as the first site, the site's data won't be cleared. 
+3. If this site's new primary is a site that previously had the same RWS primary as the first site, the site's data won't be cleared. 
     *   Pro: Provides graceful transitions for examples (f) and (g).
     *   Con: Multi-stage transitions, such as (h) to (i) are unaccounted for.
 
@@ -316,19 +316,19 @@ Potential modification, which adds implementation complexity:
 
 ![](./images/FPS_clear_site_data-not_clear.drawio.svg)
 
-a. Site A and Site B create a FPS with Site A as the primary and Site B as the member. Site data will not be cleared.
+a. Site A and Site B create a RWS with Site A as the primary and Site B as the member. Site data will not be cleared.
 
-b. Site C joins the existing FPS as a member site where Site A is the primary. Site data will not be cleared.
+b. Site C joins the existing RWS as a member site where Site A is the primary. Site data will not be cleared.
 
 ---
 
 ![](./images/FPS_clear_site_data-clear.drawio.svg)
 
-c. Given an FPS with primary Site A and members Site B and Site C, if Site D joins this FPS and becomes the new primary; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
+c. Given an RWS with primary Site A and members Site B and Site C, if Site D joins this RWS and becomes the new primary; the previous set will be dissolved and the browser will clear data for Site A, Site B and Site C.
 
-d. Given an FPS with primary Site A and members Site B and Site C, if Site B leaves the FPS, the browser will clear site data for Site B.
+d. Given an RWS with primary Site A and members Site B and Site C, if Site B leaves the RWS, the browser will clear site data for Site B.
 
-e. Given two FPSs, FPS1 has primary Site A and members Site B and Site C and FPS2 has primary Site X and member Site Y, if they join together as one FPS with Site A being the primary, the browser will clear site data for Site X and Site Y.
+e. Given two RWSs, RWS1 has primary Site A and members Site B and Site C and RWS2 has primary Site X and member Site Y, if they join together as one RWS with Site A being the primary, the browser will clear site data for Site X and Site Y.
 
 ---
 
@@ -336,11 +336,11 @@ With the potential modification allowing sites to keep their data if the new set
 
 ![](./images/FPS_clear_site_data-potential_modification.drawio.svg)
 
-f. Given an FPS with primary Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the primary and Site A becomes the member, no site data will be cleared.
+f. Given an RWS with primary Site A and members Site B and Site C, if no site is added or removed, just Site C becomes the primary and Site A becomes the member, no site data will be cleared.
 
-g. Given an FPS with primary Site A and members Site B and Site C, if Site A leaves the FPS and Site B becomes the primary, the browser will clear site data for Site A.
+g. Given an RWS with primary Site A and members Site B and Site C, if Site A leaves the RWS and Site B becomes the primary, the browser will clear site data for Site A.
 
-h. & i. Given the FPS with primary Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the primary, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
+h. & i. Given the RWS with primary Site A and member Site B and Site C, if Site D joins this set as a member and later becomes the primary, site data of Site A, Site B and Site C is only preserved if the user happens to visit during the intermediate stage.
 
 # Alternative designs
 
@@ -375,7 +375,7 @@ infrastructure.
 It's likely that this would negatively impact the deployment and use of
 encryption on the web, for example by forcing sites to obtain EV certificates
 as the only way to ensure continued functionality. A revocation of a certificate
-that is used for FPS would have grave implications (such as deletion of all local
+that is used for RWS would have grave implications (such as deletion of all local
 data through the Clear Site Data mechanism) and thus complicate the revocation process.
 
 See [Issue 12](https://github.com/privacycg/first-party-sets/issues/12) for an extended
@@ -444,9 +444,9 @@ this is worthwhile.
 
 Changes to the web platform that tighten boundaries for increased privacy often have positive effects on security as well. For example, cache partitioning restricts [cache probing](https://xsleaks.dev/docs/attacks/cache-probing/) attacks and third-party cookie blocking makes it much harder to perform [CSRF](https://owasp.org/www-community/attacks/csrf) by default. Where user agents intend to use Related Website Sets to replace or extend existing boundaries based on *site* or *origin* on the web, it is important to consider not only the effects on privacy, but also on security.
 
-Sites in a common FPS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an FPS to affect the integrity of other sites in the set.
+Sites in a common RWS may have greatly varying security requirements, for example, a set could contain a site storing user credentials and another hosting untrusted user data. Even within the same set, sites still rely on cross-site and cross-origin restrictions to stay in control of data exposure. Within reason, it should not be possible for a compromised site in an RWS to affect the integrity of other sites in the set.
 
-This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. Site owners should be aware of the potential security implications of creating an FPS and form only the smallest possible set of domains that encompasses user workflows/journeys across an application, especially when some origins in the set opt into features that may leave them open to potential attacks from other origins in the set.
+This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. Site owners should be aware of the potential security implications of creating an RWS and form only the smallest possible set of domains that encompasses user workflows/journeys across an application, especially when some origins in the set opt into features that may leave them open to potential attacks from other origins in the set.
 
 # Prior Art
 
