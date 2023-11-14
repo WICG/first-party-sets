@@ -239,7 +239,7 @@ For some subsets, like the "associated" subset, objective enforcement may be muc
 
 ## Chrome’s Submission Guidelines and RWS Canonical List
 
-Chrome’s implementation will depend on the  list of Related Website Sets generated via the process described in [Submission Guidelines](https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md). The guidelines aim to provide developers with clear expectations on how to submit sets to the [canonical list](https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON) that the browser will consume and apply to its behavior. 
+Chrome’s implementation will depend on the  list of Related Website Sets generated via the process described in [Submission Guidelines](https://github.com/GoogleChrome/related-website-sets/blob/main/RWS-Submission_Guidelines.md). The guidelines aim to provide developers with clear expectations on how to submit sets to the [canonical list](https://github.com/GoogleChrome/related-website-sets/blob/main/related_website_sets.JSON) that the browser will consume and apply to its behavior. 
 
 ## Leveraging the Storage Access API
 
