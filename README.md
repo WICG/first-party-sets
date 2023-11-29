@@ -235,7 +235,7 @@ The following technical checks also help to mitigate abuse:
 
 Additionally, there are other enforcement strategies we could consider to further mitigate abuse. If there is a report regarding a domain specified under the "service" subset, potential reactive enforcement measures could be taken to validate that the domain in question is indeed a "service" subset.
 
-For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of three domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion of the relationship between domains.
+For some subsets, like the "associated" subset, objective enforcement may be much more difficult and complex. In these situations, the browser's handling policy, such as a limit of five domains, should limit the scope of potential abuse. Additionally, we think that site authors will be beholden to the subset definition and avoid intentional miscategorization as their submissions would be entirely public and constitute an assertion of the relationship between domains.
 
 ## Chrome’s Submission Guidelines and RWS Canonical List
 
@@ -459,7 +459,6 @@ This consideration will always involve a necessary trade-off between gains like 
 # Open question(s)
 
 -   We are still exploring how [CHIPS](https://github.com/privacycg/CHIPS) [integrates with](https://developer.chrome.com/docs/privacy-sandbox/chips/#first-party-sets-and-cookie-partitioning) Related Website Sets. We are working on technical changes to that design as well, and will share updates when we have a proposal.
--   While we've proposed a limit of three domains for the "associated" subset, we seek feedback on whether this would be suitable for ecosystem use cases.
 -   We may consider expanding the technical checks, where possible, involved in mitigating abuse (e.g., to validate ccTLD variants).
 
 # Acknowledgements
