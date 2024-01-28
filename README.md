@@ -195,7 +195,7 @@ Requires common ownership.</td>
     <tr>
       <td>associated</td>
       <td>Reserved for domains whose affiliation with the set primary is clearly presented to users (e.g., an About page, header or footer, shared branding or logo, or similar forms).</td>
-      <td>Limit of 3* domains. If greater than 3, auto-reject access.<br>
+      <td>Limit of 5* domains. If greater than 5, auto-reject access.<br>
 <br>
 <em>*[^1]exact number TBD</em></a></td>
     </tr>
