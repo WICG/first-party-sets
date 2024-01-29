@@ -29,8 +29,7 @@ spec: clear-site-data; urlPrefix: https://www.w3.org/TR/clear-site-data/#
 spec: storage-access; urlPrex: https://privacycg.github.io/storage-access/#
     type: dfn
         text: determine the storage access policy; url: determine-the-storage-access-policy
-<!-- Export PR is https://github.com/w3c/permissions/pull/407, but note that we will likely end up
-     not using the permissions task source directly, see https://github.com/privacycg/storage-access/issues/144 -->
+<!-- Export PR is https://github.com/w3c/permissions/pull/407, but note that we will likely end up not using the permissions task source directly, see https://github.com/privacycg/storage-access/issues/144 -->
 urlPrefix: https://w3c.github.io/permissions/; spec: permissions
     text: permissions task source; url: #permissions-task-source; type: dfn
 </pre>
