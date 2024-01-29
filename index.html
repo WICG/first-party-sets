@@ -4,9 +4,9 @@
   <title>User Agent Interaction with Related Website Sets</title>
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
   <link href="https://www.w3.org/StyleSheets/TR/2021/cg-draft" rel="stylesheet">
-  <meta content="Bikeshed version 82ce88815, updated Thu Sep 7 16:33:55 2023 -0700" name="generator">
+  <meta content="Bikeshed version d5d58a306, updated Fri Jan 26 16:12:28 2024 -0800" name="generator">
   <link href="https://wicg.github.io/first-party-sets/" rel="canonical">
-  <meta content="20f1ccbbaf70e774159e7d4b0829cc88574e74fc" name="document-revision">
+  <meta content="c05b321f09a04e5baaecc3d6ad9d6765c07d616f" name="revision">
 <style>/* Boilerplate: style-autolinks */
 .css.css, .property.property, .descriptor.descriptor {
     color: var(--a-normal-text);
@@ -78,7 +78,6 @@ pre .property::before, pre .property::after {
 }
 </style>
 <style>/* Boilerplate: style-colors */
-
 /* Any --*-text not paired with a --*-bg is assumed to have a transparent bg */
 :root {
     color-scheme: light dark;
@@ -332,11 +331,15 @@ figcaption:not(.no-marker)::before {
 :root {
     --dfnpanel-bg: #ddd;
     --dfnpanel-text: var(--text);
+    --dfnpanel-target-bg: #ffc;
+    --dfnpanel-target-outline: orange;
 }
 @media (prefers-color-scheme: dark) {
     :root {
         --dfnpanel-bg: #222;
         --dfnpanel-text: var(--text);
+        --dfnpanel-target-bg: #333;
+        --dfnpanel-target-outline: silver;
     }
 }
 .dfn-panel {
@@ -359,11 +362,13 @@ figcaption:not(.no-marker)::before {
 .dfn-panel > b { display: block; }
 .dfn-panel a { color: var(--dfnpanel-text); }
 .dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
+.dfn-panel a:focus {
+    outline: 5px auto Highlight;
+    outline: 5px auto -webkit-focus-ring-color;
+}
 .dfn-panel > b + b { margin-top: 0.25em; }
 .dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
 .dfn-panel li a {
-    white-space: pre;
-    display: inline-block;
     max-width: calc(300px - 1.5em - 1em);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -372,67 +377,79 @@ figcaption:not(.no-marker)::before {
 .dfn-panel.activated {
     display: inline-block;
     position: fixed;
-    left: .5em;
+    left: 8px;
     bottom: 2em;
     margin: 0 auto;
     max-width: calc(100vw - 1.5em - .4em - .5em);
     max-height: 30vh;
+    transition: left 1s ease-out, bottom 1s ease-out;
 }
 
-.dfn-paneled[role="button"] { cursor: pointer; }
-</style>
-<style>/* Boilerplate: style-dfn-panel */
-:root {
-    --dfnpanel-bg: #ddd;
-    --dfnpanel-text: var(--text);
+.dfn-panel .link-item:hover {
+    text-decoration: underline;
 }
-@media (prefers-color-scheme: dark) {
-    :root {
-        --dfnpanel-bg: #222;
-        --dfnpanel-text: var(--text);
+.dfn-panel .link-item .copy-icon {
+    opacity: 0;
+}
+.dfn-panel .link-item:hover .copy-icon,
+.dfn-panel .link-item .copy-icon:focus {
+    opacity: 1;
+}
+
+.dfn-panel .copy-icon {
+    display: inline-block;
+    margin-right: 0.5em;
+    width: 0.85em;
+    height: 1em;
+    border-radius: 3px;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dfn-panel .copy-icon .icon {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.dfn-panel .copy-icon .icon::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #ccc;
+    opacity: 0.25;
+    transform: translate(3px, -3px);
+}
+
+.dfn-panel .copy-icon:active .icon::before {
+    opacity: 1;
+}
+
+.dfn-paneled[role="button"] { cursor: help; }
+
+.highlighted {
+    animation: target-fade 3s;
+}
+
+@keyframes target-fade {
+    from {
+        background-color: var(--dfnpanel-target-bg);
+        outline: 5px solid var(--dfnpanel-target-outline);
+    }
+    to {
+        color: var(--a-normal-text);
+        background-color: transparent;
+        outline: transparent;
     }
 }
-.dfn-panel {
-    position: absolute;
-    z-index: 35;
-    width: 20em;
-    width: 300px;
-    height: auto;
-    max-height: 500px;
-    overflow: auto;
-    padding: 0.5em 0.75em;
-    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
-    background: var(--dfnpanel-bg);
-    color: var(--dfnpanel-text);
-    border: outset 0.2em;
-    white-space: normal; /* in case it's moved into a pre */
-}
-.dfn-panel:not(.on) { display: none; }
-.dfn-panel * { margin: 0; padding: 0; text-indent: 0; }
-.dfn-panel > b { display: block; }
-.dfn-panel a { color: var(--dfnpanel-text); }
-.dfn-panel a:not(:hover) { text-decoration: none !important; border-bottom: none !important; }
-.dfn-panel > b + b { margin-top: 0.25em; }
-.dfn-panel ul { padding: 0 0 0 1em; list-style: none; }
-.dfn-panel li a {
-    white-space: pre;
-    display: inline-block;
-    max-width: calc(300px - 1.5em - 1em);
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dfn-panel.activated {
-    display: inline-block;
-    position: fixed;
-    left: .5em;
-    bottom: 2em;
-    margin: 0 auto;
-    max-width: calc(100vw - 1.5em - .4em - .5em);
-    max-height: 30vh;
-}
-
-.dfn-paneled[role="button"] { cursor: pointer; }
 </style>
 <style>/* Boilerplate: style-issues */
 a[href].issue-return {
@@ -453,8 +470,40 @@ a[href].issue-return {
     margin-bottom: 0;
 }
 </style>
-<style>/* Boilerplate: style-selflinks */
+<style>/* Boilerplate: style-ref-hints */
+:root {
+    --ref-hint-bg: #ddd;
+    --ref-hint-text: var(--text);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ref-hint-bg: #222;
+        --ref-hint-text: var(--text);
+    }
+}
 
+.ref-hint {
+    display: inline-block;
+    position: absolute;
+    z-index: 35;
+    width: 20em;
+    width: 300px;
+    height: auto;
+    max-height: 500px;
+    overflow: auto;
+    padding: 0.5em 0.5em;
+    font: small Helvetica Neue, sans-serif, Droid Sans Fallback;
+    background: var(--ref-hint-bg);
+    color: var(--ref-hint-text);
+    border: outset 0.2em;
+    white-space: normal; /* in case it's moved into a pre */
+}
+
+.ref-hint * { margin: 0; padding: 0; text-indent: 0; }
+
+.ref-hint ul { padding: 0 0 0 1em; list-style: none; }
+</style>
+<style>/* Boilerplate: style-selflinks */
 :root {
     --selflink-text: white;
     --selflink-bg: gray;
@@ -517,7 +566,7 @@ dfn > a.self-link::before      { content: "#"; }
   <div class="head">
    <p data-fill-with="logo"><a class="logo" href="https://www.w3.org/"> <img alt="W3C" height="48" src="https://www.w3.org/StyleSheets/TR/2021/logos/W3C" width="72"> </a> </p>
    <h1 class="p-name no-ref" id="title">User Agent Interaction with Related Website Sets</h1>
-   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2023-11-29">29 November 2023</time></p>
+   <p id="w3c-state"><a href="https://www.w3.org/standards/types#CG-DRAFT">Draft Community Group Report</a>, <time class="dt-updated" datetime="2024-01-29">29 January 2024</time></p>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
@@ -532,7 +581,7 @@ dfn > a.self-link::before      { content: "#"; }
     </dl>
    </div>
    <div data-fill-with="warning"></div>
-   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2023 the Contributors to the User Agent Interaction with Related Website Sets Specification, published by the <a href="https://www.w3.org/community/wicg/">Web Platform Incubator Community Group</a> under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>.
+   <p class="copyright" data-fill-with="copyright"><a href="https://www.w3.org/policies/#copyright">Copyright</a> © 2024 the Contributors to the User Agent Interaction with Related Website Sets Specification, published by the <a href="https://www.w3.org/community/wicg/">Web Platform Incubator Community Group</a> under the <a href="https://www.w3.org/community/about/agreements/cla/">W3C Community Contributor License Agreement (CLA)</a>.
 A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/">summary</a> is available. </p>
    <hr title="Separator for header">
   </div>
@@ -1030,369 +1079,8 @@ A human-readable <a href="http://www.w3.org/community/about/agreements/cla-deed/
    <div class="issue"> Should this be renamed to avoid being confused with a mathematical equivalence relation? <a href="https://github.com/wicg/first-party-sets/issues/123">[Issue #wicg/first-party-sets#123]</a> <a class="issue-return" href="#issue-7a693f54" title="Jump to section">↵</a></div>
    <div class="issue"> This section should provide more details on how user agents can figure out when a site leaves an RWS. <a href="https://github.com/wicg/first-party-sets/issues/124">[Issue #wicg/first-party-sets#124]</a> <a class="issue-return" href="#issue-a87490bb" title="Jump to section">↵</a></div>
   </div>
-<script>/* Boilerplate: script-dfn-panel */
-"use strict";
-{
-    const dfnsJson = window.dfnsJson || {};
-
-    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
-        return mk.aside({
-            class: "dfn-panel",
-            id: `infopanel-for-${dfnID}`,
-            "data-for": dfnID,
-            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
-            },
-            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
-                `Info about the '${dfnText}' ${external?"external":""} reference.`),
-            mk.a({href:url}, url),
-            mk.b({}, "Referenced in:"),
-            mk.ul({},
-                ...refSections.map(section=>
-                    mk.li({},
-                        ...section.refs.map((ref, refI)=>
-                            [
-                                mk.a({
-                                    href: `#${ref.id}`
-                                    },
-                                    (refI == 0) ? section.title : `(${refI + 1})`
-                                ),
-                                " ",
-                            ]
-                        ),
-                    ),
-                ),
-            ),
-        );
-    }
-
-    function genAllDfnPanels() {
-        for(const panelData of Object.values(window.dfnpanelData)) {
-            const dfnID = panelData.dfnID;
-            const dfn = document.getElementById(dfnID);
-            if(!dfn) {
-                console.log(`Can't find dfn#${dfnID}.`, panelData);
-            } else {
-                const panel = genDfnPanel(panelData);
-                append(document.body, panel);
-                insertDfnPopupAction(dfn, panel)
-            }
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", ()=>{
-        genAllDfnPanels();
-
-        // Add popup behavior to all dfns to show the corresponding dfn-panel.
-        var dfns = queryAll('.dfn-paneled');
-        for(let dfn of dfns) { ; }
-
-        document.body.addEventListener("click", (e) => {
-            // If not handled already, just hide all dfn panels.
-            hideAllDfnPanels();
-        });
-    })
-
-
-    function hideAllDfnPanels() {
-        // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
-    }
-
-    function showDfnPanel(dfnPanel, dfn) {
-        hideAllDfnPanels(); // Only display one at this time.
-        dfn.setAttribute("aria-expanded", "true");
-        dfnPanel.classList.add("on");
-        dfnPanel.style.left = "5px";
-        dfnPanel.style.top = "0px";
-        const panelRect = dfnPanel.getBoundingClientRect();
-        const panelWidth = panelRect.right - panelRect.left;
-        if (panelRect.right > document.body.scrollWidth) {
-            // Panel's overflowing the screen.
-            // Just drop it below the dfn and flip it rightward instead.
-            // This still wont' fix things if the screen is *really* wide,
-            // but fixing that's a lot harder without 'anchor()'.
-            dfnPanel.style.top = "1.5em";
-            dfnPanel.style.left = "auto";
-            dfnPanel.style.right = "0px";
-        }
-    }
-
-    function pinDfnPanel(dfnPanel) {
-        // Switch it to "activated" state, which pins it.
-        dfnPanel.classList.add("activated");
-        dfnPanel.style.left = null;
-        dfnPanel.style.top = null;
-    }
-
-    function hideDfnPanel(dfnPanel, dfn) {
-        if(!dfn) {
-            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
-        }
-        dfn.setAttribute("aria-expanded", "false")
-        dfnPanel.classList.remove("on");
-        dfnPanel.classList.remove("activated");
-    }
-
-    function toggleDfnPanel(dfnPanel, dfn) {
-        if(dfnPanel.classList.contains("on")) {
-            hideDfnPanel(dfnPanel, dfn);
-        } else {
-            showDfnPanel(dfnPanel, dfn);
-        }
-    }
-
-    function insertDfnPopupAction(dfn, dfnPanel) {
-        // Find dfn panel
-        const panelWrapper = document.createElement('span');
-        panelWrapper.appendChild(dfnPanel);
-        panelWrapper.style.position = "relative";
-        panelWrapper.style.height = "0px";
-        dfn.insertAdjacentElement("afterend", panelWrapper);
-        dfn.setAttribute('role', 'button');
-        dfn.setAttribute('aria-expanded', 'false')
-        dfn.tabIndex = 0;
-        dfn.classList.add('has-dfn-panel');
-        dfn.addEventListener('click', (event) => {
-            showDfnPanel(dfnPanel, dfn);
-            event.stopPropagation();
-        });
-        dfn.addEventListener('keypress', (event) => {
-            const kc = event.keyCode;
-            // 32->Space, 13->Enter
-            if(kc == 32 || kc == 13) {
-                toggleDfnPanel(dfnPanel, dfn);
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        });
-
-        dfnPanel.addEventListener('click', (event) => {
-            if (event.target.nodeName == 'A') {
-                pinDfnPanel(dfnPanel);
-            }
-            event.stopPropagation();
-        });
-
-        dfnPanel.addEventListener('keydown', (event) => {
-            if(event.keyCode == 27) { // Escape key
-                hideDfnPanel(dfnPanel, dfn);
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        })
-    }
-}
-</script>
-<script>/* Boilerplate: script-dfn-panel */
-"use strict";
-{
-    const dfnsJson = window.dfnsJson || {};
-
-    function genDfnPanel({dfnID, url, dfnText, refSections, external}) {
-        return mk.aside({
-            class: "dfn-panel",
-            id: `infopanel-for-${dfnID}`,
-            "data-for": dfnID,
-            "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
-            },
-            mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
-                `Info about the '${dfnText}' ${external?"external":""} reference.`),
-            mk.a({href:url}, url),
-            mk.b({}, "Referenced in:"),
-            mk.ul({},
-                ...refSections.map(section=>
-                    mk.li({},
-                        ...section.refs.map((ref, refI)=>
-                            [
-                                mk.a({
-                                    href: `#${ref.id}`
-                                    },
-                                    (refI == 0) ? section.title : `(${refI + 1})`
-                                ),
-                                " ",
-                            ]
-                        ),
-                    ),
-                ),
-            ),
-        );
-    }
-
-    function genAllDfnPanels() {
-        for(const panelData of Object.values(window.dfnpanelData)) {
-            const dfnID = panelData.dfnID;
-            const dfn = document.getElementById(dfnID);
-            if(!dfn) {
-                console.log(`Can't find dfn#${dfnID}.`, panelData);
-            } else {
-                const panel = genDfnPanel(panelData);
-                append(document.body, panel);
-                insertDfnPopupAction(dfn, panel)
-            }
-        }
-    }
-
-    document.addEventListener("DOMContentLoaded", ()=>{
-        genAllDfnPanels();
-
-        // Add popup behavior to all dfns to show the corresponding dfn-panel.
-        var dfns = queryAll('.dfn-paneled');
-        for(let dfn of dfns) { ; }
-
-        document.body.addEventListener("click", (e) => {
-            // If not handled already, just hide all dfn panels.
-            hideAllDfnPanels();
-        });
-    })
-
-
-    function hideAllDfnPanels() {
-        // Turn off any currently "on" or "activated" panels.
-        queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>hideDfnPanel(el));
-    }
-
-    function showDfnPanel(dfnPanel, dfn) {
-        hideAllDfnPanels(); // Only display one at this time.
-        dfn.setAttribute("aria-expanded", "true");
-        dfnPanel.classList.add("on");
-        dfnPanel.style.left = "5px";
-        dfnPanel.style.top = "0px";
-        const panelRect = dfnPanel.getBoundingClientRect();
-        const panelWidth = panelRect.right - panelRect.left;
-        if (panelRect.right > document.body.scrollWidth) {
-            // Panel's overflowing the screen.
-            // Just drop it below the dfn and flip it rightward instead.
-            // This still wont' fix things if the screen is *really* wide,
-            // but fixing that's a lot harder without 'anchor()'.
-            dfnPanel.style.top = "1.5em";
-            dfnPanel.style.left = "auto";
-            dfnPanel.style.right = "0px";
-        }
-    }
-
-    function pinDfnPanel(dfnPanel) {
-        // Switch it to "activated" state, which pins it.
-        dfnPanel.classList.add("activated");
-        dfnPanel.style.left = null;
-        dfnPanel.style.top = null;
-    }
-
-    function hideDfnPanel(dfnPanel, dfn) {
-        if(!dfn) {
-            dfn = document.getElementById(dfnPanel.getAttribute("data-for"));
-        }
-        dfn.setAttribute("aria-expanded", "false")
-        dfnPanel.classList.remove("on");
-        dfnPanel.classList.remove("activated");
-    }
-
-    function toggleDfnPanel(dfnPanel, dfn) {
-        if(dfnPanel.classList.contains("on")) {
-            hideDfnPanel(dfnPanel, dfn);
-        } else {
-            showDfnPanel(dfnPanel, dfn);
-        }
-    }
-
-    function insertDfnPopupAction(dfn, dfnPanel) {
-        // Find dfn panel
-        const panelWrapper = document.createElement('span');
-        panelWrapper.appendChild(dfnPanel);
-        panelWrapper.style.position = "relative";
-        panelWrapper.style.height = "0px";
-        dfn.insertAdjacentElement("afterend", panelWrapper);
-        dfn.setAttribute('role', 'button');
-        dfn.setAttribute('aria-expanded', 'false')
-        dfn.tabIndex = 0;
-        dfn.classList.add('has-dfn-panel');
-        dfn.addEventListener('click', (event) => {
-            showDfnPanel(dfnPanel, dfn);
-            event.stopPropagation();
-        });
-        dfn.addEventListener('keypress', (event) => {
-            const kc = event.keyCode;
-            // 32->Space, 13->Enter
-            if(kc == 32 || kc == 13) {
-                toggleDfnPanel(dfnPanel, dfn);
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        });
-
-        dfnPanel.addEventListener('click', (event) => {
-            if (event.target.nodeName == 'A') {
-                pinDfnPanel(dfnPanel);
-            }
-            event.stopPropagation();
-        });
-
-        dfnPanel.addEventListener('keydown', (event) => {
-            if(event.keyCode == 27) { // Escape key
-                hideDfnPanel(dfnPanel, dfn);
-                event.stopPropagation();
-                event.preventDefault();
-            }
-        })
-    }
-}
-</script>
-<script>/* Boilerplate: script-dfn-panel-json */
-window.dfnpanelData = {};
-window.dfnpanelData['9b4f1943'] = {"dfnID": "9b4f1943", "url": "https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin", "dfnText": "clear cache for origin", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-clear-cache-for-origin"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['0fda77ac'] = {"dfnID": "0fda77ac", "url": "https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin", "dfnText": "clear cookies for origin", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-clear-cookies-for-origin"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['a0459604'] = {"dfnID": "a0459604", "url": "https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin", "dfnText": "clear dom-accessible storage for origin", "refSections": [{"refs": [{"id": "ref-for-abstract-opdef-clear-dom-accessible-storage-for-origin"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['bffb633e'] = {"dfnID": "bffb633e", "url": "https://encoding.spec.whatwg.org/#utf-8", "dfnText": "utf-8", "refSections": [{"refs": [{"id": "ref-for-utf-8"}], "title": "3. List consumption"}], "external": true};
-window.dfnpanelData['3e12e042'] = {"dfnID": "3e12e042", "url": "https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object", "dfnText": "environment settings object", "refSections": [{"refs": [{"id": "ref-for-environment-settings-object"}, {"id": "ref-for-environment-settings-object\u2460"}], "title": "5. Validating related website set inclusion"}], "external": true};
-window.dfnpanelData['77a2ee6e'] = {"dfnID": "77a2ee6e", "url": "https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host", "dfnText": "host", "refSections": [{"refs": [{"id": "ref-for-concept-origin-host"}, {"id": "ref-for-concept-origin-host\u2460"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['602b1a68'] = {"dfnID": "602b1a68", "url": "https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site", "dfnText": "obtain a site", "refSections": [{"refs": [{"id": "ref-for-obtain-a-site"}], "title": "4. Data Structures"}, {"refs": [{"id": "ref-for-obtain-a-site\u2460"}, {"id": "ref-for-obtain-a-site\u2461"}, {"id": "ref-for-obtain-a-site\u2462"}, {"id": "ref-for-obtain-a-site\u2463"}], "title": "5. Validating related website set inclusion"}], "external": true};
-window.dfnpanelData['b01b1359'] = {"dfnID": "b01b1359", "url": "https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque", "dfnText": "opaque origin", "refSections": [{"refs": [{"id": "ref-for-concept-origin-opaque"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['086e3aff'] = {"dfnID": "086e3aff", "url": "https://html.spec.whatwg.org/multipage/browsers.html#concept-origin", "dfnText": "origin", "refSections": [{"refs": [{"id": "ref-for-concept-origin"}], "title": "5. Validating related website set inclusion"}], "external": true};
-window.dfnpanelData['43ac8374'] = {"dfnID": "43ac8374", "url": "https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin", "dfnText": "origin (for environment settings object)", "refSections": [{"refs": [{"id": "ref-for-concept-settings-object-origin"}], "title": "5. Validating related website set inclusion"}], "external": true};
-window.dfnpanelData['48438eb3'] = {"dfnID": "48438eb3", "url": "https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task", "dfnText": "queue a global task", "refSections": [{"refs": [{"id": "ref-for-queue-a-global-task"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['9c4c1e66'] = {"dfnID": "9c4c1e66", "url": "https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object", "dfnText": "relevant settings object", "refSections": [{"refs": [{"id": "ref-for-relevant-settings-object"}, {"id": "ref-for-relevant-settings-object\u2460"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['fb9bb722'] = {"dfnID": "fb9bb722", "url": "https://html.spec.whatwg.org/multipage/browsers.html#site", "dfnText": "site", "refSections": [{"refs": [{"id": "ref-for-site"}, {"id": "ref-for-site\u2460"}, {"id": "ref-for-site\u2461"}, {"id": "ref-for-site\u2462"}, {"id": "ref-for-site\u2463"}], "title": "4. Data Structures"}, {"refs": [{"id": "ref-for-site\u2464"}, {"id": "ref-for-site\u2465"}, {"id": "ref-for-site\u2466"}, {"id": "ref-for-site\u2467"}, {"id": "ref-for-site\u2468"}, {"id": "ref-for-site\u2460\u24ea"}, {"id": "ref-for-site\u2460\u2460"}], "title": "5. Validating related website set inclusion"}, {"refs": [{"id": "ref-for-site\u2460\u2461"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['c63519ed'] = {"dfnID": "c63519ed", "url": "https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin", "dfnText": "top-level origin", "refSections": [{"refs": [{"id": "ref-for-concept-environment-top-level-origin"}, {"id": "ref-for-concept-environment-top-level-origin\u2460"}], "title": "5. Validating related website set inclusion"}], "external": true};
-window.dfnpanelData['3de9e659'] = {"dfnID": "3de9e659", "url": "https://infra.spec.whatwg.org/#byte-sequence", "dfnText": "byte sequence", "refSections": [{"refs": [{"id": "ref-for-byte-sequence"}], "title": "3. List consumption"}], "external": true};
-window.dfnpanelData['860300d4'] = {"dfnID": "860300d4", "url": "https://infra.spec.whatwg.org/#implementation-defined", "dfnText": "implementation-defined", "refSections": [{"refs": [{"id": "ref-for-implementation-defined"}], "title": "5. Validating related website set inclusion"}, {"refs": [{"id": "ref-for-implementation-defined\u2460"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['649608b9'] = {"dfnID": "649608b9", "url": "https://infra.spec.whatwg.org/#list", "dfnText": "list", "refSections": [{"refs": [{"id": "ref-for-list"}, {"id": "ref-for-list\u2460"}, {"id": "ref-for-list\u2461"}, {"id": "ref-for-list\u2462"}, {"id": "ref-for-list\u2463"}, {"id": "ref-for-list\u2464"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['84b454ff'] = {"dfnID": "84b454ff", "url": "https://infra.spec.whatwg.org/#ordered-map", "dfnText": "ordered map", "refSections": [{"refs": [{"id": "ref-for-ordered-map"}], "title": "3. List consumption"}, {"refs": [{"id": "ref-for-ordered-map\u2460"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['0a78af08'] = {"dfnID": "0a78af08", "url": "https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value", "dfnText": "parse json bytes to an infra value", "refSections": [{"refs": [{"id": "ref-for-parse-json-bytes-to-an-infra-value"}], "title": "3. List consumption"}], "external": true};
-window.dfnpanelData['0698d556'] = {"dfnID": "0698d556", "url": "https://infra.spec.whatwg.org/#string", "dfnText": "string", "refSections": [{"refs": [{"id": "ref-for-string"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['984221ca'] = {"dfnID": "984221ca", "url": "https://infra.spec.whatwg.org/#struct", "dfnText": "struct", "refSections": [{"refs": [{"id": "ref-for-struct"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['ebb01253'] = {"dfnID": "ebb01253", "url": "https://w3c.github.io/permissions/#dom-permissiondescriptor", "dfnText": "PermissionDescriptor", "refSections": [{"refs": [{"id": "ref-for-dom-permissiondescriptor"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['6821ab89'] = {"dfnID": "6821ab89", "url": "https://w3c.github.io/permissions/#dfn-granted", "dfnText": "granted", "refSections": [{"refs": [{"id": "ref-for-dfn-granted"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['0310eecd'] = {"dfnID": "0310eecd", "url": "https://w3c.github.io/permissions/#dom-permissiondescriptor-name", "dfnText": "name", "refSections": [{"refs": [{"id": "ref-for-dom-permissiondescriptor-name"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['03af1875'] = {"dfnID": "03af1875", "url": "https://w3c.github.io/permissions/#permissions-task-source", "dfnText": "permissions task source", "refSections": [{"refs": [{"id": "ref-for-permissions-task-source"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['56736c6d'] = {"dfnID": "56736c6d", "url": "https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry", "dfnText": "remove a permission store entry", "refSections": [{"refs": [{"id": "ref-for-dfn-remove-a-permission-store-entry"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['d357c753'] = {"dfnID": "d357c753", "url": "https://w3c.github.io/permissions/#dfn-request-permission-to-use", "dfnText": "requesting permission to use", "refSections": [{"refs": [{"id": "ref-for-dfn-request-permission-to-use"}, {"id": "ref-for-dfn-request-permission-to-use\u2460"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['aba5485c'] = {"dfnID": "aba5485c", "url": "https://publicsuffix.org/list/#", "dfnText": "registered domain", "refSections": [{"refs": [{"id": "ref-for-something"}], "title": "7. Handling related website set changes"}], "external": true};
-window.dfnpanelData['09ba3f74'] = {"dfnID": "09ba3f74", "url": "https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor", "dfnText": "requestStorageAccessFor(requestedOrigin)", "refSections": [{"refs": [{"id": "ref-for-dom-document-requeststorageaccessfor"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['aa7820f7'] = {"dfnID": "aa7820f7", "url": "https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess", "dfnText": "requestStorageAccess()", "refSections": [{"refs": [{"id": "ref-for-dom-document-requeststorageaccess"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['9ed8b710'] = {"dfnID": "9ed8b710", "url": "https://url.spec.whatwg.org/#concept-basic-url-parser", "dfnText": "basic url parser", "refSections": [{"refs": [{"id": "ref-for-concept-basic-url-parser"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['959ad97b'] = {"dfnID": "959ad97b", "url": "https://url.spec.whatwg.org/#concept-url-origin", "dfnText": "origin", "refSections": [{"refs": [{"id": "ref-for-concept-url-origin"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['3a711be7'] = {"dfnID": "3a711be7", "url": "https://url.spec.whatwg.org/#concept-url-scheme", "dfnText": "scheme", "refSections": [{"refs": [{"id": "ref-for-concept-url-scheme"}], "title": "4. Data Structures"}], "external": true};
-window.dfnpanelData['3b90bdcd'] = {"dfnID": "3b90bdcd", "url": "https://webidl.spec.whatwg.org/#resolve", "dfnText": "resolve", "refSections": [{"refs": [{"id": "ref-for-resolve"}], "title": "6. Integration with the Storage Access API"}], "external": true};
-window.dfnpanelData['build-the-list-of-related-website-sets'] = {"dfnID": "build-the-list-of-related-website-sets", "url": "#build-the-list-of-related-website-sets", "dfnText": "build the list of related website sets", "refSections": [{"refs": [{"id": "ref-for-build-the-list-of-related-website-sets"}], "title": "3. List consumption"}], "external": false};
-window.dfnpanelData['list-of-related-website-sets'] = {"dfnID": "list-of-related-website-sets", "url": "#list-of-related-website-sets", "dfnText": "list of related website sets", "refSections": [{"refs": [{"id": "ref-for-list-of-related-website-sets"}, {"id": "ref-for-list-of-related-website-sets\u2460"}], "title": "3. List consumption"}, {"refs": [{"id": "ref-for-list-of-related-website-sets\u2461"}], "title": "5. Validating related website set inclusion"}, {"refs": [{"id": "ref-for-list-of-related-website-sets\u2462"}], "title": "7. Handling related website set changes"}], "external": false};
-window.dfnpanelData['related-website-set'] = {"dfnID": "related-website-set", "url": "#related-website-set", "dfnText": "related website set", "refSections": [{"refs": [{"id": "ref-for-related-website-set"}], "title": "3. List consumption"}, {"refs": [{"id": "ref-for-related-website-set\u2460"}], "title": "4. Data Structures"}, {"refs": [{"id": "ref-for-related-website-set\u2461"}, {"id": "ref-for-related-website-set\u2462"}, {"id": "ref-for-related-website-set\u2463"}], "title": "5. Validating related website set inclusion"}, {"refs": [{"id": "ref-for-related-website-set\u2464"}], "title": "7. Handling related website set changes"}], "external": false};
-window.dfnpanelData['related-website-set-primary'] = {"dfnID": "related-website-set-primary", "url": "#related-website-set-primary", "dfnText": "primary", "refSections": [{"refs": [{"id": "ref-for-related-website-set-primary"}], "title": "3. List consumption"}, {"refs": [{"id": "ref-for-related-website-set-primary\u2460"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['related-website-set-cctlds'] = {"dfnID": "related-website-set-cctlds", "url": "#related-website-set-cctlds", "dfnText": "ccTLDs", "refSections": [{"refs": [{"id": "ref-for-related-website-set-cctlds"}, {"id": "ref-for-related-website-set-cctlds\u2460"}, {"id": "ref-for-related-website-set-cctlds\u2461"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['related-website-set-associatedsites'] = {"dfnID": "related-website-set-associatedsites", "url": "#related-website-set-associatedsites", "dfnText": "associatedSites", "refSections": [{"refs": [{"id": "ref-for-related-website-set-associatedsites"}], "title": "3. List consumption"}, {"refs": [{"id": "ref-for-related-website-set-associatedsites\u2460"}, {"id": "ref-for-related-website-set-associatedsites\u2461"}, {"id": "ref-for-related-website-set-associatedsites\u2462"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['related-website-set-servicesites'] = {"dfnID": "related-website-set-servicesites", "url": "#related-website-set-servicesites", "dfnText": "serviceSites", "refSections": [{"refs": [{"id": "ref-for-related-website-set-servicesites"}], "title": "3. List consumption"}, {"refs": [{"id": "ref-for-related-website-set-servicesites\u2460"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['equivalence-map'] = {"dfnID": "equivalence-map", "url": "#equivalence-map", "dfnText": "equivalence map", "refSections": [{"refs": [{"id": "ref-for-equivalence-map"}, {"id": "ref-for-equivalence-map\u2460"}], "title": "4. Data Structures"}, {"refs": [{"id": "ref-for-equivalence-map\u2461"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['parse-and-validate-a-site'] = {"dfnID": "parse-and-validate-a-site", "url": "#parse-and-validate-a-site", "dfnText": "parse and validate a site", "refSections": [{"refs": [{"id": "ref-for-parse-and-validate-a-site"}, {"id": "ref-for-parse-and-validate-a-site\u2460"}, {"id": "ref-for-parse-and-validate-a-site\u2461"}], "title": "4. Data Structures"}], "external": false};
-window.dfnpanelData['parse-a-subset'] = {"dfnID": "parse-a-subset", "url": "#parse-a-subset", "dfnText": "parse a subset", "refSections": [{"refs": [{"id": "ref-for-parse-a-subset"}, {"id": "ref-for-parse-a-subset\u2460"}], "title": "3. List consumption"}], "external": false};
-window.dfnpanelData['parse-an-equivalence-map'] = {"dfnID": "parse-an-equivalence-map", "url": "#parse-an-equivalence-map", "dfnText": "parse an equivalence map", "refSections": [{"refs": [{"id": "ref-for-parse-an-equivalence-map"}], "title": "3. List consumption"}], "external": false};
-window.dfnpanelData['equivalent-to'] = {"dfnID": "equivalent-to", "url": "#equivalent-to", "dfnText": "equivalent to", "refSections": [{"refs": [{"id": "ref-for-equivalent-to"}, {"id": "ref-for-equivalent-to\u2460"}, {"id": "ref-for-equivalent-to\u2461"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['determine-the-member-type'] = {"dfnID": "determine-the-member-type", "url": "#determine-the-member-type", "dfnText": "determine the member type", "refSections": [{"refs": [{"id": "ref-for-determine-the-member-type"}, {"id": "ref-for-determine-the-member-type\u2460"}, {"id": "ref-for-determine-the-member-type\u2461"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['find-a-related-website-set'] = {"dfnID": "find-a-related-website-set", "url": "#find-a-related-website-set", "dfnText": "find a related website set", "refSections": [{"refs": [{"id": "ref-for-find-a-related-website-set"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['limit-for-associated-sites'] = {"dfnID": "limit-for-associated-sites", "url": "#limit-for-associated-sites", "dfnText": "limit for associated sites", "refSections": [{"refs": [{"id": "ref-for-limit-for-associated-sites"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['eligible-for-same-party-membership-when-embedded-within'] = {"dfnID": "eligible-for-same-party-membership-when-embedded-within", "url": "#eligible-for-same-party-membership-when-embedded-within", "dfnText": "eligible for same-party membership when embedded within", "refSections": [{"refs": [{"id": "ref-for-eligible-for-same-party-membership-when-embedded-within"}, {"id": "ref-for-eligible-for-same-party-membership-when-embedded-within\u2460"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['determine-eligibility-for-an-associated-site'] = {"dfnID": "determine-eligibility-for-an-associated-site", "url": "#determine-eligibility-for-an-associated-site", "dfnText": "determine eligibility for an associated site", "refSections": [{"refs": [{"id": "ref-for-determine-eligibility-for-an-associated-site"}, {"id": "ref-for-determine-eligibility-for-an-associated-site\u2460"}, {"id": "ref-for-determine-eligibility-for-an-associated-site\u2461"}], "title": "5. Validating related website set inclusion"}], "external": false};
-window.dfnpanelData['is-same-party-with-its-top-level-embedder'] = {"dfnID": "is-same-party-with-its-top-level-embedder", "url": "#is-same-party-with-its-top-level-embedder", "dfnText": "is same-party with its top-level embedder", "refSections": [{"refs": [{"id": "ref-for-is-same-party-with-its-top-level-embedder"}], "title": "6. Integration with the Storage Access API"}], "external": false};
-window.dfnpanelData['are-same-party-in-an-embedding-context'] = {"dfnID": "are-same-party-in-an-embedding-context", "url": "#are-same-party-in-an-embedding-context", "dfnText": "are same-party in an embedding context", "refSections": [{"refs": [{"id": "ref-for-are-same-party-in-an-embedding-context"}], "title": "6. Integration with the Storage Access API"}], "external": false};
-</script>
 <script>/* Boilerplate: script-dom-helper */
+"use strict";
 function query(sel) { return document.querySelector(sel); }
 
 function queryAll(sel) { return [...document.querySelectorAll(sel)]; }
@@ -1586,5 +1274,698 @@ function parseHTML(markup) {
 		el.innerHTML = markup;
 		return el.content;
 	}
+}</script>
+<script>/* Boilerplate: script-dfn-panel */
+"use strict";
+{
+let dfnPanelData = {
+"0310eecd": {"dfnID":"0310eecd","dfnText":"name","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-permissiondescriptor-name"}],"title":"7. Handling related website set changes"}],"url":"https://w3c.github.io/permissions/#dom-permissiondescriptor-name"},
+"03af1875": {"dfnID":"03af1875","dfnText":"permissions task source","external":true,"refSections":[{"refs":[{"id":"ref-for-permissions-task-source"}],"title":"6. Integration with the Storage Access API"}],"url":"https://w3c.github.io/permissions/#permissions-task-source"},
+"0698d556": {"dfnID":"0698d556","dfnText":"string","external":true,"refSections":[{"refs":[{"id":"ref-for-string"}],"title":"4. Data Structures"}],"url":"https://infra.spec.whatwg.org/#string"},
+"086e3aff": {"dfnID":"086e3aff","dfnText":"origin","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-origin"}],"title":"5. Validating related website set inclusion"}],"url":"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin"},
+"09ba3f74": {"dfnID":"09ba3f74","dfnText":"requestStorageAccessFor(requestedOrigin)","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-document-requeststorageaccessfor"}],"title":"6. Integration with the Storage Access API"}],"url":"https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor"},
+"0a78af08": {"dfnID":"0a78af08","dfnText":"parse json bytes to an infra value","external":true,"refSections":[{"refs":[{"id":"ref-for-parse-json-bytes-to-an-infra-value"}],"title":"3. List consumption"}],"url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value"},
+"0fda77ac": {"dfnID":"0fda77ac","dfnText":"clear cookies for origin","external":true,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-clear-cookies-for-origin"}],"title":"7. Handling related website set changes"}],"url":"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin"},
+"3a711be7": {"dfnID":"3a711be7","dfnText":"scheme","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-url-scheme"}],"title":"4. Data Structures"}],"url":"https://url.spec.whatwg.org/#concept-url-scheme"},
+"3b90bdcd": {"dfnID":"3b90bdcd","dfnText":"resolve","external":true,"refSections":[{"refs":[{"id":"ref-for-resolve"}],"title":"6. Integration with the Storage Access API"}],"url":"https://webidl.spec.whatwg.org/#resolve"},
+"3de9e659": {"dfnID":"3de9e659","dfnText":"byte sequence","external":true,"refSections":[{"refs":[{"id":"ref-for-byte-sequence"}],"title":"3. List consumption"}],"url":"https://infra.spec.whatwg.org/#byte-sequence"},
+"3e12e042": {"dfnID":"3e12e042","dfnText":"environment settings object","external":true,"refSections":[{"refs":[{"id":"ref-for-environment-settings-object"},{"id":"ref-for-environment-settings-object\u2460"}],"title":"5. Validating related website set inclusion"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object"},
+"43ac8374": {"dfnID":"43ac8374","dfnText":"origin (for environment settings object)","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-settings-object-origin"}],"title":"5. Validating related website set inclusion"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin"},
+"48438eb3": {"dfnID":"48438eb3","dfnText":"queue a global task","external":true,"refSections":[{"refs":[{"id":"ref-for-queue-a-global-task"}],"title":"6. Integration with the Storage Access API"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task"},
+"56736c6d": {"dfnID":"56736c6d","dfnText":"remove a permission store entry","external":true,"refSections":[{"refs":[{"id":"ref-for-dfn-remove-a-permission-store-entry"}],"title":"7. Handling related website set changes"}],"url":"https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry"},
+"602b1a68": {"dfnID":"602b1a68","dfnText":"obtain a site","external":true,"refSections":[{"refs":[{"id":"ref-for-obtain-a-site"}],"title":"4. Data Structures"},{"refs":[{"id":"ref-for-obtain-a-site\u2460"},{"id":"ref-for-obtain-a-site\u2461"},{"id":"ref-for-obtain-a-site\u2462"},{"id":"ref-for-obtain-a-site\u2463"}],"title":"5. Validating related website set inclusion"}],"url":"https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site"},
+"649608b9": {"dfnID":"649608b9","dfnText":"list","external":true,"refSections":[{"refs":[{"id":"ref-for-list"},{"id":"ref-for-list\u2460"},{"id":"ref-for-list\u2461"},{"id":"ref-for-list\u2462"},{"id":"ref-for-list\u2463"},{"id":"ref-for-list\u2464"}],"title":"4. Data Structures"}],"url":"https://infra.spec.whatwg.org/#list"},
+"6821ab89": {"dfnID":"6821ab89","dfnText":"granted","external":true,"refSections":[{"refs":[{"id":"ref-for-dfn-granted"}],"title":"6. Integration with the Storage Access API"}],"url":"https://w3c.github.io/permissions/#dfn-granted"},
+"77a2ee6e": {"dfnID":"77a2ee6e","dfnText":"host","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-origin-host"},{"id":"ref-for-concept-origin-host\u2460"}],"title":"7. Handling related website set changes"}],"url":"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host"},
+"84b454ff": {"dfnID":"84b454ff","dfnText":"ordered map","external":true,"refSections":[{"refs":[{"id":"ref-for-ordered-map"}],"title":"3. List consumption"},{"refs":[{"id":"ref-for-ordered-map\u2460"}],"title":"4. Data Structures"}],"url":"https://infra.spec.whatwg.org/#ordered-map"},
+"860300d4": {"dfnID":"860300d4","dfnText":"implementation-defined","external":true,"refSections":[{"refs":[{"id":"ref-for-implementation-defined"}],"title":"5. Validating related website set inclusion"},{"refs":[{"id":"ref-for-implementation-defined\u2460"}],"title":"7. Handling related website set changes"}],"url":"https://infra.spec.whatwg.org/#implementation-defined"},
+"959ad97b": {"dfnID":"959ad97b","dfnText":"origin","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-url-origin"}],"title":"4. Data Structures"}],"url":"https://url.spec.whatwg.org/#concept-url-origin"},
+"984221ca": {"dfnID":"984221ca","dfnText":"struct","external":true,"refSections":[{"refs":[{"id":"ref-for-struct"}],"title":"4. Data Structures"}],"url":"https://infra.spec.whatwg.org/#struct"},
+"9b4f1943": {"dfnID":"9b4f1943","dfnText":"clear cache for origin","external":true,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-clear-cache-for-origin"}],"title":"7. Handling related website set changes"}],"url":"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin"},
+"9c4c1e66": {"dfnID":"9c4c1e66","dfnText":"relevant settings object","external":true,"refSections":[{"refs":[{"id":"ref-for-relevant-settings-object"},{"id":"ref-for-relevant-settings-object\u2460"}],"title":"6. Integration with the Storage Access API"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object"},
+"9ed8b710": {"dfnID":"9ed8b710","dfnText":"basic url parser","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-basic-url-parser"}],"title":"4. Data Structures"}],"url":"https://url.spec.whatwg.org/#concept-basic-url-parser"},
+"a0459604": {"dfnID":"a0459604","dfnText":"clear dom-accessible storage for origin","external":true,"refSections":[{"refs":[{"id":"ref-for-abstract-opdef-clear-dom-accessible-storage-for-origin"}],"title":"7. Handling related website set changes"}],"url":"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin"},
+"aa7820f7": {"dfnID":"aa7820f7","dfnText":"requestStorageAccess()","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-document-requeststorageaccess"}],"title":"6. Integration with the Storage Access API"}],"url":"https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess"},
+"aba5485c": {"dfnID":"aba5485c","dfnText":"registered domain","external":true,"refSections":[{"refs":[{"id":"ref-for-something"}],"title":"7. Handling related website set changes"}],"url":"https://publicsuffix.org/list/#"},
+"are-same-party-in-an-embedding-context": {"dfnID":"are-same-party-in-an-embedding-context","dfnText":"are same-party in an embedding context","external":false,"refSections":[{"refs":[{"id":"ref-for-are-same-party-in-an-embedding-context"}],"title":"6. Integration with the Storage Access API"}],"url":"#are-same-party-in-an-embedding-context"},
+"b01b1359": {"dfnID":"b01b1359","dfnText":"opaque origin","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-origin-opaque"}],"title":"7. Handling related website set changes"}],"url":"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque"},
+"bffb633e": {"dfnID":"bffb633e","dfnText":"utf-8","external":true,"refSections":[{"refs":[{"id":"ref-for-utf-8"}],"title":"3. List consumption"}],"url":"https://encoding.spec.whatwg.org/#utf-8"},
+"build-the-list-of-related-website-sets": {"dfnID":"build-the-list-of-related-website-sets","dfnText":"build the list of related website sets","external":false,"refSections":[{"refs":[{"id":"ref-for-build-the-list-of-related-website-sets"}],"title":"3. List consumption"}],"url":"#build-the-list-of-related-website-sets"},
+"c63519ed": {"dfnID":"c63519ed","dfnText":"top-level origin","external":true,"refSections":[{"refs":[{"id":"ref-for-concept-environment-top-level-origin"},{"id":"ref-for-concept-environment-top-level-origin\u2460"}],"title":"5. Validating related website set inclusion"}],"url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin"},
+"d357c753": {"dfnID":"d357c753","dfnText":"requesting permission to use","external":true,"refSections":[{"refs":[{"id":"ref-for-dfn-request-permission-to-use"},{"id":"ref-for-dfn-request-permission-to-use\u2460"}],"title":"6. Integration with the Storage Access API"}],"url":"https://w3c.github.io/permissions/#dfn-request-permission-to-use"},
+"determine-eligibility-for-an-associated-site": {"dfnID":"determine-eligibility-for-an-associated-site","dfnText":"determine eligibility for an associated site","external":false,"refSections":[{"refs":[{"id":"ref-for-determine-eligibility-for-an-associated-site"},{"id":"ref-for-determine-eligibility-for-an-associated-site\u2460"},{"id":"ref-for-determine-eligibility-for-an-associated-site\u2461"}],"title":"5. Validating related website set inclusion"}],"url":"#determine-eligibility-for-an-associated-site"},
+"determine-the-member-type": {"dfnID":"determine-the-member-type","dfnText":"determine the member type","external":false,"refSections":[{"refs":[{"id":"ref-for-determine-the-member-type"},{"id":"ref-for-determine-the-member-type\u2460"},{"id":"ref-for-determine-the-member-type\u2461"}],"title":"5. Validating related website set inclusion"}],"url":"#determine-the-member-type"},
+"ebb01253": {"dfnID":"ebb01253","dfnText":"PermissionDescriptor","external":true,"refSections":[{"refs":[{"id":"ref-for-dom-permissiondescriptor"}],"title":"7. Handling related website set changes"}],"url":"https://w3c.github.io/permissions/#dom-permissiondescriptor"},
+"eligible-for-same-party-membership-when-embedded-within": {"dfnID":"eligible-for-same-party-membership-when-embedded-within","dfnText":"eligible for same-party membership when embedded within","external":false,"refSections":[{"refs":[{"id":"ref-for-eligible-for-same-party-membership-when-embedded-within"},{"id":"ref-for-eligible-for-same-party-membership-when-embedded-within\u2460"}],"title":"5. Validating related website set inclusion"}],"url":"#eligible-for-same-party-membership-when-embedded-within"},
+"equivalence-map": {"dfnID":"equivalence-map","dfnText":"equivalence map","external":false,"refSections":[{"refs":[{"id":"ref-for-equivalence-map"},{"id":"ref-for-equivalence-map\u2460"}],"title":"4. Data Structures"},{"refs":[{"id":"ref-for-equivalence-map\u2461"}],"title":"5. Validating related website set inclusion"}],"url":"#equivalence-map"},
+"equivalent-to": {"dfnID":"equivalent-to","dfnText":"equivalent to","external":false,"refSections":[{"refs":[{"id":"ref-for-equivalent-to"},{"id":"ref-for-equivalent-to\u2460"},{"id":"ref-for-equivalent-to\u2461"}],"title":"5. Validating related website set inclusion"}],"url":"#equivalent-to"},
+"fb9bb722": {"dfnID":"fb9bb722","dfnText":"site","external":true,"refSections":[{"refs":[{"id":"ref-for-site"},{"id":"ref-for-site\u2460"},{"id":"ref-for-site\u2461"},{"id":"ref-for-site\u2462"},{"id":"ref-for-site\u2463"}],"title":"4. Data Structures"},{"refs":[{"id":"ref-for-site\u2464"},{"id":"ref-for-site\u2465"},{"id":"ref-for-site\u2466"},{"id":"ref-for-site\u2467"},{"id":"ref-for-site\u2468"},{"id":"ref-for-site\u2460\u24ea"},{"id":"ref-for-site\u2460\u2460"}],"title":"5. Validating related website set inclusion"},{"refs":[{"id":"ref-for-site\u2460\u2461"}],"title":"7. Handling related website set changes"}],"url":"https://html.spec.whatwg.org/multipage/browsers.html#site"},
+"find-a-related-website-set": {"dfnID":"find-a-related-website-set","dfnText":"find a related website set","external":false,"refSections":[{"refs":[{"id":"ref-for-find-a-related-website-set"}],"title":"5. Validating related website set inclusion"}],"url":"#find-a-related-website-set"},
+"is-same-party-with-its-top-level-embedder": {"dfnID":"is-same-party-with-its-top-level-embedder","dfnText":"is same-party with its top-level embedder","external":false,"refSections":[{"refs":[{"id":"ref-for-is-same-party-with-its-top-level-embedder"}],"title":"6. Integration with the Storage Access API"}],"url":"#is-same-party-with-its-top-level-embedder"},
+"limit-for-associated-sites": {"dfnID":"limit-for-associated-sites","dfnText":"limit for associated sites","external":false,"refSections":[{"refs":[{"id":"ref-for-limit-for-associated-sites"}],"title":"5. Validating related website set inclusion"}],"url":"#limit-for-associated-sites"},
+"list-of-related-website-sets": {"dfnID":"list-of-related-website-sets","dfnText":"list of related website sets","external":false,"refSections":[{"refs":[{"id":"ref-for-list-of-related-website-sets"},{"id":"ref-for-list-of-related-website-sets\u2460"}],"title":"3. List consumption"},{"refs":[{"id":"ref-for-list-of-related-website-sets\u2461"}],"title":"5. Validating related website set inclusion"},{"refs":[{"id":"ref-for-list-of-related-website-sets\u2462"}],"title":"7. Handling related website set changes"}],"url":"#list-of-related-website-sets"},
+"parse-a-subset": {"dfnID":"parse-a-subset","dfnText":"parse a subset","external":false,"refSections":[{"refs":[{"id":"ref-for-parse-a-subset"},{"id":"ref-for-parse-a-subset\u2460"}],"title":"3. List consumption"}],"url":"#parse-a-subset"},
+"parse-an-equivalence-map": {"dfnID":"parse-an-equivalence-map","dfnText":"parse an equivalence map","external":false,"refSections":[{"refs":[{"id":"ref-for-parse-an-equivalence-map"}],"title":"3. List consumption"}],"url":"#parse-an-equivalence-map"},
+"parse-and-validate-a-site": {"dfnID":"parse-and-validate-a-site","dfnText":"parse and validate a site","external":false,"refSections":[{"refs":[{"id":"ref-for-parse-and-validate-a-site"},{"id":"ref-for-parse-and-validate-a-site\u2460"},{"id":"ref-for-parse-and-validate-a-site\u2461"}],"title":"4. Data Structures"}],"url":"#parse-and-validate-a-site"},
+"related-website-set": {"dfnID":"related-website-set","dfnText":"related website set","external":false,"refSections":[{"refs":[{"id":"ref-for-related-website-set"}],"title":"3. List consumption"},{"refs":[{"id":"ref-for-related-website-set\u2460"}],"title":"4. Data Structures"},{"refs":[{"id":"ref-for-related-website-set\u2461"},{"id":"ref-for-related-website-set\u2462"},{"id":"ref-for-related-website-set\u2463"}],"title":"5. Validating related website set inclusion"},{"refs":[{"id":"ref-for-related-website-set\u2464"}],"title":"7. Handling related website set changes"}],"url":"#related-website-set"},
+"related-website-set-associatedsites": {"dfnID":"related-website-set-associatedsites","dfnText":"associatedSites","external":false,"refSections":[{"refs":[{"id":"ref-for-related-website-set-associatedsites"}],"title":"3. List consumption"},{"refs":[{"id":"ref-for-related-website-set-associatedsites\u2460"},{"id":"ref-for-related-website-set-associatedsites\u2461"},{"id":"ref-for-related-website-set-associatedsites\u2462"}],"title":"5. Validating related website set inclusion"}],"url":"#related-website-set-associatedsites"},
+"related-website-set-cctlds": {"dfnID":"related-website-set-cctlds","dfnText":"ccTLDs","external":false,"refSections":[{"refs":[{"id":"ref-for-related-website-set-cctlds"},{"id":"ref-for-related-website-set-cctlds\u2460"},{"id":"ref-for-related-website-set-cctlds\u2461"}],"title":"5. Validating related website set inclusion"}],"url":"#related-website-set-cctlds"},
+"related-website-set-primary": {"dfnID":"related-website-set-primary","dfnText":"primary","external":false,"refSections":[{"refs":[{"id":"ref-for-related-website-set-primary"}],"title":"3. List consumption"},{"refs":[{"id":"ref-for-related-website-set-primary\u2460"}],"title":"5. Validating related website set inclusion"}],"url":"#related-website-set-primary"},
+"related-website-set-servicesites": {"dfnID":"related-website-set-servicesites","dfnText":"serviceSites","external":false,"refSections":[{"refs":[{"id":"ref-for-related-website-set-servicesites"}],"title":"3. List consumption"},{"refs":[{"id":"ref-for-related-website-set-servicesites\u2460"}],"title":"5. Validating related website set inclusion"}],"url":"#related-website-set-servicesites"},
+};
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    genAllDfnPanels();
+
+    document.body.addEventListener("click", (e) => {
+        // If not handled already, just hide all dfn panels.
+        hideAllDfnPanels();
+    });
+});
+
+window.addEventListener("resize", () => {
+    // Pin any visible dfn panel
+    queryAll(".dfn-panel.on, .dfn-panel.activated").forEach(el=>positionDfnPanel(el));
+});
+
+function genAllDfnPanels() {
+    for(const panelData of Object.values(dfnPanelData)) {
+        const dfnID = panelData.dfnID;
+        const dfn = document.getElementById(dfnID);
+        if(!dfn) {
+            console.log(`Can't find dfn#${dfnID}.`, panelData);
+            continue;
+        }
+        dfn.panelData = panelData;
+        insertDfnPopupAction(dfn);
+    }
+}
+
+function genDfnPanel(dfn, { dfnID, url, dfnText, refSections, external }) {
+    const dfnPanel = mk.aside({
+        class: "dfn-panel on",
+        id: `infopanel-for-${dfnID}`,
+        "data-for": dfnID,
+        "aria-labelled-by":`infopaneltitle-for-${dfnID}`,
+        },
+        mk.span({id:`infopaneltitle-for-${dfnID}`, style:"display:none"},
+            `Info about the '${dfnText}' ${external?"external":""} reference.`),
+        mk.a({href:url, class:"dfn-link"}, url),
+        refSections.length == 0 ? [] :
+            mk.b({}, "Referenced in:"),
+            mk.ul({},
+                ...refSections.map(section=>
+                    mk.li({},
+                        ...section.refs.map((ref, refI)=>
+                            [
+                                mk.a({ href: `#${ref.id}` },
+                                    (refI == 0) ? section.title : `(${refI + 1})`
+                                ),
+                                " ",
+                            ]
+                        ),
+                    ),
+                ),
+            ),
+        genLinkingSyntaxes(dfn),
+    );
+
+    dfnPanel.addEventListener('click', (event) => {
+        if (event.target.nodeName == 'A') {
+            scrollToTargetAndHighlight(event);
+            pinDfnPanel(dfnPanel);
+        }
+        event.stopPropagation();
+        refocusOnTarget(event);
+    });
+    dfnPanel.addEventListener('keydown', (event) => {
+        if(event.keyCode == 27) { // Escape key
+            hideDfnPanel({dfnPanel});
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+
+    dfnPanel.dfn = dfn;
+    dfn.dfnPanel = dfnPanel;
+    return dfnPanel;
+}
+
+
+
+function hideAllDfnPanels() {
+    // Delete the currently-active dfn panel.
+    queryAll(".dfn-panel").forEach(dfnPanel=>hideDfnPanel({dfnPanel}));
+}
+
+function showDfnPanel(dfn) {
+    hideAllDfnPanels(); // Only display one at a time.
+
+    dfn.setAttribute("aria-expanded", "true");
+
+    const dfnPanel = genDfnPanel(dfn, dfn.panelData);
+
+    // Give the dfn a unique tabindex, and then
+    // give all the tabbable panel bits successive indexes.
+    let tabIndex = 100;
+    dfn.tabIndex = tabIndex++;
+    const tabbable = dfnPanel.querySelectorAll(":is(a, button)");
+    for (const el of tabbable) {
+        el.tabIndex = tabIndex++;
+    }
+
+    append(document.body, dfnPanel);
+    positionDfnPanel(dfnPanel);
+}
+
+function positionDfnPanel(dfnPanel) {
+    const dfn = dfnPanel.dfn;
+    const dfnPos = getBounds(dfn);
+    dfnPanel.style.top = dfnPos.bottom + "px";
+    dfnPanel.style.left = dfnPos.left + "px";
+
+    const panelPos = dfnPanel.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, dfnPos.left - overflowAmount);
+        dfnPanel.style.left = newLeft + "px";
+    }
+}
+
+function pinDfnPanel(dfnPanel) {
+    // Switch it to "activated" state, which pins it.
+    dfnPanel.classList.add("activated");
+    dfnPanel.style.position = "fixed";
+    dfnPanel.style.left = null;
+    dfnPanel.style.top = null;
+}
+
+function hideDfnPanel({dfn, dfnPanel}) {
+    if(!dfnPanel) dfnPanel = dfn.dfnPanel;
+    if(!dfn) dfn = dfnPanel.dfn;
+    dfn.dfnPanel = undefined;
+    dfnPanel.dfn = undefined;
+    dfn.setAttribute("aria-expanded", "false");
+    dfn.tabIndex = undefined;
+    dfnPanel.remove()
+}
+
+function toggleDfnPanel(dfn) {
+    if(dfn.dfnPanel) {
+        hideDfnPanel(dfn);
+    } else {
+        showDfnPanel(dfn);
+    }
+}
+
+function insertDfnPopupAction(dfn) {
+    dfn.setAttribute('role', 'button');
+    dfn.setAttribute('aria-expanded', 'false')
+    dfn.tabIndex = 0;
+    dfn.classList.add('has-dfn-panel');
+    dfn.addEventListener('click', (event) => {
+        toggleDfnPanel(dfn);
+        event.stopPropagation();
+    });
+    dfn.addEventListener('keypress', (event) => {
+        const kc = event.keyCode;
+        // 32->Space, 13->Enter
+        if(kc == 32 || kc == 13) {
+            toggleDfnPanel(dfn);
+            event.stopPropagation();
+            event.preventDefault();
+        }
+    });
+}
+
+function refocusOnTarget(event) {
+    const target = event.target;
+    setTimeout(() => {
+        // Refocus on the event.target element.
+        // This is needed after browser scrolls to the destination.
+        target.focus();
+    });
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function scrollToTargetAndHighlight(event) {
+    let hash = event.target.hash;
+    if (hash) {
+        hash = decodeURIComponent(hash.substring(1));
+        const dest = document.getElementById(hash);
+        if (dest) {
+            dest.classList.add('highlighted');
+            setTimeout(() => dest.classList.remove('highlighted'), 1000);
+        }
+    }
+}
+
+// Functions, divided by link type, that wrap an autolink's
+// contents with the appropriate outer syntax.
+// Alternately, a string naming another type they format
+// the same as.
+function needsFor(type) {
+    switch(type) {
+        case "descriptor":
+        case "value":
+        case "element-attr":
+        case "attr-value":
+        case "element-state":
+        case "method":
+        case "constructor":
+        case "argument":
+        case "attribute":
+        case "const":
+        case "dict-member":
+        case "event":
+        case "enum-value":
+        case "stringifier":
+        case "serializer":
+        case "iterator":
+        case "maplike":
+        case "setlike":
+        case "state":
+        case "mode":
+        case "context":
+        case "facet": return true;
+
+        default: return false;
+    }
+}
+function refusesFor(type) {
+    switch(type) {
+        case "property":
+        case "element":
+        case "interface":
+        case "namespace":
+        case "callback":
+        case "dictionary":
+        case "enum":
+        case "exception":
+        case "typedef":
+        case "http-header":
+        case "permission": return true;
+
+        default: return false;
+    }
+}
+function linkFormatterFromType(type) {
+    switch(type) {
+        case 'scheme':
+        case 'permission':
+        case 'dfn': return (text) => `[=${text}=]`;
+
+        case 'abstract-op': return (text) => `[\$${text}\$]`;
+
+        case 'function':
+        case 'at-rule':
+        case 'selector':
+        case 'value': return (text) => `''${text}''`;
+
+        case 'http-header': return (text) => `[:${text}:]`;
+
+        case 'interface':
+        case 'constructor':
+        case 'method':
+        case 'argument':
+        case 'attribute':
+        case 'callback':
+        case 'dictionary':
+        case 'dict-member':
+        case 'enum':
+        case 'enum-value':
+        case 'exception':
+        case 'const':
+        case 'typedef':
+        case 'stringifier':
+        case 'serializer':
+        case 'iterator':
+        case 'maplike':
+        case 'setlike':
+        case 'extended-attribute':
+        case 'event':
+        case 'idl': return (text) => `{{${text}}}`;
+
+        case 'element-state':
+        case 'element-attr':
+        case 'attr-value':
+        case 'element': return (element) => `<{${element}}>`;
+
+        case 'grammar': return (text) => `${text} (within a <pre class=prod>)`;
+
+        case 'type': return (text)=> `<<${text}>>`;
+
+        case 'descriptor':
+        case 'property': return (text) => `'${text}'`;
+
+        default: return;
+    };
+};
+
+function genLinkingSyntaxes(dfn) {
+    if(dfn.tagName != "DFN") return;
+
+    const type = dfn.getAttribute('data-dfn-type');
+    if(!type) {
+        console.log(`<dfn> doesn't have a data-dfn-type:`, dfn);
+        return [];
+    }
+
+    // Return a function that wraps link text based on the type
+    const linkFormatter = linkFormatterFromType(type);
+    if(!linkFormatter) {
+        console.log(`<dfn> has an unknown data-dfn-type:`, dfn);
+        return [];
+    }
+
+    let ltAlts;
+    if(dfn.hasAttribute('data-lt')) {
+        ltAlts = dfn.getAttribute('data-lt')
+            .split("|")
+            .map(x=>x.trim());
+    } else {
+        ltAlts = [dfn.textContent.trim()];
+    }
+    if(type == "type") {
+        // lt of "<foo>", but "foo" is the interior;
+        // <<foo/bar>> is how you write it with a for,
+        // not <foo/<bar>> or whatever.
+        for(var i = 0; i < ltAlts.length; i++) {
+            const lt = ltAlts[i];
+            const match = /<(.*)>/.exec(lt);
+            if(match) { ltAlts[i] = match[1]; }
+        }
+    }
+
+    let forAlts;
+    if(dfn.hasAttribute('data-dfn-for')) {
+        forAlts = dfn.getAttribute('data-dfn-for')
+            .split(",")
+            .map(x=>x.trim());
+    } else {
+        forAlts = [''];
+    }
+
+    let linkingSyntaxes = [];
+    if(!needsFor(type)) {
+        for(const lt of ltAlts) {
+            linkingSyntaxes.push(linkFormatter(lt));
+        }
+    }
+    if(!refusesFor(type)) {
+        for(const f of forAlts) {
+            linkingSyntaxes.push(linkFormatter(`${f}/${ltAlts[0]}`))
+        }
+    }
+    return [
+        mk.b({}, 'Possible linking syntaxes:'),
+        mk.ul({},
+            ...linkingSyntaxes.map(link => {
+                const copyLink = async () =>
+                    await navigator.clipboard.writeText(link);
+                return mk.li({},
+                    mk.div({ class: 'link-item' },
+                        mk.button({
+                            class: 'copy-icon', title: 'Copy',
+                            type: 'button',
+                            _onclick: copyLink,
+                            tabindex: 0,
+                        }, mk.span({ class: 'icon' }) ),
+                        mk.span({}, link)
+                    )
+                );
+            })
+        )
+    ];
+}
+}
+</script>
+<script>/* Boilerplate: script-ref-hints */
+"use strict";
+{
+let refsData = {
+"#are-same-party-in-an-embedding-context": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"are same-party in an embedding context","type":"dfn","url":"#are-same-party-in-an-embedding-context"},
+"#build-the-list-of-related-website-sets": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"build the list of related website sets","type":"dfn","url":"#build-the-list-of-related-website-sets"},
+"#determine-eligibility-for-an-associated-site": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"determine eligibility for an associated site","type":"dfn","url":"#determine-eligibility-for-an-associated-site"},
+"#determine-the-member-type": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"determine the member type","type":"dfn","url":"#determine-the-member-type"},
+"#eligible-for-same-party-membership-when-embedded-within": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"eligible for same-party membership when embedded within","type":"dfn","url":"#eligible-for-same-party-membership-when-embedded-within"},
+"#equivalence-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"equivalence map","type":"dfn","url":"#equivalence-map"},
+"#equivalent-to": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"equivalent to","type":"dfn","url":"#equivalent-to"},
+"#find-a-related-website-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"find a related website set","type":"dfn","url":"#find-a-related-website-set"},
+"#is-same-party-with-its-top-level-embedder": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"is same-party with its top-level embedder","type":"dfn","url":"#is-same-party-with-its-top-level-embedder"},
+"#limit-for-associated-sites": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"limit for associated sites","type":"dfn","url":"#limit-for-associated-sites"},
+"#list-of-related-website-sets": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"list of related website sets","type":"dfn","url":"#list-of-related-website-sets"},
+"#parse-a-subset": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"parse a subset","type":"dfn","url":"#parse-a-subset"},
+"#parse-an-equivalence-map": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"parse an equivalence map","type":"dfn","url":"#parse-an-equivalence-map"},
+"#parse-and-validate-a-site": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"parse and validate a site","type":"dfn","url":"#parse-and-validate-a-site"},
+"#related-website-set": {"export":true,"for_":[],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"related website set","type":"dfn","url":"#related-website-set"},
+"#related-website-set-associatedsites": {"export":true,"for_":["related website set"],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"associatedsites","type":"dfn","url":"#related-website-set-associatedsites"},
+"#related-website-set-cctlds": {"export":true,"for_":["related website set"],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"cctlds","type":"dfn","url":"#related-website-set-cctlds"},
+"#related-website-set-primary": {"export":true,"for_":["related website set"],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"primary","type":"dfn","url":"#related-website-set-primary"},
+"#related-website-set-servicesites": {"export":true,"for_":["related website set"],"level":"","normative":true,"shortname":"first-party-sets","spec":"first-party-sets","status":"local","text":"servicesites","type":"dfn","url":"#related-website-set-servicesites"},
+"https://encoding.spec.whatwg.org/#utf-8": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"encoding","spec":"encoding","status":"current","text":"utf-8","type":"dfn","url":"https://encoding.spec.whatwg.org/#utf-8"},
+"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"origin","type":"dfn","url":"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin"},
+"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host": {"export":true,"for_":["origin"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"host","type":"dfn","url":"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-host"},
+"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"opaque origin","type":"dfn","url":"https://html.spec.whatwg.org/multipage/browsers.html#concept-origin-opaque"},
+"https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"obtain a site","type":"dfn","url":"https://html.spec.whatwg.org/multipage/browsers.html#obtain-a-site"},
+"https://html.spec.whatwg.org/multipage/browsers.html#site": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"site","type":"dfn","url":"https://html.spec.whatwg.org/multipage/browsers.html#site"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin": {"export":true,"for_":["environment"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"top-level origin","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-environment-top-level-origin"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin": {"export":true,"for_":["environment settings object"],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"origin","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#concept-settings-object-origin"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"environment settings object","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#environment-settings-object"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"queue a global task","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#queue-a-global-task"},
+"https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"html","spec":"html","status":"current","text":"relevant settings object","type":"dfn","url":"https://html.spec.whatwg.org/multipage/webappapis.html#relevant-settings-object"},
+"https://infra.spec.whatwg.org/#byte-sequence": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"byte sequence","type":"dfn","url":"https://infra.spec.whatwg.org/#byte-sequence"},
+"https://infra.spec.whatwg.org/#implementation-defined": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"implementation-defined","type":"dfn","url":"https://infra.spec.whatwg.org/#implementation-defined"},
+"https://infra.spec.whatwg.org/#list": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"list","type":"dfn","url":"https://infra.spec.whatwg.org/#list"},
+"https://infra.spec.whatwg.org/#ordered-map": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"ordered map","type":"dfn","url":"https://infra.spec.whatwg.org/#ordered-map"},
+"https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"parse json bytes to an infra value","type":"dfn","url":"https://infra.spec.whatwg.org/#parse-json-bytes-to-an-infra-value"},
+"https://infra.spec.whatwg.org/#string": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"string","type":"dfn","url":"https://infra.spec.whatwg.org/#string"},
+"https://infra.spec.whatwg.org/#struct": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"infra","spec":"infra","status":"current","text":"struct","type":"dfn","url":"https://infra.spec.whatwg.org/#struct"},
+"https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor": {"export":true,"for_":["Document"],"level":"1","normative":true,"shortname":"requeststorageaccessfor","spec":"requeststorageaccessfor","status":"current","text":"requestStorageAccessFor(requestedOrigin)","type":"method","url":"https://privacycg.github.io/requestStorageAccessFor/#dom-document-requeststorageaccessfor"},
+"https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess": {"export":true,"for_":["Document"],"level":"1","normative":true,"shortname":"storage-access","spec":"storage-access","status":"current","text":"requestStorageAccess()","type":"method","url":"https://privacycg.github.io/storage-access/#dom-document-requeststorageaccess"},
+"https://publicsuffix.org/list/#": {"export":true,"for_":[],"level":"","normative":true,"shortname":"psl","spec":"psl","status":"anchor-block","text":"registered domain","type":"dfn","url":"https://publicsuffix.org/list/#"},
+"https://url.spec.whatwg.org/#concept-basic-url-parser": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"url","spec":"url","status":"current","text":"basic url parser","type":"dfn","url":"https://url.spec.whatwg.org/#concept-basic-url-parser"},
+"https://url.spec.whatwg.org/#concept-url-origin": {"export":true,"for_":["url"],"level":"1","normative":true,"shortname":"url","spec":"url","status":"current","text":"origin","type":"dfn","url":"https://url.spec.whatwg.org/#concept-url-origin"},
+"https://url.spec.whatwg.org/#concept-url-scheme": {"export":true,"for_":["url"],"level":"1","normative":true,"shortname":"url","spec":"url","status":"current","text":"scheme","type":"dfn","url":"https://url.spec.whatwg.org/#concept-url-scheme"},
+"https://w3c.github.io/permissions/#dfn-granted": {"export":true,"for_":["permission"],"level":"1","normative":true,"shortname":"permissions","spec":"permissions","status":"current","text":"granted","type":"dfn","url":"https://w3c.github.io/permissions/#dfn-granted"},
+"https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"permissions","spec":"permissions","status":"current","text":"remove a permission store entry","type":"dfn","url":"https://w3c.github.io/permissions/#dfn-remove-a-permission-store-entry"},
+"https://w3c.github.io/permissions/#dfn-request-permission-to-use": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"permissions","spec":"permissions","status":"current","text":"requesting permission to use","type":"dfn","url":"https://w3c.github.io/permissions/#dfn-request-permission-to-use"},
+"https://w3c.github.io/permissions/#dom-permissiondescriptor": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"permissions","spec":"permissions","status":"current","text":"PermissionDescriptor","type":"dictionary","url":"https://w3c.github.io/permissions/#dom-permissiondescriptor"},
+"https://w3c.github.io/permissions/#dom-permissiondescriptor-name": {"export":true,"for_":["PermissionDescriptor"],"level":"1","normative":true,"shortname":"permissions","spec":"permissions","status":"current","text":"name","type":"dict-member","url":"https://w3c.github.io/permissions/#dom-permissiondescriptor-name"},
+"https://w3c.github.io/permissions/#permissions-task-source": {"export":true,"for_":[],"level":"","normative":true,"shortname":"permissions","spec":"permissions","status":"anchor-block","text":"permissions task source","type":"dfn","url":"https://w3c.github.io/permissions/#permissions-task-source"},
+"https://webidl.spec.whatwg.org/#resolve": {"export":true,"for_":[],"level":"1","normative":true,"shortname":"webidl","spec":"webidl","status":"current","text":"resolve","type":"dfn","url":"https://webidl.spec.whatwg.org/#resolve"},
+"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin": {"export":true,"for_":[],"level":"","normative":true,"shortname":"clear-site-data","spec":"clear-site-data","status":"anchor-block","text":"clear cache for origin","type":"dfn","url":"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cache-for-origin"},
+"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin": {"export":true,"for_":[],"level":"","normative":true,"shortname":"clear-site-data","spec":"clear-site-data","status":"anchor-block","text":"clear cookies for origin","type":"dfn","url":"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-cookies-for-origin"},
+"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin": {"export":true,"for_":[],"level":"","normative":true,"shortname":"clear-site-data","spec":"clear-site-data","status":"anchor-block","text":"clear dom-accessible storage for origin","type":"dfn","url":"https://www.w3.org/TR/clear-site-data/#abstract-opdef-clear-dom-accessible-storage-for-origin"},
+};
+
+function mkRefHint(link, ref) {
+    const linkText = link.textContent;
+    let dfnTextElements = '';
+    if (ref.text != linkText) {
+        dfnTextElements =
+            mk.li({},
+                mk.b({}, "Term: "),
+                mk.span({}, ref.text)
+            );
+    }
+    const forList = ref.for_;
+    let forListElements;
+    if(forList.length == 0) {
+        forListElements = [];
+    } else if(forList.length == 1) {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.span({}, forList[0]),
+        );
+    } else {
+        forListElements = mk.li({},
+            mk.b({}, "For: "),
+            mk.ul({},
+                ...forList.map(forItem =>
+                    mk.li({},
+                        mk.span({}, forItem)
+                    ),
+                ),
+            ),
+        );
+    }
+    const url = ref.url;
+    const safeUrl = encodeURIComponent(url);
+    const hintPanel = mk.aside({
+        class: "ref-hint",
+        id: `ref-hint-for-${safeUrl}`,
+        "data-for": url,
+        "aria-labelled-by": `ref-hint-for-${safeUrl}`,
+    },
+        mk.ul({},
+            dfnTextElements,
+            mk.li({},
+                mk.b({}, "URL: "),
+                mk.a({ href: url, class: "ref" }, url),
+            ),
+            mk.li({},
+                mk.b({}, "Type: "),
+                mk.span({}, `${ref.type}`),
+            ),
+            mk.li({},
+                mk.b({}, "Spec: "),
+                mk.span({}, `${ref.spec ? ref.spec : ''}`),
+            ),
+            forListElements
+        ),
+    );
+    hintPanel.forLink = link;
+    setupRefHintEventListeners(link, hintPanel);
+    return hintPanel;
+}
+
+function hideAllRefHints() {
+    queryAll(".ref-hint").forEach(el=>hideRefHint(el));
+}
+
+function hideRefHint(refHint) {
+    const link = refHint.forLink;
+    link.setAttribute("aria-expanded", "false");
+    if(refHint.teardownEventListeners) {
+        refHint.teardownEventListeners();
+    }
+    refHint.remove();
+}
+
+function showRefHint(link) {
+    if(link.classList.contains("dfn-link")) return;
+    const url = link.getAttribute("href");
+    const ref = refsData[url];
+    if(!ref) return;
+
+    hideAllRefHints(); // Only display one at this time.
+
+    const refHint = mkRefHint(link, ref);
+    append(document.body, refHint);
+    link.setAttribute("aria-expanded", "true");
+    positionRefHint(refHint);
+}
+
+function setupRefHintEventListeners(link, refHint) {
+    if (refHint.teardownEventListeners) return;
+    // Add event handlers to hide the refHint after the user moves away
+    // from both the link and refHint, if not hovering either within one second.
+    let timeout = null;
+    const startHidingRefHint = (event) => {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            hideRefHint(refHint);
+        }, 1000);
+    }
+    const resetHidingRefHint = (event) => {
+        if (timeout) clearTimeout(timeout);
+        timeout = null;
+    };
+    link.addEventListener("mouseleave", startHidingRefHint);
+    link.addEventListener("mouseenter", resetHidingRefHint);
+    link.addEventListener("blur", startHidingRefHint);
+    link.addEventListener("focus", resetHidingRefHint);
+    refHint.addEventListener("mouseleave", startHidingRefHint);
+    refHint.addEventListener("mouseenter", resetHidingRefHint);
+    refHint.addEventListener("blur", startHidingRefHint);
+    refHint.addEventListener("focus", resetHidingRefHint);
+
+    refHint.teardownEventListeners = () => {
+        // remove event listeners
+        resetHidingRefHint();
+        link.removeEventListener("mouseleave", startHidingRefHint);
+        link.removeEventListener("mouseenter", resetHidingRefHint);
+        link.removeEventListener("blur", startHidingRefHint);
+        link.removeEventListener("focus", resetHidingRefHint);
+        refHint.removeEventListener("mouseleave", startHidingRefHint);
+        refHint.removeEventListener("mouseenter", resetHidingRefHint);
+        refHint.removeEventListener("blur", startHidingRefHint);
+        refHint.removeEventListener("focus", resetHidingRefHint);
+    };
+}
+
+function positionRefHint(refHint) {
+    const link = refHint.forLink;
+    const linkPos = getBounds(link);
+    refHint.style.top = linkPos.bottom + "px";
+    refHint.style.left = linkPos.left + "px";
+
+    const panelPos = refHint.getBoundingClientRect();
+    const panelMargin = 8;
+    const maxRight = document.body.parentNode.clientWidth - panelMargin;
+    if (panelPos.right > maxRight) {
+        const overflowAmount = panelPos.right - maxRight;
+        const newLeft = Math.max(panelMargin, linkPos.left - overflowAmount);
+        refHint.style.left = newLeft + "px";
+    }
+}
+
+// TODO: shared util
+// Returns the root-level absolute position {left and top} of element.
+function getBounds(el, relativeTo=document.body) {
+    const relativeRect = relativeTo.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    const top = elRect.top - relativeRect.top;
+    const left = elRect.left - relativeRect.left;
+    return {
+        top,
+        left,
+        bottom: top + elRect.height,
+        right: left + elRect.width,
+    }
+}
+
+function showRefHintListener(e) {
+    // If the target isn't in a link (or is a link),
+    // just ignore it.
+    let link = e.target.closest("a");
+    if(!link) return;
+
+    // If the target is in a ref-hint panel
+    // (aka a link in the already-open one),
+    // also just ignore it.
+    if(link.closest(".ref-hint")) return;
+
+    // Otherwise, show the panel for the link.
+    showRefHint(link);
+}
+
+function hideAllHintsListener(e) {
+    // If the click is inside a ref-hint panel, ignore it.
+    if(e.target.closest(".ref-hint")) return;
+    // Otherwise, close all the current panels.
+    hideAllRefHints();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("mousedown", showRefHintListener);
+    document.body.addEventListener("focus", showRefHintListener);
+
+    document.body.addEventListener("click", hideAllHintsListener);
+});
+
+window.addEventListener("resize", () => {
+    // Hide any open ref hint.
+    hideAllRefHints();
+});
 }
 </script>
