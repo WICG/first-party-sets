@@ -36,7 +36,7 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
 <pre class="biblio">
 {
   "SUBMISSION-GUIDELINES": {
-    "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/FPS-Submission_Guidelines.md",
+    "href": "https://github.com/GoogleChrome/related-website-sets/blob/main/RWS-Submission_Guidelines.md",
     "title": "Related Website Sets Submission Guidelines",
     "publisher": "Google Chrome"
   },
