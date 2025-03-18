@@ -56,14 +56,14 @@ some notion of first-party. In defining this scope, we must balance two goals: t
 small enough to meet the user's privacy expectations, yet large enough to provide the user's desired
 functionality on the site they are interacting with.
 
-Related Website Sets (RWS) is a web platform mechanism, proposed within the context of browser efforts to phase out support for third-party cookies, through which site authors of multi-domain sites may declare relationships between domains such that the browser may understand the relationships and handle cookie access accordingly.
+Related Website Sets (RWS) is a web platform mechanism, proposed within the context of browser efforts to phase out support for third-party cookies, through which site authors of multi-domain sites may declare relationships between domains such that the browser may understand the relationships and handle cross-site data access accordingly.
 
 The core principle of allowing browsers to treat collections of *known related sites* differently from otherwise *unrelated sites* is grounded in ideas that had been previously discussed in the W3C (such as [Affiliated Domains](https://www.w3.org/2017/11/06-webappsec-minutes.html#item12)), the now defunct IETF [DBOUND](https://datatracker.ietf.org/doc/html/draft-sullivan-dbound-problem-statement-02) working group, and previously deployed in some browsers (such as the [Disconnect.me entities list](https://github.com/disconnectme/disconnect-tracking-protection/blob/master/entities.json)).
 
 There are two key components to the proposal:
 
 -   The framework governing how relationships between domains may be declared, and
--   The method by which the browser may manage cross-domain cookie access based on the declared relationship between domains.
+-   The method by which the browser may manage cross-site cookie access based on the declared relationship between domains.
 
 
 # Goals
@@ -104,7 +104,7 @@ On the modern web, sites span multiple domains and many sites are owned & operat
 
 **Note:** The above have been provided only to serve as real-world illustrative assumed examples of collections of domains that are owned by the same organization; and have not all been validated with the site owners.
 
-This proposal anchors on the use cases described above to develop a framework for the browser to support limited cross-domain cookie access. This will allow browsers to ensure continued operation of existing functionality that would otherwise be broken by blocking cross-domain cookies ("third-party cookies"), and will support the seamless operation of functionality such as:
+This proposal anchors on the use cases described above to develop a framework for the browser to support limited cross-domain data access. This will allow browsers to ensure continued operation of existing functionality that would otherwise be broken by blocking cross-domain cookies ("third-party cookies"), and will support the seamless operation of functionality such as:
 
 
 
@@ -223,6 +223,10 @@ In addition to the subsets proposed above, we propose a mechanism by which a set
 
 For example, `exampleA.co.uk` could be considered a ccTLD variant of `exampleA.com`. If `exampleB.com` and `exampleC.com` are listed in the associated subset, the inclusion of `exampleB.co.uk` and `exampleC.co.uk` as ccTLD variants (of `exampleB.com` and `exampleC.com`, respectively) would *not* count against the limit on the number of associated domains, and would be allowed.
 
+Note: Browsers may use RWS's domain relationships for other purposes. For example, Chrome's [IP Protection proposal](https://github.com/GoogleChrome/ip-protection) includes relying on RWS for the purposes of determining first-party and third-party contexts, but does not change RWS’s Subset Types or Validation criteria.
+
+If a submitter is defining related sites for non-browser-storage use cases like IP address, it may be to address network-level performance optimization or access management. In these scenarios, it may be appropriate to utilize the "service" subset, which does not have a domain limit but does have ownership requirements.
+
 ### Abuse mitigation measures
 
 We consider using a public submission process (like a GitHub repository) to be a valuable approach because it facilitates our goal to keep all set submissions public and submitters accountable to users, civil society, and the broader web ecosystem. For example, a mechanism to report potentially invalid sets may be provisioned. We expect public accountability to be a significant deterrent for intentionally miscategorized subsets.
@@ -243,9 +247,9 @@ Chrome’s implementation will depend on the  list of Related Website Sets gener
 
 ## Leveraging the Storage Access API
 
-To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cookie access within a RWS.
+To facilitate the browser's ability to handle each subset differently, we are proposing leveraging the [Storage Access API](https://privacycg.github.io/storage-access/) (SAA) to enable cross-site cookie and storage access within a RWS.
 
- With the SAA, sites may actively request cross-site cookie access, and user-agents may [make their own decisions](https://privacycg.github.io/storage-access/#ua-policy) on whether to automatically grant or deny the request or choose to prompt the user. We propose that browsers supporting RWS incorporate set membership information into this decision. In other words, browsers may choose to automatically grant cross-site access when the requesting site is in the same RWS, or in a particular subset of the same RWS, as the top-level site.
+ With the SAA, sites may actively request cross-site cookie and storage access, and user-agents may [make their own decisions](https://privacycg.github.io/storage-access/#ua-policy) on whether to automatically grant or deny the request or choose to prompt the user. We propose that browsers supporting RWS incorporate set membership information into this decision. In other words, browsers may choose to automatically grant cross-site access when the requesting site is in the same RWS, or in a particular subset of the same RWS, as the top-level site.
 
 We'd like to collaborate with the community in evolving the Storage Access API to improve developer and user experience and help the SAA better support the use cases that RWS is intended to solve. One way to do that is through extending the API surface in a way that makes it easier for developers to use the SAA without integrating iframes:
 
