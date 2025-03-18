@@ -279,7 +279,7 @@ Sites in a common RWS may have greatly varying security requirements, for exampl
 This consideration will always involve a necessary trade-off between gains like performance or interoperability and risks for users and sites. User agents should facilitate additional mechanisms such as a per-origin opt-in or opt-out to manage this trade-off. 
 
 <h2 id="acknowledgements" class="no-num">Acknowledgements</h2>
-</a>
+
 Other members of the W3C Privacy Community Group had previously suggested the use of Storage Access API, or an equivalent API; in place of SameParty cookies. Thanks to @jdcauley ([1](https://github.com/WICG/first-party-sets/issues/14#issuecomment-785144990)), @arthuredelstein ([2](https://github.com/WICG/first-party-sets/issues/42)), and @johnwilander ([3](https://lists.w3.org/Archives/Public/public-privacycg/2022Jun/0001.html)).
 
 Browser vendors, web developers, and members of the web community provided valuable feedback during this proposal's incubation in the W3C Privacy Community Group.
