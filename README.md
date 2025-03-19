@@ -223,7 +223,7 @@ In addition to the subsets proposed above, we propose a mechanism by which a set
 
 For example, `exampleA.co.uk` could be considered a ccTLD variant of `exampleA.com`. If `exampleB.com` and `exampleC.com` are listed in the associated subset, the inclusion of `exampleB.co.uk` and `exampleC.co.uk` as ccTLD variants (of `exampleB.com` and `exampleC.com`, respectively) would *not* count against the limit on the number of associated domains, and would be allowed.
 
-Note: Browsers may use RWS's domain relationships for other purposes. For example, Chrome's [IP Protection proposal](https://github.com/GoogleChrome/ip-protection) includes relying on RWS for the purposes of determining first-party and third-party contexts, but does not change RWS’s Subset Types or Validation criteria.
+Note: Browsers may use RWS's domain relationships for other purposes. For example, Chrome's [IP Protection proposal](https://github.com/GoogleChrome/ip-protection) includes relying on RWS for the purposes of determining first-party and third-party contexts, but does not change RWS's Subset Types or Validation criteria.
 
 If a submitter is defining related sites for non-browser-storage use cases like IP address, it may be to address network-level performance optimization or access management. In these scenarios, it may be appropriate to utilize the "service" subset, which does not have a domain limit but does have ownership requirements.
 
