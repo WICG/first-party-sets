@@ -41,7 +41,7 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
     "publisher": "Google Chrome"
   },
   "RWS-LIST": {
-    "href": "https://github.com/GoogleChrome/first-party-sets/blob/main/first_party_sets.JSON",
+    "href": "https://github.com/GoogleChrome/related-website-sets/blob/main/related_website_sets.JSON",
     "title": "Related Website Sets list",
     "publisher": "Google Chrome"
   },
@@ -68,7 +68,7 @@ urlPrefix: https://w3c.github.io/permissions/; spec: permissions
 
 <em>This section is non-normative.</em>
 
-Related Website Sets (“RWS”) provides a framework for developers to declare relationships among sites, to enable limited cross-site cookie access for specific, user-facing purposes. This is facilitated through the use of the [[STORAGE-ACCESS]].
+Related Website Sets (“RWS”) provides a framework for developers to declare relationships among sites, so that user agents can allow limited access to cross-site data, such as cookies, for user-facing purposes. This is facilitated through the use of the [[STORAGE-ACCESS]].
 
 This document defines how user agents should integrate with the [[RWS-LIST]]. For a canonical reference of the structure of the RWS list and technical validations that are run at time of submission, please see the [[SUBMISSION-GUIDELINES]].
 
@@ -241,6 +241,12 @@ When a [=site=] |site| leaves a [=related website set=] as the result of buildin
     6. Run additional [=implementation-defined=] steps to ensure that any web-accessible storage is removed from |origin|.
 
 ISSUE(wicg/first-party-sets#124): This section should provide more details on how user agents can figure out when a site leaves an RWS.
+
+<h2 id="other-features">Integration with other features</h2>
+
+User agents may use the domain relationships declared through RWS for other implementation-defined purposes, in which case they must still follow the rest of this specification for consuming and storing the RWS list as well as checking eligibility for same-party membership.
+
+Note: For example, <a href="https://github.com/GoogleChrome/ip-protection">Chrome's IP Protection proposal</a> includes relying on RWS for the purposes of determining first-party and third-party contexts.
 
 <h2 id="privacy-consideration">Privacy Considerations</h2>
 
